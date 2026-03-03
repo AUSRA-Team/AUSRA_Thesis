@@ -1,0 +1,461 @@
+\contentsline {chapter}{Declaration}{1}{chapter*.1}%
+\contentsline {chapter}{Abstract}{2}{chapter*.2}%
+\contentsline {chapter}{Acknowledgments}{4}{chapter*.3}%
+\contentsline {frontmatter}{List of Tables}{x}{chapter*.5}%
+\contentsline {frontmatter}{List of Figures}{xii}{chapter*.6}%
+\contentsline {chapter}{List of Acronyms and Abbreviations}{xv}{chapter*.7}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Overview}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Project Motivation}{1}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Spatial Parallelism and Temporal Efficiency}{2}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Scalability and Modular Deployment}{2}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Decentralized Intelligence and Reduced Communication Overhead}{2}{subsection.1.2.3}%
+\contentsline {section}{\numberline {1.3}Problem Statement}{2}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Project Objectives}{3}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Thesis Structure}{4}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Literature Review}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Evolution of Material Handling: From AGVs to AMRs}{5}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}The Limitations of AGVs}{6}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}The Superiority of AMRs}{6}{subsection.2.1.2}%
+\contentsline {section}{\numberline {2.2}Existing Swarm Architectures}{7}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Kilobot}{7}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}e-puck}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Industrial Solutions}{8}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}Mechanical Design Precedents}{9}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Chassis Design Approaches}{9}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Material Selection Studies}{9}{subsection.2.3.2}%
+\contentsline {section}{\numberline {2.4}Control Strategies}{9}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Centralized vs. Decentralized Approaches}{9}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Navigation and Path Planning}{10}{subsection.2.4.2}%
+\contentsline {section}{\numberline {2.5}Design Frameworks in Swarm Robotics}{10}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}The Puzzle: Understanding Self-Organization}{10}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}The Problem: Task-Oriented Design with Trade-offs}{11}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}The Mess: Real-World Deployment Complexity}{11}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Stigmergy as an Interface Mechanism}{12}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}AUSRA's Position in the Framework}{12}{subsection.2.5.5}%
+\contentsline {section}{\numberline {2.6}Multi-Robot Exploration and Mapping}{12}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Collaborative Mapping Approaches}{12}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}Pose Graph Optimization}{13}{subsection.2.6.2}%
+\contentsline {section}{\numberline {2.7}Task Allocation in Swarms}{13}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Summary}{14}{section.2.8}%
+\contentsline {chapter}{\numberline {3}Hardware Selection \& Mechanical Design of Ausrabot}{15}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction to the Hardware Architecture}{15}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Design Requirements and Constraints}{15}{subsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.1.1}Maximum Weight of The Robot}{15}{subsubsection.3.1.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.1.2}Minimum Velocity of the Robot}{16}{subsubsection.3.1.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.1.3}Spatial Constraints (Compactness)}{16}{subsubsection.3.1.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.1.4}Modularity and Serviceability}{16}{subsubsection.3.1.1.4}%
+\contentsline {subsection}{\numberline {3.1.2}Functional Layer Decomposition}{16}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Robot's Hardware Selection}{17}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Locomotion \& Actuation Group}{17}{subsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.1.1}Locomotion System (Robot's wheel selection)}{17}{subsubsection.3.2.1.1}%
+\contentsline {paragraph}{A. Exploration of Robotic Wheel Technologies}{17}{section*.16}%
+\contentsline {paragraph}{B. Selection Criteria}{19}{section*.18}%
+\contentsline {paragraph}{C. Quantitative Selection Matrix}{19}{section*.19}%
+\contentsline {paragraph}{D. Selection Rationale}{20}{section*.21}%
+\contentsline {subsubsection}{\numberline {3.2.1.2}Chassis Geometry \& Configuration}{20}{subsubsection.3.2.1.2}%
+\contentsline {paragraph}{A. Available Geometric Configurations}{20}{section*.22}%
+\contentsline {paragraph}{B. The Selection Matrix}{21}{section*.24}%
+\contentsline {paragraph}{C. Detailed Rationale for the Circular Design}{22}{section*.26}%
+\contentsline {subsubsection}{\numberline {3.2.1.3}Material Selection of Robot Plate}{23}{subsubsection.3.2.1.3}%
+\contentsline {paragraph}{A. Available Materials}{23}{section*.27}%
+\contentsline {paragraph}{B. Plate Material selection Matrix}{23}{section*.29}%
+\contentsline {subsubsection}{\numberline {3.2.1.4}Evaluation of Materials}{24}{subsubsection.3.2.1.4}%
+\contentsline {paragraph}{Candidate Materials Analysis}{24}{section*.32}%
+\contentsline {paragraph}{Material Selection Matrix}{25}{table.caption.34}%
+\contentsline {subsubsection}{\numberline {3.2.1.5}Actuator Sizing and Motor Selection}{25}{subsubsection.3.2.1.5}%
+\contentsline {paragraph}{A. Determination of Motor Requirements}{25}{section*.35}%
+\contentsline {paragraph}{B. Comparative Analysis of Available Actuators}{25}{section*.36}%
+\contentsline {paragraph}{C. Actuator Selection Criteria}{26}{section*.38}%
+\contentsline {paragraph}{D. Selection Matrix}{27}{section*.39}%
+\contentsline {paragraph}{E. Selection Rationale}{27}{section*.41}%
+\contentsline {section}{\numberline {3.3}Detailed CAD Design}{28}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}CAD Modeling \& Geometry}{28}{subsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.1.1}Layer 1: The Locomotion \& Power Drive Base Plate}{29}{subsubsection.3.3.1.1}%
+\contentsline {paragraph}{A. The Actuation Assembly and Radial Support System}{30}{section*.44}%
+\contentsline {paragraph}{B. Precision Power Transmission and Coupling}{31}{section*.46}%
+\contentsline {paragraph}{C. Integrated Power Control and Signal Integrity}{31}{section*.48}%
+\contentsline {subsubsection}{\numberline {3.3.1.2}Layer 2: Energy Storage \& Signal Processing}{32}{subsubsection.3.3.1.2}%
+\contentsline {paragraph}{A. Battery and Center of Gravity (CoG) Optimization}{33}{section*.51}%
+\contentsline {paragraph}{B. The Centralized Control Hub and Signal Routing}{34}{section*.53}%
+\contentsline {subsubsection}{\numberline {3.3.1.3}Layer 3: Perception \& High-Level Intelligence}{35}{subsubsection.3.3.1.3}%
+\contentsline {paragraph}{A. High-Level Computing and Spatial AI Integration}{35}{section*.55}%
+\contentsline {paragraph}{B. Navigation Sensors and SLAM Hardware}{35}{section*.56}%
+\contentsline {subsubsection}{\numberline {3.3.1.4}Protective Enclosure (The Outer Shell \& Top Cover)}{37}{subsubsection.3.3.1.4}%
+\contentsline {subsection}{\numberline {3.3.2}Empirical Stress Analysis}{38}{subsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.1}Acrylic Plate of thickness (3mm)}{38}{subsubsection.3.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.3.2.2}Acrylic Plate of (6mm)}{40}{subsubsection.3.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.3.2.3}Comparison Table}{41}{subsubsection.3.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.3.2.4}All Three layers Stress Analysis}{42}{subsubsection.3.3.2.4}%
+\contentsline {section}{\numberline {3.4}Kinematic Modeling and URDF Generation}{44}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Kinematic Tree Construction and Geometric Pre-processing}{44}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}ROS 2 Migration and Package Reconfiguration}{45}{subsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.2.1}Build System Adaptation}{45}{subsubsection.3.4.2.1}%
+\contentsline {subsubsection}{\numberline {3.4.2.2}Launch System Development}{46}{subsubsection.3.4.2.2}%
+\contentsline {paragraph}{RViz2 Visualization}{46}{section*.72}%
+\contentsline {paragraph}{Gazebo Simulation}{46}{section*.74}%
+\contentsline {subsubsection}{\numberline {3.4.2.3}Inertial and Visual Optimization}{47}{subsubsection.3.4.2.3}%
+\contentsline {subsection}{\numberline {3.4.3}Summary}{47}{subsection.3.4.3}%
+\contentsline {chapter}{\numberline {4}Electrical System Architecture and Embedded Design}{48}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Overview}{48}{section.4.1}%
+\contentsline {section}{\numberline {4.2}System Topology}{48}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Component Selection and Justification}{49}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Low-Level Controller Selection}{49}{subsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.1}Selection Criteria}{49}{subsubsection.4.3.1.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.2}Selection Matrix}{50}{subsubsection.4.3.1.2}%
+\contentsline {subsubsection}{\numberline {4.3.1.3}Summary of Microcontroller Selection}{51}{subsubsection.4.3.1.3}%
+\contentsline {paragraph}{Teensy 4.1 (Score: 7.95/10)}{51}{section*.80}%
+\contentsline {paragraph}{STM32F411 (Score: 6.55/10)}{51}{section*.81}%
+\contentsline {paragraph}{ESP32-S3 (Selected --- Score: 8.80/10)}{51}{section*.82}%
+\contentsline {subsection}{\numberline {4.3.2}Motor Driver Selection}{52}{subsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.2.1}Candidates Evaluated}{52}{subsubsection.4.3.2.1}%
+\contentsline {subsubsection}{\numberline {4.3.2.2}Selection Matrix}{52}{subsubsection.4.3.2.2}%
+\contentsline {subsubsection}{\numberline {4.3.2.3}Final Selection: Cytron MDD3A}{52}{subsubsection.4.3.2.3}%
+\contentsline {subsubsection}{\numberline {4.3.2.4}Justification of Selection}{53}{subsubsection.4.3.2.4}%
+\contentsline {paragraph}{Current Headroom}{53}{section*.85}%
+\contentsline {paragraph}{Thermal Efficiency}{53}{section*.86}%
+\contentsline {paragraph}{Protection Features}{53}{section*.87}%
+\contentsline {paragraph}{Size Optimization}{53}{section*.88}%
+\contentsline {subsection}{\numberline {4.3.3}Power Source Selection}{53}{subsection.4.3.3}%
+\contentsline {subsubsection}{\numberline {4.3.3.1}Design Constraint}{53}{subsubsection.4.3.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.3.2}Candidates Evaluated}{53}{subsubsection.4.3.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3.3}Selection Matrix}{54}{subsubsection.4.3.3.3}%
+\contentsline {subsubsection}{\numberline {4.3.3.4}Justification of Selection}{54}{subsubsection.4.3.3.4}%
+\contentsline {paragraph}{Rejection of LiPo Configurations}{54}{section*.92}%
+\contentsline {paragraph}{Selection of Total P20S (20V Platform)}{55}{section*.93}%
+\contentsline {subsubsection}{\numberline {4.3.3.5}Battery Sizing (Target: $>$30 minutes runtime)}{55}{subsubsection.4.3.3.5}%
+\contentsline {paragraph}{Power Calculation}{55}{section*.94}%
+\contentsline {paragraph}{Current Calculation}{56}{section*.96}%
+\contentsline {paragraph}{Capacity \& Runtime Verification}{56}{section*.97}%
+\contentsline {paragraph}{C-Rating (Discharge Safety) Check}{56}{section*.98}%
+\contentsline {section}{\numberline {4.4}Power Distribution and Safety Strategy}{57}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Physical Isolation Logic (Three-State Failsafe)}{57}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Dual-Stage Voltage Regulation}{57}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Low-Level Firmware Design}{59}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Actuator Feedback: Quadrature Encoders}{59}{subsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.1.1}Operating Principle}{59}{subsubsection.4.5.1.1}%
+\contentsline {paragraph}{Optical Encoder Technology}{59}{section*.102}%
+\contentsline {subsection}{\numberline {4.5.2}Encoder Data Acquisition Strategy}{60}{subsection.4.5.2}%
+\contentsline {subsubsection}{\numberline {4.5.2.1}Polling vs. Interrupt-Driven Architecture}{60}{subsubsection.4.5.2.1}%
+\contentsline {paragraph}{Polling (Rejected)}{60}{section*.104}%
+\contentsline {paragraph}{Interrupt Service Routines (Selected)}{60}{section*.105}%
+\contentsline {paragraph}{Critical Implementation: IRAM\_ATTR}{60}{section*.106}%
+\contentsline {subsection}{\numberline {4.5.3}Quadrature Encoding Selection}{61}{subsection.4.5.3}%
+\contentsline {subsubsection}{\numberline {4.5.3.1}X1 Encoding Selection Rationale}{61}{subsubsection.4.5.3.1}%
+\contentsline {paragraph}{1. Computational Efficiency}{61}{section*.107}%
+\contentsline {paragraph}{2. Noise Immunity}{61}{section*.108}%
+\contentsline {paragraph}{3. Sufficient Resolution}{61}{section*.109}%
+\contentsline {subsection}{\numberline {4.5.4}Encoder Calibration}{61}{subsection.4.5.4}%
+\contentsline {paragraph}{Procedure:}{61}{section*.110}%
+\contentsline {paragraph}{Result:}{61}{section*.111}%
+\contentsline {subsection}{\numberline {4.5.5}Velocity Estimation and Signal Processing}{61}{subsection.4.5.5}%
+\contentsline {subsubsection}{\numberline {4.5.5.1}The Quantization Problem}{62}{subsubsection.4.5.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.5.2}Solution: First-Order Low-Pass Filter}{62}{subsubsection.4.5.5.2}%
+\contentsline {paragraph}{Tuning:}{62}{section*.112}%
+\contentsline {section}{\numberline {4.6}Control Strategy and Controller Selection}{63}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Controller Selection Analysis}{63}{subsection.4.6.1}%
+\contentsline {subsubsection}{\numberline {4.6.1.1}Computational Cost}{63}{subsubsection.4.6.1.1}%
+\contentsline {subsubsection}{\numberline {4.6.1.2}Model Dependency}{63}{subsubsection.4.6.1.2}%
+\contentsline {subsubsection}{\numberline {4.6.1.3}Constraint Handling}{64}{subsubsection.4.6.1.3}%
+\contentsline {subsubsection}{\numberline {4.6.1.4}Application Suitability}{64}{subsubsection.4.6.1.4}%
+\contentsline {subsubsection}{\numberline {4.6.1.5}Selection Conclusion}{64}{subsubsection.4.6.1.5}%
+\contentsline {subsection}{\numberline {4.6.2}Mathematical Derivation: Discrete PID Algorithm}{64}{subsection.4.6.2}%
+\contentsline {subsubsection}{\numberline {4.6.2.1}Proportional Term}{64}{subsubsection.4.6.2.1}%
+\contentsline {subsubsection}{\numberline {4.6.2.2}Integral Term (Accumulation)}{64}{subsubsection.4.6.2.2}%
+\contentsline {subsubsection}{\numberline {4.6.2.3}Derivative Term (Difference)}{65}{subsubsection.4.6.2.3}%
+\contentsline {subsubsection}{\numberline {4.6.2.4}Final Control Law}{65}{subsubsection.4.6.2.4}%
+\contentsline {subsection}{\numberline {4.6.3}Stability Augmentation: Anti-Windup Strategy}{65}{subsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.6.4}Tuning Methodology}{65}{subsection.4.6.4}%
+\contentsline {subsubsection}{\numberline {4.6.4.1}Phase 1: Heuristic Tuning (Ziegler-Nichols Variant)}{65}{subsubsection.4.6.4.1}%
+\contentsline {subsubsection}{\numberline {4.6.4.2}Phase 2: Pole Placement using MATLAB PID Tuner}{66}{subsubsection.4.6.4.2}%
+\contentsline {section}{\numberline {4.7}The Micro-ROS Architecture}{67}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Overview: Bridging Real-Time Embedded Systems with DDS}{67}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}The Client-Agent Architecture}{67}{subsection.4.7.2}%
+\contentsline {subsubsection}{\numberline {4.7.2.1}The Micro-ROS Client (ESP32-S3)}{67}{subsubsection.4.7.2.1}%
+\contentsline {subsubsection}{\numberline {4.7.2.2}The Micro-ROS Agent (Jetson/Laptop)}{67}{subsubsection.4.7.2.2}%
+\contentsline {subsection}{\numberline {4.7.3}The Middleware: Micro-XRCE-DDS}{68}{subsection.4.7.3}%
+\contentsline {subsubsection}{\numberline {4.7.3.1}Protocol Efficiency}{68}{subsubsection.4.7.3.1}%
+\contentsline {subsubsection}{\numberline {4.7.3.2}Transport Layer Agnosticism}{68}{subsubsection.4.7.3.2}%
+\contentsline {paragraph}{UDP over Wi-Fi (UDPv4)}{68}{section*.115}%
+\contentsline {paragraph}{UART Serial}{69}{section*.116}%
+\contentsline {subsection}{\numberline {4.7.4}Deep Dive: The Micro-ROS Agent}{69}{subsection.4.7.4}%
+\contentsline {subsubsection}{\numberline {4.7.4.1}Connection Mechanics and Handshake}{69}{subsubsection.4.7.4.1}%
+\contentsline {paragraph}{Session Initiation}{69}{section*.117}%
+\contentsline {paragraph}{Entity Creation (The ``Graph'' Build)}{69}{section*.118}%
+\contentsline {subsubsection}{\numberline {4.7.4.2}Running the Agent}{70}{subsubsection.4.7.4.2}%
+\contentsline {subsection}{\numberline {4.7.5}Implementation Strategy: The rclc Executor}{70}{subsection.4.7.5}%
+\contentsline {subsubsection}{\numberline {4.7.5.1}Memory Management (Allocators)}{70}{subsubsection.4.7.5.1}%
+\contentsline {subsubsection}{\numberline {4.7.5.2}The Executor Pattern}{70}{subsubsection.4.7.5.2}%
+\contentsline {paragraph}{Determinism:}{70}{section*.119}%
+\contentsline {subsection}{\numberline {4.7.6}Quality of Service (QoS) and Reliability}{70}{subsection.4.7.6}%
+\contentsline {subsubsection}{\numberline {4.7.6.1}The Problem: ``Reliable'' Overhead}{71}{subsubsection.4.7.6.1}%
+\contentsline {subsubsection}{\numberline {4.7.6.2}The Solution: ``Best Effort'' (UDP-Style)}{71}{subsubsection.4.7.6.2}%
+\contentsline {subsection}{\numberline {4.7.7}Section Summary}{71}{subsection.4.7.7}%
+\contentsline {section}{\numberline {4.8}Evolutionary Architecture: The Three-Phase Iteration}{72}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Trial 1: RTOS-Native Approach}{72}{subsection.4.8.1}%
+\contentsline {subsubsection}{\numberline {4.8.1.1}Hypothesis}{72}{subsubsection.4.8.1.1}%
+\contentsline {subsubsection}{\numberline {4.8.1.2}Implementation}{72}{subsubsection.4.8.1.2}%
+\contentsline {subsubsection}{\numberline {4.8.1.3}Failure Mode}{72}{subsubsection.4.8.1.3}%
+\contentsline {subsection}{\numberline {4.8.2}Trial 2: Bare-Metal ESP-IDF Optimization}{72}{subsection.4.8.2}%
+\contentsline {subsubsection}{\numberline {4.8.2.1}Hypothesis}{72}{subsubsection.4.8.2.1}%
+\contentsline {subsubsection}{\numberline {4.8.2.2}Implementation}{72}{subsubsection.4.8.2.2}%
+\contentsline {subsubsection}{\numberline {4.8.2.3}Failure Mode}{73}{subsubsection.4.8.2.3}%
+\contentsline {subsection}{\numberline {4.8.3}Trial 3: Hybrid Architecture (Final Solution)}{73}{subsection.4.8.3}%
+\contentsline {subsubsection}{\numberline {4.8.3.1}Dual-Core Asymmetric Processing}{73}{subsubsection.4.8.3.1}%
+\contentsline {subsubsection}{\numberline {4.8.3.2}IRAM-Resident ISRs}{73}{subsubsection.4.8.3.2}%
+\contentsline {subsubsection}{\numberline {4.8.3.3}Atomic Data Access}{73}{subsubsection.4.8.3.3}%
+\contentsline {subsubsection}{\numberline {4.8.3.4}Validation Results}{73}{subsubsection.4.8.3.4}%
+\contentsline {section}{\numberline {4.9}Summary}{74}{section.4.9}%
+\contentsline {chapter}{\numberline {5}High-Level Configuration and Autonomous Stack}{75}{chapter.5}%
+\contentsline {section}{\numberline {5.1}High-Level Computing Architecture}{75}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}System Requirements}{75}{subsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.1.1}Perception Requirements}{76}{subsubsection.5.1.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.1.2}Communication Requirements}{76}{subsubsection.5.1.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.1.3}Navigation and Control Requirements}{76}{subsubsection.5.1.1.3}%
+\contentsline {subsection}{\numberline {5.1.2}Computing Platform Analysis}{77}{subsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.2.1}Raspberry Pi 5}{77}{subsubsection.5.1.2.1}%
+\contentsline {paragraph}{Strengths}{78}{section*.124}%
+\contentsline {paragraph}{Limitations}{78}{section*.125}%
+\contentsline {subsubsection}{\numberline {5.1.2.2}NVIDIA Jetson Orin Nano}{78}{subsubsection.5.1.2.2}%
+\contentsline {paragraph}{Strengths}{78}{section*.127}%
+\contentsline {paragraph}{Limitations}{79}{section*.128}%
+\contentsline {subsection}{\numberline {5.1.3}Platform Selection}{79}{subsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.1.4}Depth Camera Selection}{79}{subsection.5.1.4}%
+\contentsline {subsubsection}{\numberline {5.1.4.1}Camera Technology Comparison}{80}{subsubsection.5.1.4.1}%
+\contentsline {subsubsection}{\numberline {5.1.4.2}Depth Camera Model Comparison}{80}{subsubsection.5.1.4.2}%
+\contentsline {subsubsection}{\numberline {5.1.4.3}Final Selection: Luxonis OAK-D Lite}{81}{subsubsection.5.1.4.3}%
+\contentsline {subsubsection}{\numberline {5.1.4.4}Hardware Specifications}{81}{subsubsection.5.1.4.4}%
+\contentsline {subsubsection}{\numberline {5.1.4.5}Application Scenarios}{82}{subsubsection.5.1.4.5}%
+\contentsline {paragraph}{Obstacle Detection and Collision Avoidance}{82}{section*.135}%
+\contentsline {paragraph}{Visual Odometry}{82}{section*.136}%
+\contentsline {paragraph}{Robot Detection and Swarm Coordination}{82}{section*.137}%
+\contentsline {paragraph}{Semantic Scene Understanding}{82}{section*.138}%
+\contentsline {subsubsection}{\numberline {5.1.4.6}Mechanical Integration}{83}{subsubsection.5.1.4.6}%
+\contentsline {subsection}{\numberline {5.1.5}Inertial Measurement Unit Selection}{83}{subsection.5.1.5}%
+\contentsline {subsubsection}{\numberline {5.1.5.1}IMU Configuration Comparison}{84}{subsubsection.5.1.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.5.2}IMU Model Comparison}{84}{subsubsection.5.1.5.2}%
+\contentsline {subsubsection}{\numberline {5.1.5.3}Final Selection: MPU-9250}{85}{subsubsection.5.1.5.3}%
+\contentsline {subsubsection}{\numberline {5.1.5.4}Hardware Specifications}{85}{subsubsection.5.1.5.4}%
+\contentsline {subsubsection}{\numberline {5.1.5.5}Hardware Implementation}{86}{subsubsection.5.1.5.5}%
+\contentsline {subsubsection}{\numberline {5.1.5.6}Calibration Procedures}{87}{subsubsection.5.1.5.6}%
+\contentsline {paragraph}{Accelerometer and Gyroscope Calibration}{87}{section*.146}%
+\contentsline {paragraph}{Magnetometer Calibration}{87}{section*.147}%
+\contentsline {subsection}{\numberline {5.1.6}LiDAR Selection}{87}{subsection.5.1.6}%
+\contentsline {subsubsection}{\numberline {5.1.6.1}2D vs. 3D LiDAR Comparison}{88}{subsubsection.5.1.6.1}%
+\contentsline {subsubsection}{\numberline {5.1.6.2}Final Selection: RPLIDAR A1}{88}{subsubsection.5.1.6.2}%
+\contentsline {paragraph}{Hardware Specifications}{88}{section*.150}%
+\contentsline {subsubsection}{\numberline {5.1.6.3}ROS 2 Integration}{89}{subsubsection.5.1.6.3}%
+\contentsline {paragraph}{Hardware Driver}{89}{section*.151}%
+\contentsline {paragraph}{Simulation Driver}{89}{section*.152}%
+\contentsline {paragraph}{Data Output}{89}{section*.154}%
+\contentsline {section}{\numberline {5.2}System Architecture}{91}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Software Stack Overview}{91}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Key Software Components}{91}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}Low-Level Interface (micro-ROS)}{92}{subsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.2.4}Deployment on Jetson Orin Nano (Docker)}{92}{subsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.2.5}Core ROS 2 Node Overview}{92}{subsection.5.2.5}%
+\contentsline {section}{\numberline {5.3}Simulation Environment}{93}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Testing Scenarios}{93}{subsection.5.3.1}%
+\contentsline {section}{\numberline {5.4}Multi-Robot Swarm Architecture}{95}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Namespace-Based Scalability}{95}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}RQT Graph Analysis: Dual-Robot Operation}{96}{subsection.5.4.2}%
+\contentsline {subsubsection}{\numberline {5.4.2.1}Graph Structure Analysis}{97}{subsubsection.5.4.2.1}%
+\contentsline {paragraph}{Per-Robot Node Set}{97}{section*.163}%
+\contentsline {paragraph}{Topic Flow Pattern}{97}{section*.164}%
+\contentsline {paragraph}{Shared Resources}{98}{section*.165}%
+\contentsline {subsection}{\numberline {5.4.3}Docker-Based Swarm Deployment}{98}{subsection.5.4.3}%
+\contentsline {subsubsection}{\numberline {5.4.3.1}Deployment Architecture}{98}{subsubsection.5.4.3.1}%
+\contentsline {subsubsection}{\numberline {5.4.3.2}Scalability Benefits}{98}{subsubsection.5.4.3.2}%
+\contentsline {subsubsection}{\numberline {5.4.3.3}Launch File Integration}{99}{subsubsection.5.4.3.3}%
+\contentsline {subsection}{\numberline {5.4.4}Swarm Communication Topology}{99}{subsection.5.4.4}%
+\contentsline {section}{\numberline {5.5}Communication Stack}{99}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}DDS Middleware Configuration}{99}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Quality of Service Configuration}{100}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Inter-Robot Communication}{100}{subsection.5.5.3}%
+\contentsline {section}{\numberline {5.6}The Autonomous System}{100}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Sensor Fusion and Localization}{100}{subsection.5.6.1}%
+\contentsline {subsubsection}{\numberline {5.6.1.1}Extended Kalman Filter Architecture}{100}{subsubsection.5.6.1.1}%
+\contentsline {paragraph}{State Vector}{101}{section*.169}%
+\contentsline {paragraph}{Sensor Configuration}{101}{section*.170}%
+\contentsline {paragraph}{Covariance Tuning}{101}{section*.171}%
+\contentsline {subsubsection}{\numberline {5.6.1.2}ROS 2 IMU Driver Implementation}{101}{subsubsection.5.6.1.2}%
+\contentsline {paragraph}{Topics Published}{101}{section*.172}%
+\contentsline {paragraph}{Unit Conversions}{101}{section*.173}%
+\contentsline {subsubsection}{\numberline {5.6.1.3}Visualization and Validation}{102}{subsubsection.5.6.1.3}%
+\contentsline {subsubsection}{\numberline {5.6.1.4}Direct Jetson Integration}{103}{subsubsection.5.6.1.4}%
+\contentsline {subsubsection}{\numberline {5.6.1.5}SLAM Integration}{103}{subsubsection.5.6.1.5}%
+\contentsline {paragraph}{The Navigation Problem}{103}{section*.176}%
+\contentsline {paragraph}{Challenges in Unstructured Environments}{103}{section*.177}%
+\contentsline {paragraph}{SLAM: Simultaneous Localization and Mapping}{103}{section*.178}%
+\contentsline {subsection}{\numberline {5.6.2}Mapping with slam\_toolbox}{103}{subsection.5.6.2}%
+\contentsline {subsubsection}{\numberline {5.6.2.1}Algorithm Selection}{104}{subsubsection.5.6.2.1}%
+\contentsline {subsubsection}{\numberline {5.6.2.2}System Architecture}{104}{subsubsection.5.6.2.2}%
+\contentsline {paragraph}{Pose Graph Representation}{105}{section*.181}%
+\contentsline {paragraph}{Maximum Likelihood Formulation}{105}{section*.182}%
+\contentsline {subsubsection}{\numberline {5.6.2.3}ROS 2 Topics and Frames}{105}{subsubsection.5.6.2.3}%
+\contentsline {subsubsection}{\numberline {5.6.2.4}Parameter Tuning Strategy}{105}{subsubsection.5.6.2.4}%
+\contentsline {paragraph}{Wall Thickness Reduction}{105}{section*.184}%
+\contentsline {paragraph}{Corner Preservation}{106}{section*.186}%
+\contentsline {subsubsection}{\numberline {5.6.2.5}Experimental Results}{107}{subsubsection.5.6.2.5}%
+\contentsline {subsection}{\numberline {5.6.3}Google Cartographer SLAM}{108}{subsection.5.6.3}%
+\contentsline {subsubsection}{\numberline {5.6.3.1}Algorithm Selection}{108}{subsubsection.5.6.3.1}%
+\contentsline {subsubsection}{\numberline {5.6.3.2}System Architecture}{109}{subsubsection.5.6.3.2}%
+\contentsline {paragraph}{Input Data}{109}{section*.192}%
+\contentsline {subsubsection}{\numberline {5.6.3.3}Local SLAM: Trajectory Builder}{109}{subsubsection.5.6.3.3}%
+\contentsline {paragraph}{Probability Grids}{109}{section*.193}%
+\contentsline {paragraph}{Ceres Scan Matching}{110}{section*.194}%
+\contentsline {subsubsection}{\numberline {5.6.3.4}Global SLAM: Pose Graph Optimization}{110}{subsubsection.5.6.3.4}%
+\contentsline {paragraph}{Loop Closure via Branch-and-Bound}{110}{section*.195}%
+\contentsline {paragraph}{Sparse Pose Adjustment}{110}{section*.196}%
+\contentsline {subsubsection}{\numberline {5.6.3.5}Error Diagnosis and Tuning}{110}{subsubsection.5.6.3.5}%
+\contentsline {paragraph}{Odometry Drift Correction}{110}{figure.caption.198}%
+\contentsline {paragraph}{Lateral Slip Compensation}{111}{section*.199}%
+\contentsline {subsubsection}{\numberline {5.6.3.6}Final Configuration Parameters}{111}{subsubsection.5.6.3.6}%
+\contentsline {subsubsection}{\numberline {5.6.3.7}Validation Results}{112}{subsubsection.5.6.3.7}%
+\contentsline {subsection}{\numberline {5.6.4}SLAM Framework Selection}{112}{subsection.5.6.4}%
+\contentsline {subsection}{\numberline {5.6.5}SLAM Limitations and Future Work}{113}{subsection.5.6.5}%
+\contentsline {subsubsection}{\numberline {5.6.5.1}Current Limitations}{113}{subsubsection.5.6.5.1}%
+\contentsline {subsubsection}{\numberline {5.6.5.2}Future Improvements}{113}{subsubsection.5.6.5.2}%
+\contentsline {paragraph}{Semantic SLAM}{113}{section*.203}%
+\contentsline {paragraph}{Collaborative Mapping}{113}{section*.204}%
+\contentsline {subsection}{\numberline {5.6.6}Planning}{113}{subsection.5.6.6}%
+\contentsline {subsubsection}{\numberline {5.6.6.1}Global Planning (SmacPlanner A*)}{113}{subsubsection.5.6.6.1}%
+\contentsline {subsubsection}{\numberline {5.6.6.2}Local Control (DWB Holonomic)}{114}{subsubsection.5.6.6.2}%
+\contentsline {subsection}{\numberline {5.6.7}Autonomous Exploration Strategy}{114}{subsection.5.6.7}%
+\contentsline {subsubsection}{\numberline {5.6.7.1}Frontier Detection and Filtering}{114}{subsubsection.5.6.7.1}%
+\contentsline {subsubsection}{\numberline {5.6.7.2}Goal Selection}{114}{subsubsection.5.6.7.2}%
+\contentsline {subsection}{\numberline {5.6.8}Control}{115}{subsection.5.6.8}%
+\contentsline {subsubsection}{\numberline {5.6.8.1}Trajectory Tracking}{115}{subsubsection.5.6.8.1}%
+\contentsline {subsubsection}{\numberline {5.6.8.2}Velocity Commands}{115}{subsubsection.5.6.8.2}%
+\contentsline {subsection}{\numberline {5.6.9}Omnidirectional Kinematic Modeling}{115}{subsection.5.6.9}%
+\contentsline {subsubsection}{\numberline {5.6.9.1}Motivation and System Role}{115}{subsubsection.5.6.9.1}%
+\contentsline {subsubsection}{\numberline {5.6.9.2}Modeling Assumptions}{115}{subsubsection.5.6.9.2}%
+\contentsline {paragraph}{Planar Motion}{115}{section*.205}%
+\contentsline {paragraph}{Pure Rolling}{115}{section*.206}%
+\contentsline {paragraph}{No Slip}{116}{section*.207}%
+\contentsline {paragraph}{Rigid Body}{116}{section*.208}%
+\contentsline {subsubsection}{\numberline {5.6.9.3}Coordinate Frames}{116}{subsubsection.5.6.9.3}%
+\contentsline {paragraph}{World Frame $\{I\}$}{116}{section*.210}%
+\contentsline {paragraph}{Robot Base Frame $\{B\}$}{116}{section*.211}%
+\contentsline {paragraph}{Wheel Frames $\{W_i\}$}{116}{section*.212}%
+\contentsline {subsubsection}{\numberline {5.6.9.4}Wheel Configuration}{116}{subsubsection.5.6.9.4}%
+\contentsline {subsubsection}{\numberline {5.6.9.5}Inverse Kinematics}{117}{subsubsection.5.6.9.5}%
+\contentsline {paragraph}{Global Frame Transformation}{118}{section*.214}%
+\contentsline {subsubsection}{\numberline {5.6.9.6}Forward Kinematics}{118}{subsubsection.5.6.9.6}%
+\contentsline {subsection}{\numberline {5.6.10}Omnidirectional Interface Driver}{118}{subsection.5.6.10}%
+\contentsline {subsubsection}{\numberline {5.6.10.1}Design Objectives}{118}{subsubsection.5.6.10.1}%
+\contentsline {subsubsection}{\numberline {5.6.10.2}Functional Requirements}{118}{subsubsection.5.6.10.2}%
+\contentsline {subsubsection}{\numberline {5.6.10.3}Design Choices}{119}{subsubsection.5.6.10.3}%
+\contentsline {subsubsection}{\numberline {5.6.10.4}Driver Architecture}{119}{subsubsection.5.6.10.4}%
+\contentsline {paragraph}{Twist Representation}{119}{section*.215}%
+\contentsline {paragraph}{Kinematic Mapping}{119}{section*.216}%
+\contentsline {subsubsection}{\numberline {5.6.10.5}Odometry Estimation}{120}{subsubsection.5.6.10.5}%
+\contentsline {paragraph}{Discrete-Time Integration}{120}{section*.217}%
+\contentsline {paragraph}{Coordinate Frames}{120}{section*.218}%
+\contentsline {subsubsection}{\numberline {5.6.10.6}Odometry Covariance Modeling}{120}{subsubsection.5.6.10.6}%
+\contentsline {paragraph}{Motivation}{120}{section*.219}%
+\contentsline {paragraph}{Encoder Quantization Noise}{120}{section*.220}%
+\contentsline {paragraph}{Multi-Encoder Covariance}{120}{section*.221}%
+\contentsline {paragraph}{Robot Motion Uncertainty}{120}{section*.222}%
+\contentsline {paragraph}{Twist Covariance}{121}{section*.223}%
+\contentsline {subsubsection}{\numberline {5.6.10.7}Kalman Prediction for Covariance Propagation}{121}{subsubsection.5.6.10.7}%
+\contentsline {paragraph}{State Integration}{121}{section*.224}%
+\contentsline {paragraph}{State Jacobian}{121}{section*.225}%
+\contentsline {paragraph}{Control Jacobian}{121}{section*.226}%
+\contentsline {paragraph}{Process Noise}{121}{section*.227}%
+\contentsline {paragraph}{Covariance Prediction}{121}{section*.228}%
+\contentsline {section}{\numberline {5.7}Autonomous System Node Structure}{122}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Single Robot Architecture}{122}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Data Flow Pipeline}{122}{subsection.5.7.2}%
+\contentsline {subsubsection}{\numberline {5.7.2.1}Perception Layer}{122}{subsubsection.5.7.2.1}%
+\contentsline {subsubsection}{\numberline {5.7.2.2}Localization and Mapping Layer}{123}{subsubsection.5.7.2.2}%
+\contentsline {subsubsection}{\numberline {5.7.2.3}Planning and Navigation Layer}{123}{subsubsection.5.7.2.3}%
+\contentsline {subsubsection}{\numberline {5.7.2.4}Control Layer}{123}{subsubsection.5.7.2.4}%
+\contentsline {subsection}{\numberline {5.7.3}Topic Summary}{123}{subsection.5.7.3}%
+\contentsline {section}{\numberline {5.8}Robot Description (URDF)}{124}{section.5.8}%
+\contentsline {subsection}{\numberline {5.8.1}Xacro Architecture}{124}{subsection.5.8.1}%
+\contentsline {subsection}{\numberline {5.8.2}Model Generation}{124}{subsection.5.8.2}%
+\contentsline {section}{\numberline {5.9}Future Work and Research}{125}{section.5.9}%
+\contentsline {subsection}{\numberline {5.9.1}Collaborative Algorithms (Planned)}{125}{subsection.5.9.1}%
+\contentsline {subsection}{\numberline {5.9.2}Advanced Perception}{125}{subsection.5.9.2}%
+\contentsline {chapter}{\numberline {6}Experimental Results and Discussion}{126}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Mechanical Testing and Validation}{126}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Structural Analysis Results}{126}{subsection.6.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.1.1}Von Mises Stress Analysis}{126}{subsubsection.6.1.1.1}%
+\contentsline {subsubsection}{\numberline {6.1.1.2}Displacement Analysis}{126}{subsubsection.6.1.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.1.3}Design Decision}{127}{subsubsection.6.1.1.3}%
+\contentsline {subsection}{\numberline {6.1.2}Operational Testing Results}{127}{subsection.6.1.2}%
+\contentsline {section}{\numberline {6.2}Electrical System Validation}{127}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Power System Performance}{127}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Motor Control Performance}{128}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}Microcontroller Selection Validation}{128}{subsection.6.2.3}%
+\contentsline {section}{\numberline {6.3}IMU Integration and Sensor Fusion Results}{129}{section.6.3}%
+\contentsline {subsection}{\numberline {6.3.1}IMU Hardware Selection}{129}{subsection.6.3.1}%
+\contentsline {subsubsection}{\numberline {6.3.1.1}IMU Configuration Comparison}{129}{subsubsection.6.3.1.1}%
+\contentsline {subsubsection}{\numberline {6.3.1.2}IMU Model Comparison}{129}{subsubsection.6.3.1.2}%
+\contentsline {subsection}{\numberline {6.3.2}IMU Calibration Results}{130}{subsection.6.3.2}%
+\contentsline {subsection}{\numberline {6.3.3}Extended Kalman Filter Performance}{130}{subsection.6.3.3}%
+\contentsline {subsection}{\numberline {6.3.4}System Latency Comparison}{130}{subsection.6.3.4}%
+\contentsline {section}{\numberline {6.4}SLAM Algorithm Evaluation}{131}{section.6.4}%
+\contentsline {subsection}{\numberline {6.4.1}Algorithm Selection}{131}{subsection.6.4.1}%
+\contentsline {subsection}{\numberline {6.4.2}Mapping Quality Results}{131}{subsection.6.4.2}%
+\contentsline {subsubsection}{\numberline {6.4.2.1}Single-Robot Mapping}{131}{subsubsection.6.4.2.1}%
+\contentsline {subsection}{\numberline {6.4.3}SLAM Artifact Resolution}{133}{subsection.6.4.3}%
+\contentsline {section}{\numberline {6.5}Autonomous Navigation Results}{134}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Nav2 Stack Performance}{134}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Frontier-Based Exploration}{135}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Kinematic Model Validation}{135}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}Compute Platform Evaluation}{135}{section.6.6}%
+\contentsline {subsection}{\numberline {6.6.1}Jetson Orin Nano vs Raspberry Pi 5}{135}{subsection.6.6.1}%
+\contentsline {section}{\numberline {6.7}LiDAR Sensor Validation}{136}{section.6.7}%
+\contentsline {subsection}{\numberline {6.7.1}RPLiDAR A1M8 Performance}{136}{subsection.6.7.1}%
+\contentsline {section}{\numberline {6.8}Depth Camera Validation}{136}{section.6.8}%
+\contentsline {subsection}{\numberline {6.8.1}OAK-D Lite Performance}{136}{subsection.6.8.1}%
+\contentsline {section}{\numberline {6.9}System Integration Results}{137}{section.6.9}%
+\contentsline {subsection}{\numberline {6.9.1}micro-ROS Communication}{137}{subsection.6.9.1}%
+\contentsline {subsection}{\numberline {6.9.2}Docker Deployment Validation}{137}{subsection.6.9.2}%
+\contentsline {section}{\numberline {6.10}Simulation and Autonomous Stack Validation}{138}{section.6.10}%
+\contentsline {subsection}{\numberline {6.10.1}Frontier Exploration Algorithm Validation}{138}{subsection.6.10.1}%
+\contentsline {subsubsection}{\numberline {6.10.1.1}Matplotlib Simulation Environment}{138}{subsubsection.6.10.1.1}%
+\contentsline {subsubsection}{\numberline {6.10.1.2}Exploration Progression}{138}{subsubsection.6.10.1.2}%
+\contentsline {subsubsection}{\numberline {6.10.1.3}Algorithm Performance Analysis}{140}{subsubsection.6.10.1.3}%
+\contentsline {subsection}{\numberline {6.10.2}Omnidirectional Motion Validation}{141}{subsection.6.10.2}%
+\contentsline {subsubsection}{\numberline {6.10.2.1}Heading-Independent Translation}{141}{subsubsection.6.10.2.1}%
+\contentsline {subsection}{\numberline {6.10.3}Complete Autonomous Stack Integration Test}{142}{subsection.6.10.3}%
+\contentsline {subsubsection}{\numberline {6.10.3.1}System Configuration}{142}{subsubsection.6.10.3.1}%
+\contentsline {subsubsection}{\numberline {6.10.3.2}Integration Test Progression}{142}{subsubsection.6.10.3.2}%
+\contentsline {subsubsection}{\numberline {6.10.3.3}Integration Test Results}{144}{subsubsection.6.10.3.3}%
+\contentsline {subsubsection}{\numberline {6.10.3.4}System Resource Utilization}{144}{subsubsection.6.10.3.4}%
+\contentsline {subsubsection}{\numberline {6.10.3.5}Discussion}{144}{subsubsection.6.10.3.5}%
+\contentsline {section}{\numberline {6.11}Overall System Evaluation}{145}{section.6.11}%
+\contentsline {subsection}{\numberline {6.11.1}Project Success Criteria}{145}{subsection.6.11.1}%
+\contentsline {subsection}{\numberline {6.11.2}Bill of Materials Summary}{145}{subsection.6.11.2}%
+\contentsline {subsection}{\numberline {6.11.3}Comparative Analysis}{146}{subsection.6.11.3}%
+\contentsline {section}{\numberline {6.12}Discussion}{147}{section.6.12}%
+\contentsline {chapter}{\numberline {7}Conclusion and Future Recommendations}{148}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Conclusion}{148}{section.7.1}%
+\contentsline {subsection}{\numberline {7.1.1}Summary of Achievements}{148}{subsection.7.1.1}%
+\contentsline {subsection}{\numberline {7.1.2}Contributions}{149}{subsection.7.1.2}%
+\contentsline {subsection}{\numberline {7.1.3}Project Metrics Summary}{150}{subsection.7.1.3}%
+\contentsline {section}{\numberline {7.2}Future Recommendations}{150}{section.7.2}%
+\contentsline {subsection}{\numberline {7.2.1}Hardware Improvements}{150}{subsection.7.2.1}%
+\contentsline {subsection}{\numberline {7.2.2}Software Enhancements}{150}{subsection.7.2.2}%
+\contentsline {subsection}{\numberline {7.2.3}Scalability Testing}{151}{subsection.7.2.3}%
+\contentsline {subsection}{\numberline {7.2.4}Real-World Deployment Considerations}{151}{subsection.7.2.4}%
+\contentsline {subsection}{\numberline {7.2.5}Research Directions}{151}{subsection.7.2.5}%
+\contentsline {chapter}{References}{153}{chapter*.268}%
+\contentsline {chapter}{\numberline {A}Simulation World Construction}{155}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Robot Description Listing}{157}{appendix.B}%
+\contentsline {chapter}{\numberline {C}Code Listings}{159}{appendix.C}%
+\contentsline {section}{\numberline {C.1}Frontier Exploration Logic}{159}{section.C.1}%
+\contentsline {section}{\numberline {C.2}Navigation Configuration}{160}{section.C.2}%
+\contentsline {subsection}{\numberline {C.2.1}SmacPlanner (A*) Configuration}{161}{subsection.C.2.1}%
+\contentsline {subsection}{\numberline {C.2.2}DWB Local Controller Configuration}{161}{subsection.C.2.2}%
+\contentsline {section}{\numberline {C.3}Motor Control Firmware}{162}{section.C.3}%
+\contentsline {chapter}{\numberline {D}Bill of Materials}{163}{appendix.D}%
+\contentsline {section}{\numberline {D.1}Structural Components}{163}{section.D.1}%
+\contentsline {section}{\numberline {D.2}Mechanical Components}{164}{section.D.2}%
+\contentsline {section}{\numberline {D.3}Electrical Components}{164}{section.D.3}%
+\contentsline {section}{\numberline {D.4}Compute and Control}{165}{section.D.4}%
+\contentsline {section}{\numberline {D.5}Sensors}{165}{section.D.5}%
+\contentsline {section}{\numberline {D.6}Cost Summary}{166}{section.D.6}%

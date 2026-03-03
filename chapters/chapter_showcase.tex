@@ -1,0 +1,177 @@
+\chapter{Template Style Guide}
+\label{chap:style_guide}
+
+This chapter serves as a visual guide to the capabilities of the Thesis Template. It demonstrates the default styling for tables, mathematics, code listings, and image grids, ensuring all characteristics are properly showcased.
+
+\section{Advanced Tables}
+Tables should be clean and professional, avoiding vertical lines where possible. The \texttt{booktabs} package provides high-quality horizontal rules.
+
+\begin{table}[H]
+    \centering
+    \caption{Component Selection Matrix (Booktabs Style)}
+    \label{tab:selection_matrix_showcase}
+    \begin{tabularx}{\textwidth}{@{} l X c c @{}}
+        \toprule
+        \textbf{Component} & \textbf{Description} & \textbf{Cost (\$)} & \textbf{Selected} \\
+        \midrule
+        Microcontroller & ESP32 Dual Core, WiFi/BT & 5.00 & Yes \\
+        Motor Driver & L298N Dual H-Bridge & 2.50 & No \\
+        Motor Driver & TB6612FNG High Efficiency & 3.00 & Yes \\
+        Battery & LiPo 11.1V 2200mAh & 15.00 & Yes \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Complex Multi-column Table}
+    \label{tab:multicol_showcase}
+    \begin{tabular}{l c c c}
+        \toprule
+        & \multicolumn{3}{c}{\textbf{Performance Metrics}} \\
+        \cmidrule(lr){2-4}
+        \textbf{Algorithm} & \textbf{Accuracy (\%)} & \textbf{Latency (ms)} & \textbf{CPU Load (\%)} \\
+        \midrule
+        A* Search & 99.5 & 120 & 15 \\
+        Dijkstra & 100.0 & 450 & 45 \\
+        RRT* & 95.0 & 25 & 8 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Mathematics and Equations}
+The template uses \texttt{newtxmath} for professional mathematical typesetting.
+
+\subsection{Standard Equations}
+Maxwell's equations in differential form:
+\begin{align}
+    \nabla \cdot \mathbf{E} &= \frac{\rho}{\varepsilon_0} \label{eq:maxwell1} \\
+    \nabla \cdot \mathbf{B} &= 0 \label{eq:maxwell2} \\
+    \nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t} \label{eq:maxwell3} \\
+    \nabla \times \mathbf{B} &= \mu_0\mathbf{J} + \mu_0\varepsilon_0\frac{\partial \mathbf{E}}{\partial t} \label{eq:maxwell4}
+\end{align}
+
+\subsection{Matrices}
+State-space representation of the robot dynamics:
+\begin{equation}
+    \begin{bmatrix}
+        \dot{x} \\
+        \dot{y} \\
+        \dot{\theta}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \cos\theta & 0 \\
+        \sin\theta & 0 \\
+        0 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        v \\
+        \omega
+    \end{bmatrix}
+\end{equation}
+
+\subsection{Theorems and Definitions}
+\begin{notebox}
+    \textbf{Definition (Swarm Intelligence):} The collective behavior of decentralized, self-organized systems, natural or artificial.
+\end{notebox}
+
+\section{Code Listings}
+Source code is formatted using the \texttt{listings} package with syntax highlighting.
+
+\begin{lstlisting}[language=Python, caption={Python Control Loop Example}, label={lst:python_example}]
+import numpy as np
+
+def control_loop(target_pose, current_pose):
+    """
+    Computes velocity commands to reach target pose.
+    """
+    error = target_pose - current_pose
+    kp_linear = 0.5
+    kp_angular = 2.0
+    
+    v = kp_linear * error[0]
+    omega = kp_angular * error[2]
+    
+    return v, omega
+\end{lstlisting}
+
+\section{Image Grids and Layouts}
+We demonstrate various arrangements of figures using the \texttt{subcaption} package standard.
+
+\subsection{1x2 Grid (Side-by-Side)}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-a}
+        \caption{Left View}
+        \label{fig:side_a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-b}
+        \caption{Right View}
+        \label{fig:side_b}
+    \end{subfigure}
+    \caption{Two images displayed side-by-side.}
+    \label{fig:1x2_grid}
+\end{figure}
+
+\subsection{2x2 Grid}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-a}
+        \caption{Top Left}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-b}
+        \caption{Top Right}
+    \end{subfigure}
+    \vskip\baselineskip
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-c}
+        \caption{Bottom Left}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image}
+        \caption{Bottom Right}
+    \end{subfigure}
+    \caption{A 2x2 grid of four images.}
+    \label{fig:2x2_grid}
+\end{figure}
+
+\subsection{4x4 Complex Grid (Small Multiples)}
+Evaluating results across many scenarios often requires denser grids.
+
+\begin{figure}[H]
+    \centering
+    % Row 1
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-a}\caption*{1}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-b}\caption*{2}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-c}\caption*{3}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image}\caption*{4}\end{subfigure}
+    \vskip+1ex
+    % Row 2
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image}\caption*{5}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-a}\caption*{6}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-b}\caption*{7}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-c}\caption*{8}\end{subfigure}
+    \vskip+1ex
+    % Row 3
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-c}\caption*{9}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image}\caption*{10}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-a}\caption*{11}\end{subfigure}\hfill
+    \begin{subfigure}[b]{0.23\textwidth}\includegraphics[width=\textwidth]{example-image-b}\caption*{12}\end{subfigure}
+    
+    \caption{A dense grid layout for comparing multiple data points or results.}
+    \label{fig:dense_grid}
+\end{figure}

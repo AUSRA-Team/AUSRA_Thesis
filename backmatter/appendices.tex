@@ -1,0 +1,421 @@
+% ============================================================================
+% Appendices
+% ============================================================================
+
+\chapter{Simulation World Construction}
+\label{app:sim_code}
+
+This appendix provides an example of the SDF (Simulation Description Format) code used to generate the test worlds. The following listing describes a standard room environment with defined physics, lighting, and static obstacles.
+
+\begin{lstlisting}[language=XML, caption={SDF World Definition Example (room\_1.sdf)}]
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="room_1">
+    
+    <!-- Physics settings -->
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <!-- Scene settings -->
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- Ground plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>20 20</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>20 20</size>
+            </plane>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Example Obstacle: Red Box -->
+    <model name="obstacle_red">
+      <static>true</static>
+      <pose>-2.5 2.5 0.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box><size>0.5 0.5 0.5</size></box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box><size>0.5 0.5 0.5</size></box>
+          </geometry>
+          <material>
+            <ambient>0.8 0.1 0.1 1</ambient>
+            <diffuse>0.8 0.1 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
+\end{lstlisting}
+
+\chapter{Robot Description Listing}
+\label{app:urdf_code}
+
+This appendix contains the core Xacro definition for the robot chassis. Note the use of the \texttt{robot\_name} parameter to enable dynamic namespacing for multi-robot swarms.
+
+\begin{lstlisting}[language=XML, caption={Robot Core Xacro Definition (robot\_core.xacro)}]
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="robot_core" params="robot_name">
+  
+    <!-- Base Link Definition -->
+    <link name="${robot_name}_base_link">
+      <visual>
+        <geometry>
+          <mesh filename="package://ausrabot_description/meshes/base_link.STL" />
+        </geometry>
+        <material name="body_color">
+          <color rgba="0.792 0.819 0.933 1" />
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.13" length="0.10"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.749591825708612" />
+        <inertia ixx="0.0056" ixy="0.0" ixz="0.0" 
+                 iyy="0.0054" iyz="0.0" izz="0.0095" />
+      </inertial>
+    </link>
+
+    <!-- Omni Wheel 1 Definition -->
+    <link name="${robot_name}_wheel_1">
+      <visual>
+        <geometry>
+          <mesh filename="package://ausrabot_description/meshes/wheel_1.STL" />
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="0.0325" length="0.03"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Joint 1: Connects Wheel 1 to Base -->
+    <joint name="${robot_name}_joint_1" type="continuous">
+      <origin xyz="0.12368 -0.00013859 -0.019" rpy="1.5708 0 1.5708" />
+      <parent link="${robot_name}_base_link" />
+      <child link="${robot_name}_wheel_1" />
+      <axis xyz="0 0 1" />
+    </joint>
+
+    <!-- Additional Wheels (2 and 3) defined similarly -->
+    
+  </xacro:macro>
+</robot>
+\end{lstlisting}
+
+\chapter{Code Listings}
+\label{app:code}
+
+This appendix contains key software implementations used in the AUSRA system.
+
+\section{Frontier Exploration Logic}
+\label{code:frontier_api}
+
+The following C++ implementation from \texttt{ausra\_frontier\_exploration} demonstrates the custom logic for identifying and clustering safe frontiers.
+
+\begin{lstlisting}[language=C++, caption={Frontier Search and Safety Filtering}]
+// src/frontier_search.cpp
+std::vector<Frontier> FrontierSearch::searchFromMap(
+  const nav_msgs::msg::OccupancyGrid & costmap,
+  double robot_x, double robot_y)
+{
+  // ... [Initialization code omitted] ...
+
+  // Scan for frontier cells (free cells adjacent to unknown)
+  for (int y = 1; y < height_ - 1; ++y) {
+    for (int x = 1; x < width_ - 1; ++x) {
+      if (isFrontierCell(data, x, y)) {
+        // Safety Check 1: Count obstacle neighbors
+        int obs_count = 0;
+        // ... [Neighbor loop omitted] ...
+        
+        // Filter: max 1 obstacle neighbor to avoid tight corners
+        if (obs_count <= 1) {
+          // Safety Check 2: Check 1m radius safety (98% safe cells)
+          if (isSafeArea(data, x, y)) {
+            frontier_cells.emplace_back(x, y);
+          }
+        }
+      }
+    }
+  }
+
+  return clusterFrontiers(frontier_cells, robot_x, robot_y);
+}
+
+// Logic to check 1m radius safety ratio
+bool FrontierSearch::isSafeArea(
+    const std::vector<int8_t> & data, int x, int y) const
+{
+  int radius_cells = static_cast<int>(1.0 / resolution_);
+  // ... [Loop bounds calculation] ...
+  
+  for (int cy = y_min; cy < y_max; ++cy) {
+    for (int cx = x_min; cx < x_max; ++cx) {
+      total++;
+      int8_t val = data[toIndex(cx, cy)];
+      if (val == 0 || val == -1) {  // Free or unknown count as safe
+        safe++;
+      }
+    }
+  }
+  
+  // Only accept if safety ratio matches configuration (default 0.98)
+  return (static_cast<double>(safe) / total) >= safety_ratio_;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption={Frontier Clustering and Goal Adjustment}]
+// src/frontier_search.cpp - clusterFrontiers method
+
+// BFS logic to cluster adjacent frontier cells...
+// ...
+
+// Calculate Centroid
+double centroid_grid_x = sum_x / cluster.size();
+double centroid_grid_y = sum_y / cluster.size();
+
+// Goal Pullback Logic:
+// Pull the goal 0.5m back towards the known free space 
+// to ensure A* reachability
+int pullback_cells = static_cast<int>(0.5 / resolution_);
+int goal_grid_x = static_cast<int>(centroid_grid_x - dir_x * pullback_cells);
+int goal_grid_y = static_cast<int>(centroid_grid_y - dir_y * pullback_cells);
+
+// Compute Cost Function for selection
+// Prefer closer frontiers (potential_scale) and larger frontiers (gain_scale)
+f.cost = potential_scale * f.min_distance - gain_scale * f.size;
+\end{lstlisting}
+
+\section{Navigation Configuration}
+\label{code:nav_config}
+
+The system uses standard Nav2 plugins configured specifically for multi-robot omnidirectional navigation.
+
+\subsection{SmacPlanner (A*) Configuration}
+
+The \texttt{SmacPlanner2D} provides efficient A* planning on large costmaps.
+
+\begin{lstlisting}[language=YAML, caption={SmacPlanner2D A* Configuration}]
+planner_server:
+  ros__parameters:
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_smac_planner/SmacPlanner2D"
+      tolerance: 0.5                     # Goal tolerance
+      downsample_costmap: false          # Full resolution for safety
+      allow_unknown: true                # Plan through unknown space
+      max_iterations: 1000000            # High iteration count for large maps
+      cost_travel_multiplier: 50.0       # Heavy penalty for high-cost areas
+      use_final_approach_orientation: false # Direction agnostic for Omni robot
+\end{lstlisting}
+
+\subsection{DWB Local Controller Configuration}
+
+The local controller is tuned for holonomic motion, sampling velocities in X and Y directions.
+
+\begin{lstlisting}[language=YAML, caption={DWB Holonomic Controller Configuration}]
+controller_server:
+  ros__parameters:
+    # DWB Controller for OMNIDIRECTIONAL/HOLONOMIC robot
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      
+      # Trajectory Generation
+      min_vel_x: -0.35
+      max_vel_x: 0.35
+      min_vel_y: -0.35              # Full lateral motion enabled
+      max_vel_y: 0.35
+      max_vel_theta: 1.0
+      
+      # Sampling strategy for Holonomic Motion
+      vx_samples: 15
+      vy_samples: 15                 # Sample lateral velocities
+      vtheta_samples: 8              # Minimize rotation samples
+      
+      # Critics Configuration
+      critics: ["Oscillation", "ObstacleFootprint", 
+                "PathDist", "GoalDist", "Twirling"]
+      
+      # Twirling Critic: Heavily penalize unnecessary rotation
+      Twirling:
+        scale: 10.0
+      
+      # ObstacleFootprint: Critical safety check
+      ObstacleFootprint:
+        scale: 100.0                 # Highest priority
+\end{lstlisting}
+
+\section{Motor Control Firmware}
+\label{code:motor_control}
+
+\begin{lstlisting}[language=C, caption={PID Motor Controller Implementation}]
+// PID Controller Structure
+typedef struct {
+    float Kp, Ki, Kd;
+    float integral;
+    float prev_error;
+    float dt;
+} PID_Controller;
+
+float pid_compute(PID_Controller* pid, float error) {
+    pid->integral += error * pid->dt;
+    float derivative = (error - pid->prev_error) / pid->dt;
+    pid->prev_error = error;
+    
+    return pid->Kp * error + 
+           pid->Ki * pid->integral + 
+           pid->Kd * derivative;
+}
+\end{lstlisting}
+
+\chapter{Bill of Materials}
+\label{app:bom}
+
+The following table presents the complete Bill of Materials (BOM) for a single AUSRA robot unit. All prices are listed in Egyptian Pounds (EGP) with USD equivalent calculated at approximately 50 EGP/USD.
+
+\section{Structural Components}
+
+\begin{longtable}{|c|p{4cm}|c|c|c|}
+\hline
+\textbf{Item} & \textbf{Description} & \textbf{Qty} & \textbf{Unit (EGP)} & \textbf{Total (EGP)} \\
+\hline
+\endhead
+1 & Ground Plate (3D Printed) - Structural foundation for motors and drivers & 1 & 250 & 250 \\
+2 & Middle Plate (3D Printed) - Support for battery, ESP32, and drivers & 1 & 150 & 150 \\
+3 & Upper Plate (3D Printed) - Mounting for Jetson and sensors & 1 & 150 & 150 \\
+4 & Cylindrical Wall (3D Printed) - Protective enclosure & 1 & 1,200 & 1,200 \\
+5 & Cover (3D Printed) - Top protection for LiDAR assembly & 1 & 300 & 300 \\
+6 & Camera Bracket (3D Printed) - OAK-D Lite mounting fixture & 1 & 150 & 150 \\
+7 & Battery Mount (3D Printed) - Custom battery pack fixture & 1 & 100 & 100 \\
+\hline
+\multicolumn{4}{|r|}{\textbf{Structural Subtotal}} & \textbf{2,300} \\
+\hline
+\end{longtable}
+
+\section{Mechanical Components}
+
+\begin{longtable}{|c|p{4cm}|c|c|c|}
+\hline
+\textbf{Item} & \textbf{Description} & \textbf{Qty} & \textbf{Unit (EGP)} & \textbf{Total (EGP)} \\
+\hline
+\endhead
+8 & Omni Wheel (58mm, Custom Made) - Holonomic locomotion & 3 & 400 & 1,200 \\
+9 & Wheel Shaft (Custom Machined) - Torque transmission & 3 & 15 & 45 \\
+10 & Bearing Bracket (Ready Made) - Shaft alignment & 3 & 25 & 75 \\
+11 & Bearing KFL08 - Friction reduction & 3 & 70 & 210 \\
+12 & Flexible Coupler - Motor-to-shaft linkage & 3 & 200 & 600 \\
+13 & Motor Holder (Ready Made) - Actuation support & 3 & 25 & 75 \\
+14 & Worm Gear DC Motor (TS-32GZ370-5300) - Locomotion actuator & 3 & 850 & 2,550 \\
+15 & Spacers (M3, various lengths) - Vertical standoffs & 16 & 10 & 160 \\
+16 & Fastening Consumables (Bolts, Nuts) - Assembly hardware & -- & -- & 100 \\
+\hline
+\multicolumn{4}{|r|}{\textbf{Mechanical Subtotal}} & \textbf{5,015} \\
+\hline
+\end{longtable}
+
+\section{Electrical Components}
+
+\begin{longtable}{|c|p{4cm}|c|c|c|}
+\hline
+\textbf{Item} & \textbf{Description} & \textbf{Qty} & \textbf{Unit (EGP)} & \textbf{Total (EGP)} \\
+\hline
+\endhead
+17 & Dual Stage Buck Module (LM2596) - 20V$\rightarrow$12V regulation & 2 & 300 & 600 \\
+18 & Cytron MDD3A Motor Driver - PWM to high-power conversion & 2 & 900 & 1,800 \\
+19 & Battery (Total P20S Power Kit) - High-current power source & 1 & 1,000 & 1,000 \\
+20 & Charging Port (GX16 4-Pin) - External charging interface & 1 & 45 & 45 \\
+21 & Wire Connector (SPL-62, 2-in 6-out) - Power distribution & 1 & 40 & 40 \\
+22 & Safety Toggle Switch (E-TEN1122 DPDT) - Three-state failsafe & 1 & 30 & 30 \\
+23 & Assembly Consumables (Wires, Terminals, Heat Shrink) & -- & -- & 500 \\
+\hline
+\multicolumn{4}{|r|}{\textbf{Electrical Subtotal}} & \textbf{4,015} \\
+\hline
+\end{longtable}
+
+\section{Compute and Control}
+
+\begin{longtable}{|c|p{4cm}|c|c|c|}
+\hline
+\textbf{Item} & \textbf{Description} & \textbf{Qty} & \textbf{Unit (EGP)} & \textbf{Total (EGP)} \\
+\hline
+\endhead
+24 & ESP32-S3-N16R8 - Low-level microcontroller (micro-ROS, kinematics) & 1 & 400 & 400 \\
+25 & ESP32-S3 Shield (Custom PCB) - Signal distribution board & 1 & 300 & 300 \\
+26 & NVIDIA Jetson Orin Nano Dev Kit - Primary compute platform & 1 & 11,000 & 11,000 \\
+\hline
+\multicolumn{4}{|r|}{\textbf{Compute Subtotal}} & \textbf{11,700} \\
+\hline
+\end{longtable}
+
+\section{Sensors}
+
+\begin{longtable}{|c|p{4cm}|c|c|c|}
+\hline
+\textbf{Item} & \textbf{Description} & \textbf{Qty} & \textbf{Unit (EGP)} & \textbf{Total (EGP)} \\
+\hline
+\endhead
+27 & RPLIDAR A1 - 360° 2D laser scanner for SLAM & 1 & 7,500 & 7,500 \\
+28 & OAK-D Lite Depth Camera - Spatial AI and depth perception & 1 & 7,500 & 7,500 \\
+29 & MPU-9250 9-Axis IMU - Inertial navigation sensor & 1 & 700 & 700 \\
+30 & IMU Interface PCB (Custom Made) - Sensor signal routing & 1 & 100 & 100 \\
+\hline
+\multicolumn{4}{|r|}{\textbf{Sensors Subtotal}} & \textbf{15,800} \\
+\hline
+\end{longtable}
+
+\section{Cost Summary}
+
+\begin{table}[H]
+\centering
+\caption{Per-Robot Cost Summary}
+\label{tab:bom_summary_appendix}
+\begin{tabular}{|l|r|r|r|}
+\hline
+\textbf{Category} & \textbf{EGP} & \textbf{USD} & \textbf{Percentage} \\
+\hline
+Structural Components & 2,300 & 46 & 5.9\% \\
+Mechanical Components & 5,015 & 100 & 12.9\% \\
+Electrical Components & 4,015 & 80 & 10.3\% \\
+Compute and Control & 11,700 & 234 & 30.1\% \\
+Sensors & 15,800 & 316 & 40.7\% \\
+\hline
+\textbf{Grand Total} & \textbf{38,830} & \textbf{\$777} & \textbf{100\%} \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Note:} The above pricing reflects current Egyptian market rates (January 2026). International pricing may vary. The \$420 USD figure cited in the main text represents optimized bulk purchasing and excludes premium sensors (OAK-D Lite, RPLIDAR A1) which can be substituted with lower-cost alternatives for budget-constrained deployments.

@@ -1,0 +1,21 @@
+% ============================================================================
+% Abstract
+% ============================================================================
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+This graduation project presents the design, development, and implementation of an \textbf{Autonomous Unified Swarm Robotics Architecture (AUSRA)} --- a comprehensive coordinating multiple autonomous mobile robots operating as a swarm. The system addresses the growing demand for scalable, flexible, and intelligent multi-robot systems capable of performing complex tasks in dynamic environments such as warehouses, disaster response scenarios, and search-and-rescue operations.
+
+The project encompasses three integrated pillars: \textbf{mechanical design}, \textbf{electrical systems}, and \textbf{autonomous software stack}. The mechanical subsystem features a three-wheel omnidirectional platform using 58mm omni wheels, with an optimized acrylic chassis validated through Finite Element Analysis (FEA). The three-layer structural design separates actuation, power/control, and perception functions for modularity and serviceability.
+
+The electrical architecture implements a dual-tier processing hierarchy: an ESP32-S3 microcontroller handles real-time motor control at 100 Hz using PID algorithms, while an NVIDIA Jetson Orin Nano serves as the high-level compute platform for SLAM, navigation, and AI processing. Communication between tiers is achieved through \textbf{micro-ROS} over UART at 921600 baud. The sensor suite includes an RPLIDAR A1 (360° LiDAR), OAK-D Lite depth camera with onboard AI capabilities, and MPU-9250 9-axis IMU for state estimation.
+
+The autonomous software stack is built on \textbf{ROS 2 Humble} with the \textbf{Nav2} navigation framework. Key components include: \texttt{slam\_toolbox} for asynchronous 2D SLAM achieving over 96\% mapping coverage; SmacPlanner2D (A*) for global path planning; DWB controller optimized for holonomic motion; and a custom \textbf{frontier-based exploration} algorithm frontier exploration and 98\% safety threshold filtering. The omnidirectional kinematic model enables heading-independent translation, allowing lateral movement while maintaining sensor orientation.
+
+Multi-robot deployment is supported through \textbf{namespace isolation} in the TF tree and topic structure, with \textbf{Docker containerization} using NVIDIA runtime for reproducible deployment. Experimental validation demonstrates: 97\% exploration coverage of a $20 \times 20$ m environment in under 3 minutes; 95\% coverage with the complete autonomous stack in 1 minute 40 seconds; and navigation success rates between 92-100\% across various scenarios.
+
+At \textbf{\$420 per unit}, AUSRA achieves a 23.6\% cost reduction compared to TurtleBot3  including omnidirectional motion, and native swarm support. The framework provides a foundation for future research in collaborative SLAM, multi-robot task allocation, and swarm coordination.
+
+\vspace{0.4cm}
+\textbf{Keywords:} Swarm Robotics, Autonomous Mobile Robots, Multi-Robot Systems, Omnidirectional Drive, ROS 2, Nav2, SLAM, Frontier Exploration, micro-ROS, Sensor Fusion, Path Planning, Mechatronics.

@@ -1,0 +1,126 @@
+% ============================================================================
+% Chapter 7: Conclusion & Future Recommendations
+% ============================================================================
+
+\chapter{Conclusion and Future Recommendations}
+\label{chap:conclusion}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This graduation project successfully designed, developed, and implemented the \textbf{Autonomous Unified Swarm Robotics Architecture (AUSRA)} --- a comprehensive, cost-effective framework for multi-robot coordination and autonomous navigation. The project addressed the growing need for scalable swarm robotics platforms suitable for research and industrial applications including warehouse automation, disaster response, and search-and-rescue operations.
+
+\subsection{Summary of Achievements}
+
+\textbf{Mechanical Design:}
+\begin{itemize}
+    \item Developed a modular, three-layer chassis design optimized for omnidirectional mobility using three 58mm omni wheels in a 120° radial configuration
+    \item Conducted systematic component selection using weighted decision matrices for motors, materials, and structural elements
+    \item Validated structural integrity through Finite Element Analysis (FEA), achieving a safety factor exceeding 31 with 3mm aluminum plate configuration
+    \item Achieved target payload capacity of 5.2 kg with extended battery runtime of 1.8 hours
+    \item Created comprehensive URDF/Xacro robot description with Gazebo simulation integration
+\end{itemize}
+
+\textbf{Electrical System:}
+\begin{itemize}
+    \item Designed and implemented a robust power distribution network with dual-stage buck conversion (20V $\rightarrow$ 12V $\rightarrow$ 5V) providing isolated logic and actuator power rails
+    \item Integrated comprehensive sensor suite: RPLIDAR A1 (360° LiDAR), OAK-D Lite depth camera with onboard AI, and MPU-9250 9-axis IMU
+    \item Developed custom PCB shields for ESP32-S3 signal distribution and IMU interface with reliable screw terminal connections
+    \item Implemented low-level firmware achieving 100 Hz PID motor control loops with encoder feedback at 600 PPR resolution
+    \item Established micro-ROS communication over UART at 921600 baud with measured latency under 3 ms and packet loss below 0.02\%
+\end{itemize}
+
+\textbf{Autonomous Software Stack:}
+\begin{itemize}
+    \item Built complete navigation pipeline on ROS 2 Humble with Nav2 framework
+    \item Implemented \texttt{slam\_toolbox} for asynchronous 2D SLAM achieving over 96\% mapping coverage across test environments
+    \item Configured SmacPlanner2D (A*) for global path planning and DWB controller optimized for holonomic motion with full lateral velocity sampling
+    \item Developed custom frontier-based exploration algorithm with BFS clustering and 98\% safety threshold filtering, achieving 97\% coverage of $20 \times 20$ m environments in under 3 minutes
+    \item Implemented omnidirectional kinematic model enabling heading-independent translation with accurate odometry covariance propagation for EKF fusion
+\end{itemize}
+
+\textbf{System Integration:}
+\begin{itemize}
+    \item Successfully integrated all subsystems into functional prototypes with Docker containerization using NVIDIA runtime for reproducible deployment
+    \item Demonstrated multi-robot support through namespace isolation in TF tree and topic structure (e.g., \texttt{ausra\_1}, \texttt{ausra\_2})
+    \item Achieved navigation success rates between 92--100\% across scenarios including static obstacles, narrow passages (0.6m), and dynamic environments
+    \item Validated complete autonomous stack achieving 95\% map coverage in 1 minute 40 seconds with 100\% goal success rate (17/17 navigation goals)
+    \item Maintained real-time performance with total system resource utilization well within Jetson Orin Nano capabilities ($<$50\% CPU, $<$2.5 GB RAM)
+\end{itemize}
+
+\subsection{Contributions}
+This project makes the following contributions:
+\begin{enumerate}
+    \item A unified, modular robot platform at \textbf{\$420 USD per unit}---23.6\% cost reduction compared to TurtleBot3 while offering superior capabilities including omnidirectional motion, GPU-accelerated AI processing, and native swarm support
+    \item Comprehensive documentation serving as a reference for future swarm robotics research projects
+    \item Open-source software stack built on ROS 2 Humble with Nav2, including custom frontier exploration and omnidirectional driver packages
+    \item Validated design methodology using selection matrices and systematic analysis for component choices (IMU, SLAM algorithm, compute platform, depth camera)
+    \item Complete simulation environment with Gazebo Classic worlds and sensor plugins for hardware-in-the-loop testing before physical deployment
+\end{enumerate}
+
+\subsection{Project Metrics Summary}
+
+\begin{table}[H]
+\centering
+\caption{Final Project Achievement Summary}
+\label{tab:conclusion_metrics}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Metric} & \textbf{Target} & \textbf{Achieved} \\
+\hline
+Cost per Robot & $<$ \$500 & \$420 \\
+SLAM Coverage & $>$ 90\% & 96\%+ \\
+Navigation Success & $>$ 90\% & 92--95\% \\
+Exploration Coverage & $>$ 90\% & 95\% \\
+Battery Runtime & $>$ 1.0 hrs & 1.25 hrs \\
+Maximum Speed & 0.5 m/s & 0.52 m/s \\
+
+\hline
+\end{tabular}
+\end{table}
+
+\section{Future Recommendations}
+\label{sec:future_work}
+
+While the AUSRA project achieved its primary objectives, several areas present opportunities for future development:
+
+\subsection{Hardware Improvements}
+\begin{itemize}
+    \item \textbf{Direct IMU Integration:} Complete transition from ESP32-bridged IMU to direct Jetson I2C connection
+    \item \textbf{Docking Charging:} Implementation of autonomous docking stations with station charging for extended autonomous operation
+    \item \textbf{Improved Encoders:} Upgrade to higher resolution encoders ($>$1000 PPR) for improved odometry accuracy in precision applications
+\end{itemize}
+
+\subsection{Software Enhancements}
+\begin{itemize}
+    \item \textbf{Single Pose Graph SLAM:} Implement unified multi-robot SLAM where all agents contribute to a shared constraint graph, enabling loop closures from one robot to correct drift in others
+    \item \textbf{mTSP Task Allocation:} Integrate Multiple Traveling Salesman Problem solver (using Google OR-Tools) for globally optimal frontier assignment, replacing greedy nearest-frontier selection
+    \item \textbf{Velocity Obstacle Avoidance:} Implement decentralized collision avoidance using velocity obstacles where agents broadcast velocity vectors to neighbors for real-time trajectory deconfliction
+    \item \textbf{OAK-D Vision Pipeline:} Utilize the depth camera's onboard AI capabilities for AprilTag detection (victim identification) and semantic segmentation via DepthAI SDK
+\end{itemize}
+
+\subsection{Scalability Testing}
+\begin{itemize}
+    \item \textbf{Larger Swarms(in simualtion0):} Systematic testing with 5--10+ robots to validate namespace isolation scalability and network bandwidth requirements
+    \item \textbf{Distributed Computing:} Offload computationally intensive tasks (e.g., global map merging) to edge servers while maintaining local autonomy
+\end{itemize}
+
+\subsection{Real-World Deployment Considerations}
+\begin{itemize}
+    \item \textbf{Outdoor Operation:} Ruggedization for outdoor localization
+    \item \textbf{Dynamic Environments:} Enhanced handling of moving obstacles (humans, forklifts) through predictive trajectory modeling
+    \item \textbf{Long-Duration Missions:} Battery hot-swap mechanisms and mission resumption after charging cycles
+\end{itemize}
+
+\subsection{Research Directions}
+\begin{itemize}
+    \item \textbf{Reinforcement Learning:} Train navigation policies using simulation-to-real transfer for improved performance in cluttered environments
+    \item \textbf{Swarm Intelligence:} Investigate bio-inspired coordination algorithms (ant colony optimization, particle swarm) for emergent collective behavior
+    \item \textbf{Human-Swarm Interaction:} Develop intuitive interfaces allowing single operators to supervise and direct multiple robots through high-level commands
+\end{itemize}
+\newpage
+\vspace{1cm}
+\hrule
+\vspace{0.5cm}
+
+The AUSRA project demonstrates the feasibility of building a cost-effective, unified swarm robotics platform using commercially available components and open-source software. By achieving all primary design objectives---autonomous navigation, 2D SLAM mapping, multi-robot coordination, and sub-\$500 unit cost---AUSRA provides a validated foundation for collaborative robotics research. The modular architecture, comprehensive documentation, and ROS 2 integration enable continued development toward practical applications in warehouse automation, agricultural monitoring, and search-and-rescue operations. Future work focusing on advanced multi-robot coordination algorithms, enhanced perception capabilities, and real-world deployment considerations will further extend the platform's capabilities and impact.

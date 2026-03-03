@@ -1,0 +1,565 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}High-Level Configuration and Autonomous Stack}{75}{chapter.5}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{loa}{\addvspace {10\p@ }}
+\newlabel{chap:autonomous}{{5}{75}{High-Level Configuration and Autonomous Stack}{chapter.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}High-Level Computing Architecture}{75}{section.5.1}\protected@file@percent }
+\newlabel{sec:highlevel_computing}{{5.1}{75}{High-Level Computing Architecture}{section.5.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.1}System Requirements}{75}{subsection.5.1.1}\protected@file@percent }
+\newlabel{subsec:system_requirements}{{5.1.1}{75}{System Requirements}{subsection.5.1.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces High-Level Swarm Architecture Overview\relax }}{75}{figure.caption.121}\protected@file@percent }
+\newlabel{fig:high_level_swarm}{{5.1}{75}{High-Level Swarm Architecture Overview\relax }{figure.caption.121}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.1.1}Perception Requirements}{76}{subsubsection.5.1.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.1.2}Communication Requirements}{76}{subsubsection.5.1.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.1.3}Navigation and Control Requirements}{76}{subsubsection.5.1.1.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.2}{\ignorespaces Hardware Architecture Block Diagram\relax }}{77}{figure.caption.122}\protected@file@percent }
+\newlabel{fig:hardware_architecture}{{5.2}{77}{Hardware Architecture Block Diagram\relax }{figure.caption.122}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.2}Computing Platform Analysis}{77}{subsection.5.1.2}\protected@file@percent }
+\newlabel{subsec:computing_analysis}{{5.1.2}{77}{Computing Platform Analysis}{subsection.5.1.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.2.1}Raspberry Pi 5}{77}{subsubsection.5.1.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.3}{\ignorespaces Raspberry Pi 5\relax }}{77}{figure.caption.123}\protected@file@percent }
+\newlabel{fig:raspberry_pi}{{5.3}{77}{Raspberry Pi 5\relax }{figure.caption.123}{}}
+\@writefile{toc}{\contentsline {paragraph}{Strengths}{78}{section*.124}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Limitations}{78}{section*.125}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.2.2}NVIDIA Jetson Orin Nano}{78}{subsubsection.5.1.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.4}{\ignorespaces NVIDIA Jetson Orin Nano Development Kit\relax }}{78}{figure.caption.126}\protected@file@percent }
+\newlabel{fig:jetson_orin}{{5.4}{78}{NVIDIA Jetson Orin Nano Development Kit\relax }{figure.caption.126}{}}
+\@writefile{toc}{\contentsline {paragraph}{Strengths}{78}{section*.127}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Limitations}{79}{section*.128}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.3}Platform Selection}{79}{subsection.5.1.3}\protected@file@percent }
+\newlabel{subsec:platform_selection}{{5.1.3}{79}{Platform Selection}{subsection.5.1.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.5}{\ignorespaces Raspberry Pi 5 vs. Jetson Orin Nano Comparison\relax }}{79}{figure.caption.129}\protected@file@percent }
+\newlabel{fig:pi_vs_jetson}{{5.5}{79}{Raspberry Pi 5 vs. Jetson Orin Nano Comparison\relax }{figure.caption.129}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.4}Depth Camera Selection}{79}{subsection.5.1.4}\protected@file@percent }
+\newlabel{subsec:depth_camera}{{5.1.4}{79}{Depth Camera Selection}{subsection.5.1.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.4.1}Camera Technology Comparison}{80}{subsubsection.5.1.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.6}{\ignorespaces Luxonis OAK-D Lite Depth Camera\relax }}{80}{figure.caption.130}\protected@file@percent }
+\newlabel{fig:oakd_lite}{{5.6}{80}{Luxonis OAK-D Lite Depth Camera\relax }{figure.caption.130}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces Camera Configuration Selection Matrix\relax }}{80}{table.caption.131}\protected@file@percent }
+\newlabel{tab:camera_config}{{5.1}{80}{Camera Configuration Selection Matrix\relax }{table.caption.131}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.4.2}Depth Camera Model Comparison}{80}{subsubsection.5.1.4.2}\protected@file@percent }
+\newlabel{fig:oakd_compare}{{5.7a}{80}{OAK-D Lite\relax }{figure.caption.132}{}}
+\newlabel{sub@fig:oakd_compare}{{a}{80}{OAK-D Lite\relax }{figure.caption.132}{}}
+\newlabel{fig:realsense_compare}{{5.7b}{80}{Intel RealSense D435i\relax }{figure.caption.132}{}}
+\newlabel{sub@fig:realsense_compare}{{b}{80}{Intel RealSense D435i\relax }{figure.caption.132}{}}
+\newlabel{fig:zed_compare}{{5.7c}{80}{ZED 2i\relax }{figure.caption.132}{}}
+\newlabel{sub@fig:zed_compare}{{c}{80}{ZED 2i\relax }{figure.caption.132}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.7}{\ignorespaces Depth Camera Candidates\relax }}{80}{figure.caption.132}\protected@file@percent }
+\newlabel{fig:depth_camera_candidates}{{5.7}{80}{Depth Camera Candidates\relax }{figure.caption.132}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.2}{\ignorespaces Depth Camera Selection Matrix\relax }}{81}{table.caption.133}\protected@file@percent }
+\newlabel{tab:depth_camera_selection}{{5.2}{81}{Depth Camera Selection Matrix\relax }{table.caption.133}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.4.3}Final Selection: Luxonis OAK-D Lite}{81}{subsubsection.5.1.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.4.4}Hardware Specifications}{81}{subsubsection.5.1.4.4}\protected@file@percent }
+\newlabel{fig:oakd_architecture}{{5.8a}{82}{OAK-D Lite System Architecture\relax }{figure.caption.134}{}}
+\newlabel{sub@fig:oakd_architecture}{{a}{82}{OAK-D Lite System Architecture\relax }{figure.caption.134}{}}
+\newlabel{fig:stereo_config}{{5.8b}{82}{Stereo Camera Configuration\relax }{figure.caption.134}{}}
+\newlabel{sub@fig:stereo_config}{{b}{82}{Stereo Camera Configuration\relax }{figure.caption.134}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.8}{\ignorespaces OAK-D Lite Hardware Overview\relax }}{82}{figure.caption.134}\protected@file@percent }
+\newlabel{fig:oakd_hardware}{{5.8}{82}{OAK-D Lite Hardware Overview\relax }{figure.caption.134}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.4.5}Application Scenarios}{82}{subsubsection.5.1.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Obstacle Detection and Collision Avoidance}{82}{section*.135}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Visual Odometry}{82}{section*.136}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Robot Detection and Swarm Coordination}{82}{section*.137}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Semantic Scene Understanding}{82}{section*.138}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.9}{\ignorespaces Semantic Segmentation Example\relax }}{83}{figure.caption.139}\protected@file@percent }
+\newlabel{fig:semantic_segmentation}{{5.9}{83}{Semantic Segmentation Example\relax }{figure.caption.139}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.4.6}Mechanical Integration}{83}{subsubsection.5.1.4.6}\protected@file@percent }
+\newlabel{fig:cam_mount_design}{{5.10a}{83}{Camera Mount Design\relax }{figure.caption.140}{}}
+\newlabel{sub@fig:cam_mount_design}{{a}{83}{Camera Mount Design\relax }{figure.caption.140}{}}
+\newlabel{fig:cam_mount_installed}{{5.10b}{83}{Installed Camera Mount\relax }{figure.caption.140}{}}
+\newlabel{sub@fig:cam_mount_installed}{{b}{83}{Installed Camera Mount\relax }{figure.caption.140}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.10}{\ignorespaces OAK-D Lite Mechanical Mounting\relax }}{83}{figure.caption.140}\protected@file@percent }
+\newlabel{fig:camera_mounting}{{5.10}{83}{OAK-D Lite Mechanical Mounting\relax }{figure.caption.140}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.5}Inertial Measurement Unit Selection}{83}{subsection.5.1.5}\protected@file@percent }
+\newlabel{subsec:imu_selection}{{5.1.5}{83}{Inertial Measurement Unit Selection}{subsection.5.1.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.11}{\ignorespaces MPU-9250 9-Axis IMU Module\relax }}{84}{figure.caption.141}\protected@file@percent }
+\newlabel{fig:imu_module}{{5.11}{84}{MPU-9250 9-Axis IMU Module\relax }{figure.caption.141}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.5.1}IMU Configuration Comparison}{84}{subsubsection.5.1.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.3}{\ignorespaces IMU Configuration Selection Matrix\relax }}{84}{table.caption.142}\protected@file@percent }
+\newlabel{tab:imu_config}{{5.3}{84}{IMU Configuration Selection Matrix\relax }{table.caption.142}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.5.2}IMU Model Comparison}{84}{subsubsection.5.1.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.4}{\ignorespaces IMU Model Selection Matrix\relax }}{84}{table.caption.143}\protected@file@percent }
+\newlabel{tab:imu_model}{{5.4}{84}{IMU Model Selection Matrix\relax }{table.caption.143}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.5.3}Final Selection: MPU-9250}{85}{subsubsection.5.1.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.5.4}Hardware Specifications}{85}{subsubsection.5.1.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.5.5}Hardware Implementation}{86}{subsubsection.5.1.5.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.12}{\ignorespaces IMU I2C Connection Schematic\relax }}{86}{figure.caption.144}\protected@file@percent }
+\newlabel{fig:imu_schematic}{{5.12}{86}{IMU I2C Connection Schematic\relax }{figure.caption.144}{}}
+\newlabel{fig:imu_pcb1}{{5.13a}{87}{PCB Design\relax }{figure.caption.145}{}}
+\newlabel{sub@fig:imu_pcb1}{{a}{87}{PCB Design\relax }{figure.caption.145}{}}
+\newlabel{fig:imu_pcb2}{{5.13b}{87}{Assembled PCB\relax }{figure.caption.145}{}}
+\newlabel{sub@fig:imu_pcb2}{{b}{87}{Assembled PCB\relax }{figure.caption.145}{}}
+\newlabel{fig:imu_pcb3}{{5.13c}{87}{Mounted Assembly\relax }{figure.caption.145}{}}
+\newlabel{sub@fig:imu_pcb3}{{c}{87}{Mounted Assembly\relax }{figure.caption.145}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.13}{\ignorespaces IMU Custom Interface PCB\relax }}{87}{figure.caption.145}\protected@file@percent }
+\newlabel{fig:imu_pcb}{{5.13}{87}{IMU Custom Interface PCB\relax }{figure.caption.145}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.5.6}Calibration Procedures}{87}{subsubsection.5.1.5.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Accelerometer and Gyroscope Calibration}{87}{section*.146}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Magnetometer Calibration}{87}{section*.147}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.6}LiDAR Selection}{87}{subsection.5.1.6}\protected@file@percent }
+\newlabel{subsec:lidar_selection}{{5.1.6}{87}{LiDAR Selection}{subsection.5.1.6}{}}
+\newlabel{eq:lidar_distance}{{5.1}{87}{LiDAR Selection}{equation.5.1.1}{}}
+\newlabel{eq:lidar_cartesian}{{5.2}{87}{LiDAR Selection}{equation.5.1.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.6.1}2D vs. 3D LiDAR Comparison}{88}{subsubsection.5.1.6.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.5}{\ignorespaces LiDAR Type Selection Matrix\relax }}{88}{table.caption.148}\protected@file@percent }
+\newlabel{tab:lidar_type}{{5.5}{88}{LiDAR Type Selection Matrix\relax }{table.caption.148}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.6.2}Final Selection: RPLIDAR A1}{88}{subsubsection.5.1.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.14}{\ignorespaces RPLIDAR A1 360-Degree 2D Laser Scanner\relax }}{88}{figure.caption.149}\protected@file@percent }
+\newlabel{fig:rplidar}{{5.14}{88}{RPLIDAR A1 360-Degree 2D Laser Scanner\relax }{figure.caption.149}{}}
+\@writefile{toc}{\contentsline {paragraph}{Hardware Specifications}{88}{section*.150}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.1.6.3}ROS 2 Integration}{89}{subsubsection.5.1.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Hardware Driver}{89}{section*.151}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Simulation Driver}{89}{section*.152}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.15}{\ignorespaces LiDAR Simulation in Gazebo\relax }}{89}{figure.caption.153}\protected@file@percent }
+\newlabel{fig:lidar_gazebo}{{5.15}{89}{LiDAR Simulation in Gazebo\relax }{figure.caption.153}{}}
+\@writefile{toc}{\contentsline {paragraph}{Data Output}{89}{section*.154}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.16}{\ignorespaces LiDAR Data Visualization in RViz2\relax }}{90}{figure.caption.155}\protected@file@percent }
+\newlabel{fig:lidar_rviz}{{5.16}{90}{LiDAR Data Visualization in RViz2\relax }{figure.caption.155}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}System Architecture}{91}{section.5.2}\protected@file@percent }
+\newlabel{sec:system_architecture}{{5.2}{91}{System Architecture}{section.5.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.1}Software Stack Overview}{91}{subsection.5.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.17}{\ignorespaces Level 1: System Context - Abstract Architecture\relax }}{91}{figure.caption.156}\protected@file@percent }
+\newlabel{fig:abstract_arch}{{5.17}{91}{Level 1: System Context - Abstract Architecture\relax }{figure.caption.156}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.2}Key Software Components}{91}{subsection.5.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.3}Low-Level Interface (micro-ROS)}{92}{subsection.5.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.4}Deployment on Jetson Orin Nano (Docker)}{92}{subsection.5.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.5}Core ROS 2 Node Overview}{92}{subsection.5.2.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.6}{\ignorespaces Core ROS 2 Nodes and Their Functions\relax }}{93}{table.caption.157}\protected@file@percent }
+\newlabel{tab:ros_nodes}{{5.6}{93}{Core ROS 2 Nodes and Their Functions\relax }{table.caption.157}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.3}Simulation Environment}{93}{section.5.3}\protected@file@percent }
+\newlabel{sec:simulation}{{5.3}{93}{Simulation Environment}{section.5.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Testing Scenarios}{93}{subsection.5.3.1}\protected@file@percent }
+\newlabel{fig:room1}{{5.18a}{94}{Room 1: Basic Verification\relax }{figure.caption.158}{}}
+\newlabel{sub@fig:room1}{{a}{94}{Room 1: Basic Verification\relax }{figure.caption.158}{}}
+\newlabel{fig:room2}{{5.18b}{94}{Room 2: Complex Geometry\relax }{figure.caption.158}{}}
+\newlabel{sub@fig:room2}{{b}{94}{Room 2: Complex Geometry\relax }{figure.caption.158}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.18}{\ignorespaces Unit Testing Environments\relax }}{94}{figure.caption.158}\protected@file@percent }
+\newlabel{fig:test_rooms}{{5.18}{94}{Unit Testing Environments\relax }{figure.caption.158}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.19}{\ignorespaces Office Earthquake World: Disaster Response Scenario\relax }}{94}{figure.caption.159}\protected@file@percent }
+\newlabel{fig:earthquake}{{5.19}{94}{Office Earthquake World: Disaster Response Scenario\relax }{figure.caption.159}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.20}{\ignorespaces Multi-Robot Room: Swarm Coordination Testbed\relax }}{95}{figure.caption.160}\protected@file@percent }
+\newlabel{fig:multirobot_room}{{5.20}{95}{Multi-Robot Room: Swarm Coordination Testbed\relax }{figure.caption.160}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.4}Multi-Robot Swarm Architecture}{95}{section.5.4}\protected@file@percent }
+\newlabel{sec:swarm_architecture}{{5.4}{95}{Multi-Robot Swarm Architecture}{section.5.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.1}Namespace-Based Scalability}{95}{subsection.5.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.21}{\ignorespaces Level 2: Multi-Robot Swarm Architecture with Namespace Isolation\relax }}{96}{figure.caption.161}\protected@file@percent }
+\newlabel{fig:multi_robot_arch}{{5.21}{96}{Level 2: Multi-Robot Swarm Architecture with Namespace Isolation\relax }{figure.caption.161}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.2}RQT Graph Analysis: Dual-Robot Operation}{96}{subsection.5.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.22}{\ignorespaces RQT Graph: Dual-Robot Namespace Isolation During Simultaneous Operation\relax }}{97}{figure.caption.162}\protected@file@percent }
+\newlabel{fig:rqt_namespace}{{5.22}{97}{RQT Graph: Dual-Robot Namespace Isolation During Simultaneous Operation\relax }{figure.caption.162}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2.1}Graph Structure Analysis}{97}{subsubsection.5.4.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Per-Robot Node Set}{97}{section*.163}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Topic Flow Pattern}{97}{section*.164}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Shared Resources}{98}{section*.165}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.3}Docker-Based Swarm Deployment}{98}{subsection.5.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.3.1}Deployment Architecture}{98}{subsubsection.5.4.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.3.2}Scalability Benefits}{98}{subsubsection.5.4.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.7}{\ignorespaces Docker + Namespace Scalability Benefits\relax }}{98}{table.caption.166}\protected@file@percent }
+\newlabel{tab:docker_scalability}{{5.7}{98}{Docker + Namespace Scalability Benefits\relax }{table.caption.166}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.3.3}Launch File Integration}{99}{subsubsection.5.4.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4.4}Swarm Communication Topology}{99}{subsection.5.4.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.8}{\ignorespaces Topic Namespace Strategy\relax }}{99}{table.caption.167}\protected@file@percent }
+\newlabel{tab:topic_namespace}{{5.8}{99}{Topic Namespace Strategy\relax }{table.caption.167}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.5}Communication Stack}{99}{section.5.5}\protected@file@percent }
+\newlabel{sec:communication}{{5.5}{99}{Communication Stack}{section.5.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.1}DDS Middleware Configuration}{99}{subsection.5.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.2}Quality of Service Configuration}{100}{subsection.5.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.9}{\ignorespaces QoS Configuration by Topic Type\relax }}{100}{table.caption.168}\protected@file@percent }
+\newlabel{tab:qos_config}{{5.9}{100}{QoS Configuration by Topic Type\relax }{table.caption.168}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5.3}Inter-Robot Communication}{100}{subsection.5.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.6}The Autonomous System}{100}{section.5.6}\protected@file@percent }
+\newlabel{sec:autonomous_system}{{5.6}{100}{The Autonomous System}{section.5.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.1}Sensor Fusion and Localization}{100}{subsection.5.6.1}\protected@file@percent }
+\newlabel{subsec:localization}{{5.6.1}{100}{Sensor Fusion and Localization}{subsection.5.6.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1.1}Extended Kalman Filter Architecture}{100}{subsubsection.5.6.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{State Vector}{101}{section*.169}\protected@file@percent }
+\newlabel{eq:state_vector}{{5.3}{101}{State Vector}{equation.5.6.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Sensor Configuration}{101}{section*.170}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Covariance Tuning}{101}{section*.171}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1.2}ROS 2 IMU Driver Implementation}{101}{subsubsection.5.6.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Topics Published}{101}{section*.172}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Unit Conversions}{101}{section*.173}\protected@file@percent }
+\newlabel{fig:imu_terminal}{{5.23a}{102}{IMU Data Stream\relax }{figure.caption.174}{}}
+\newlabel{sub@fig:imu_terminal}{{a}{102}{IMU Data Stream\relax }{figure.caption.174}{}}
+\newlabel{fig:imu_rviz}{{5.23b}{102}{IMU Visualization in RViz2\relax }{figure.caption.174}{}}
+\newlabel{sub@fig:imu_rviz}{{b}{102}{IMU Visualization in RViz2\relax }{figure.caption.174}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.23}{\ignorespaces IMU Data Acquisition and Visualization\relax }}{102}{figure.caption.174}\protected@file@percent }
+\newlabel{fig:imu_data}{{5.23}{102}{IMU Data Acquisition and Visualization\relax }{figure.caption.174}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1.3}Visualization and Validation}{102}{subsubsection.5.6.1.3}\protected@file@percent }
+\newlabel{fig:linear_acc}{{5.24a}{102}{Linear Acceleration (Z-axis showing gravity)\relax }{figure.caption.175}{}}
+\newlabel{sub@fig:linear_acc}{{a}{102}{Linear Acceleration (Z-axis showing gravity)\relax }{figure.caption.175}{}}
+\newlabel{fig:angular_vel}{{5.24b}{102}{Angular Velocity During Rotation\relax }{figure.caption.175}{}}
+\newlabel{sub@fig:angular_vel}{{b}{102}{Angular Velocity During Rotation\relax }{figure.caption.175}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.24}{\ignorespaces IMU Sensor Measurements\relax }}{102}{figure.caption.175}\protected@file@percent }
+\newlabel{fig:imu_measurements}{{5.24}{102}{IMU Sensor Measurements\relax }{figure.caption.175}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1.4}Direct Jetson Integration}{103}{subsubsection.5.6.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.1.5}SLAM Integration}{103}{subsubsection.5.6.1.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{The Navigation Problem}{103}{section*.176}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Challenges in Unstructured Environments}{103}{section*.177}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{SLAM: Simultaneous Localization and Mapping}{103}{section*.178}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.2}Mapping with slam\_toolbox}{103}{subsection.5.6.2}\protected@file@percent }
+\newlabel{subsec:slam_toolbox}{{5.6.2}{103}{Mapping with slam\_toolbox}{subsection.5.6.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.2.1}Algorithm Selection}{104}{subsubsection.5.6.2.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.10}{\ignorespaces SLAM Algorithm Selection Matrix\relax }}{104}{table.caption.179}\protected@file@percent }
+\newlabel{tab:slam_selection}{{5.10}{104}{SLAM Algorithm Selection Matrix\relax }{table.caption.179}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.2.2}System Architecture}{104}{subsubsection.5.6.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.25}{\ignorespaces slam\_toolbox System Architecture\relax }}{104}{figure.caption.180}\protected@file@percent }
+\newlabel{fig:slam_toolbox_arch}{{5.25}{104}{slam\_toolbox System Architecture\relax }{figure.caption.180}{}}
+\@writefile{toc}{\contentsline {paragraph}{Pose Graph Representation}{105}{section*.181}\protected@file@percent }
+\newlabel{eq:relative_pose}{{5.4}{105}{Pose Graph Representation}{equation.5.6.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Maximum Likelihood Formulation}{105}{section*.182}\protected@file@percent }
+\newlabel{eq:slam_optimization}{{5.5}{105}{Maximum Likelihood Formulation}{equation.5.6.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.2.3}ROS 2 Topics and Frames}{105}{subsubsection.5.6.2.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.11}{\ignorespaces slam\_toolbox ROS 2 Interface\relax }}{105}{table.caption.183}\protected@file@percent }
+\newlabel{tab:slam_topics}{{5.11}{105}{slam\_toolbox ROS 2 Interface\relax }{table.caption.183}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.2.4}Parameter Tuning Strategy}{105}{subsubsection.5.6.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Wall Thickness Reduction}{105}{section*.184}\protected@file@percent }
+\newlabel{fig:wall_thick_before}{{5.26a}{106}{Before Tuning\relax }{figure.caption.185}{}}
+\newlabel{sub@fig:wall_thick_before}{{a}{106}{Before Tuning\relax }{figure.caption.185}{}}
+\newlabel{fig:wall_thick_after}{{5.26b}{106}{After Tuning\relax }{figure.caption.185}{}}
+\newlabel{sub@fig:wall_thick_after}{{b}{106}{After Tuning\relax }{figure.caption.185}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.26}{\ignorespaces Wall Thickness Optimization\relax }}{106}{figure.caption.185}\protected@file@percent }
+\newlabel{fig:wall_thickness}{{5.26}{106}{Wall Thickness Optimization\relax }{figure.caption.185}{}}
+\@writefile{toc}{\contentsline {paragraph}{Corner Preservation}{106}{section*.186}\protected@file@percent }
+\newlabel{fig:corner_before}{{5.27a}{106}{Before Tuning\relax }{figure.caption.187}{}}
+\newlabel{sub@fig:corner_before}{{a}{106}{Before Tuning\relax }{figure.caption.187}{}}
+\newlabel{fig:corner_after}{{5.27b}{106}{After Tuning\relax }{figure.caption.187}{}}
+\newlabel{sub@fig:corner_after}{{b}{106}{After Tuning\relax }{figure.caption.187}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.27}{\ignorespaces Corner Preservation Optimization\relax }}{106}{figure.caption.187}\protected@file@percent }
+\newlabel{fig:corner_preservation}{{5.27}{106}{Corner Preservation Optimization\relax }{figure.caption.187}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.2.5}Experimental Results}{107}{subsubsection.5.6.2.5}\protected@file@percent }
+\newlabel{fig:room1_map}{{5.28a}{107}{Single Room Environment\relax }{figure.caption.188}{}}
+\newlabel{sub@fig:room1_map}{{a}{107}{Single Room Environment\relax }{figure.caption.188}{}}
+\newlabel{fig:room2_map}{{5.28b}{107}{Corridor Environment\relax }{figure.caption.188}{}}
+\newlabel{sub@fig:room2_map}{{b}{107}{Corridor Environment\relax }{figure.caption.188}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.28}{\ignorespaces slam\_toolbox Mapping Results\relax }}{107}{figure.caption.188}\protected@file@percent }
+\newlabel{fig:slam_results}{{5.28}{107}{slam\_toolbox Mapping Results\relax }{figure.caption.188}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.29}{\ignorespaces Multi-Room Environment Mapping\relax }}{107}{figure.caption.189}\protected@file@percent }
+\newlabel{fig:multiroom_map}{{5.29}{107}{Multi-Room Environment Mapping\relax }{figure.caption.189}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.3}Google Cartographer SLAM}{108}{subsection.5.6.3}\protected@file@percent }
+\newlabel{subsec:cartographer}{{5.6.3}{108}{Google Cartographer SLAM}{subsection.5.6.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.3.1}Algorithm Selection}{108}{subsubsection.5.6.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.12}{\ignorespaces Cartographer Selection Matrix\relax }}{108}{table.caption.190}\protected@file@percent }
+\newlabel{tab:cartographer_selection}{{5.12}{108}{Cartographer Selection Matrix\relax }{table.caption.190}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.3.2}System Architecture}{109}{subsubsection.5.6.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.30}{\ignorespaces Google Cartographer Architecture\relax }}{109}{figure.caption.191}\protected@file@percent }
+\newlabel{fig:cartographer_arch}{{5.30}{109}{Google Cartographer Architecture\relax }{figure.caption.191}{}}
+\@writefile{toc}{\contentsline {paragraph}{Input Data}{109}{section*.192}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.3.3}Local SLAM: Trajectory Builder}{109}{subsubsection.5.6.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Probability Grids}{109}{section*.193}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ceres Scan Matching}{110}{section*.194}\protected@file@percent }
+\newlabel{eq:ceres_cost}{{5.6}{110}{Ceres Scan Matching}{equation.5.6.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.3.4}Global SLAM: Pose Graph Optimization}{110}{subsubsection.5.6.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Loop Closure via Branch-and-Bound}{110}{section*.195}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sparse Pose Adjustment}{110}{section*.196}\protected@file@percent }
+\newlabel{eq:spa}{{5.7}{110}{Sparse Pose Adjustment}{equation.5.6.7}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.3.5}Error Diagnosis and Tuning}{110}{subsubsection.5.6.3.5}\protected@file@percent }
+\newlabel{fig:odom_drift}{{5.31a}{110}{Initial Drift\relax }{figure.caption.198}{}}
+\newlabel{sub@fig:odom_drift}{{a}{110}{Initial Drift\relax }{figure.caption.198}{}}
+\newlabel{fig:snap_correction}{{5.31b}{110}{After Global Correction\relax }{figure.caption.198}{}}
+\newlabel{sub@fig:snap_correction}{{b}{110}{After Global Correction\relax }{figure.caption.198}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.31}{\ignorespaces Odometry Drift and Correction\relax }}{110}{figure.caption.198}\protected@file@percent }
+\newlabel{fig:drift_correction}{{5.31}{110}{Odometry Drift and Correction\relax }{figure.caption.198}{}}
+\@writefile{toc}{\contentsline {paragraph}{Odometry Drift Correction}{110}{figure.caption.198}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Lateral Slip Compensation}{111}{section*.199}\protected@file@percent }
+\newlabel{fig:ghosting}{{5.32a}{111}{Ghosting Artifact\relax }{figure.caption.200}{}}
+\newlabel{sub@fig:ghosting}{{a}{111}{Ghosting Artifact\relax }{figure.caption.200}{}}
+\newlabel{fig:solved_ghosting}{{5.32b}{111}{After Tuning\relax }{figure.caption.200}{}}
+\newlabel{sub@fig:solved_ghosting}{{b}{111}{After Tuning\relax }{figure.caption.200}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.32}{\ignorespaces Lateral Slip Artifact Correction\relax }}{111}{figure.caption.200}\protected@file@percent }
+\newlabel{fig:ghosting_fix}{{5.32}{111}{Lateral Slip Artifact Correction\relax }{figure.caption.200}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.3.6}Final Configuration Parameters}{111}{subsubsection.5.6.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.3.7}Validation Results}{112}{subsubsection.5.6.3.7}\protected@file@percent }
+\newlabel{fig:loop_before}{{5.33a}{112}{Before Loop Closure\relax }{figure.caption.201}{}}
+\newlabel{sub@fig:loop_before}{{a}{112}{Before Loop Closure\relax }{figure.caption.201}{}}
+\newlabel{fig:loop_after}{{5.33b}{112}{After Loop Closure\relax }{figure.caption.201}{}}
+\newlabel{sub@fig:loop_after}{{b}{112}{After Loop Closure\relax }{figure.caption.201}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.33}{\ignorespaces Loop Closure Correction\relax }}{112}{figure.caption.201}\protected@file@percent }
+\newlabel{fig:loop_closure_results}{{5.33}{112}{Loop Closure Correction\relax }{figure.caption.201}{}}
+\newlabel{fig:final_map}{{5.34a}{112}{Tuned Navigation Map\relax }{figure.caption.202}{}}
+\newlabel{sub@fig:final_map}{{a}{112}{Tuned Navigation Map\relax }{figure.caption.202}{}}
+\newlabel{fig:final_grid}{{5.34b}{112}{Final Occupancy Grid\relax }{figure.caption.202}{}}
+\newlabel{sub@fig:final_grid}{{b}{112}{Final Occupancy Grid\relax }{figure.caption.202}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.34}{\ignorespaces Cartographer Final Mapping Results\relax }}{112}{figure.caption.202}\protected@file@percent }
+\newlabel{fig:cartographer_results}{{5.34}{112}{Cartographer Final Mapping Results\relax }{figure.caption.202}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.4}SLAM Framework Selection}{112}{subsection.5.6.4}\protected@file@percent }
+\newlabel{subsec:slam_selection}{{5.6.4}{112}{SLAM Framework Selection}{subsection.5.6.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.5}SLAM Limitations and Future Work}{113}{subsection.5.6.5}\protected@file@percent }
+\newlabel{subsec:slam_limitations}{{5.6.5}{113}{SLAM Limitations and Future Work}{subsection.5.6.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.5.1}Current Limitations}{113}{subsubsection.5.6.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.5.2}Future Improvements}{113}{subsubsection.5.6.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Semantic SLAM}{113}{section*.203}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Collaborative Mapping}{113}{section*.204}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.6}Planning}{113}{subsection.5.6.6}\protected@file@percent }
+\newlabel{subsec:planning}{{5.6.6}{113}{Planning}{subsection.5.6.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.6.1}Global Planning (SmacPlanner A*)}{113}{subsubsection.5.6.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.6.2}Local Control (DWB Holonomic)}{114}{subsubsection.5.6.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.7}Autonomous Exploration Strategy}{114}{subsection.5.6.7}\protected@file@percent }
+\newlabel{subsec:exploration}{{5.6.7}{114}{Autonomous Exploration Strategy}{subsection.5.6.7}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.7.1}Frontier Detection and Filtering}{114}{subsubsection.5.6.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.7.2}Goal Selection}{114}{subsubsection.5.6.7.2}\protected@file@percent }
+\newlabel{eq:frontier_cost}{{5.8}{114}{Goal Selection}{equation.5.6.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.8}Control}{115}{subsection.5.6.8}\protected@file@percent }
+\newlabel{subsec:control}{{5.6.8}{115}{Control}{subsection.5.6.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.8.1}Trajectory Tracking}{115}{subsubsection.5.6.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.8.2}Velocity Commands}{115}{subsubsection.5.6.8.2}\protected@file@percent }
+\newlabel{eq:vel_cmd}{{5.9}{115}{Velocity Commands}{equation.5.6.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.9}Omnidirectional Kinematic Modeling}{115}{subsection.5.6.9}\protected@file@percent }
+\newlabel{subsec:omni_driver}{{5.6.9}{115}{Omnidirectional Kinematic Modeling}{subsection.5.6.9}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.9.1}Motivation and System Role}{115}{subsubsection.5.6.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.9.2}Modeling Assumptions}{115}{subsubsection.5.6.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Planar Motion}{115}{section*.205}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Pure Rolling}{115}{section*.206}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{No Slip}{116}{section*.207}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Rigid Body}{116}{section*.208}\protected@file@percent }
+\newlabel{eq:wheel_vel}{{5.10}{116}{Rigid Body}{equation.5.6.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.9.3}Coordinate Frames}{116}{subsubsection.5.6.9.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.35}{\ignorespaces Omnidirectional Robot Coordinate Frames\relax }}{116}{figure.caption.209}\protected@file@percent }
+\newlabel{fig:omni_frames}{{5.35}{116}{Omnidirectional Robot Coordinate Frames\relax }{figure.caption.209}{}}
+\@writefile{toc}{\contentsline {paragraph}{World Frame $\{I\}$}{116}{section*.210}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Robot Base Frame $\{B\}$}{116}{section*.211}\protected@file@percent }
+\newlabel{eq:body_vel}{{5.11}{116}{Robot Base Frame $\{B\}$}{equation.5.6.11}{}}
+\@writefile{toc}{\contentsline {paragraph}{Wheel Frames $\{W_i\}$}{116}{section*.212}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.9.4}Wheel Configuration}{116}{subsubsection.5.6.9.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.13}{\ignorespaces Three-Wheeled Omni Robot Configuration\relax }}{117}{table.caption.213}\protected@file@percent }
+\newlabel{tab:wheel_config}{{5.13}{117}{Three-Wheeled Omni Robot Configuration\relax }{table.caption.213}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.9.5}Inverse Kinematics}{117}{subsubsection.5.6.9.5}\protected@file@percent }
+\newlabel{eq:wheel_fundamental}{{5.12}{117}{Inverse Kinematics}{equation.5.6.12}{}}
+\newlabel{eq:wheel_pos_vel}{{5.13}{117}{Inverse Kinematics}{equation.5.6.13}{}}
+\newlabel{eq:single_wheel_ik}{{5.14}{117}{Inverse Kinematics}{equation.5.6.14}{}}
+\newlabel{eq:ik_general}{{5.15}{117}{Inverse Kinematics}{equation.5.6.15}{}}
+\newlabel{eq:ik_numerical}{{5.16}{117}{Inverse Kinematics}{equation.5.6.16}{}}
+\@writefile{toc}{\contentsline {paragraph}{Global Frame Transformation}{118}{section*.214}\protected@file@percent }
+\newlabel{eq:frame_transform}{{5.17}{118}{Global Frame Transformation}{equation.5.6.17}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.9.6}Forward Kinematics}{118}{subsubsection.5.6.9.6}\protected@file@percent }
+\newlabel{eq:fk_compact}{{5.18}{118}{Forward Kinematics}{equation.5.6.18}{}}
+\newlabel{eq:fk_general}{{5.19}{118}{Forward Kinematics}{equation.5.6.19}{}}
+\newlabel{eq:fk_numerical}{{5.20}{118}{Forward Kinematics}{equation.5.6.20}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.6.10}Omnidirectional Interface Driver}{118}{subsection.5.6.10}\protected@file@percent }
+\newlabel{subsec:omni_interface_driver}{{5.6.10}{118}{Omnidirectional Interface Driver}{subsection.5.6.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.10.1}Design Objectives}{118}{subsubsection.5.6.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.10.2}Functional Requirements}{118}{subsubsection.5.6.10.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.10.3}Design Choices}{119}{subsubsection.5.6.10.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.10.4}Driver Architecture}{119}{subsubsection.5.6.10.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Twist Representation}{119}{section*.215}\protected@file@percent }
+\newlabel{eq:twist_rep}{{5.21}{119}{Twist Representation}{equation.5.6.21}{}}
+\@writefile{toc}{\contentsline {paragraph}{Kinematic Mapping}{119}{section*.216}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.10.5}Odometry Estimation}{120}{subsubsection.5.6.10.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Discrete-Time Integration}{120}{section*.217}\protected@file@percent }
+\newlabel{eq:body_increment}{{5.22}{120}{Discrete-Time Integration}{equation.5.6.22}{}}
+\newlabel{eq:euler_integration}{{5.23}{120}{Discrete-Time Integration}{equation.5.6.23}{}}
+\@writefile{toc}{\contentsline {paragraph}{Coordinate Frames}{120}{section*.218}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.10.6}Odometry Covariance Modeling}{120}{subsubsection.5.6.10.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Motivation}{120}{section*.219}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Encoder Quantization Noise}{120}{section*.220}\protected@file@percent }
+\newlabel{eq:encoder_resolution}{{5.24}{120}{Encoder Quantization Noise}{equation.5.6.24}{}}
+\newlabel{eq:angular_variance}{{5.25}{120}{Encoder Quantization Noise}{equation.5.6.25}{}}
+\newlabel{eq:displacement_variance}{{5.26}{120}{Encoder Quantization Noise}{equation.5.6.26}{}}
+\@writefile{toc}{\contentsline {paragraph}{Multi-Encoder Covariance}{120}{section*.221}\protected@file@percent }
+\newlabel{eq:wheel_covariance}{{5.27}{120}{Multi-Encoder Covariance}{equation.5.6.27}{}}
+\@writefile{toc}{\contentsline {paragraph}{Robot Motion Uncertainty}{120}{section*.222}\protected@file@percent }
+\newlabel{eq:motion_covariance}{{5.28}{120}{Robot Motion Uncertainty}{equation.5.6.28}{}}
+\@writefile{toc}{\contentsline {paragraph}{Twist Covariance}{121}{section*.223}\protected@file@percent }
+\newlabel{eq:twist_covariance}{{5.29}{121}{Twist Covariance}{equation.5.6.29}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.6.10.7}Kalman Prediction for Covariance Propagation}{121}{subsubsection.5.6.10.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{State Integration}{121}{section*.224}\protected@file@percent }
+\newlabel{eq:delta_x}{{5.30}{121}{State Integration}{equation.5.6.30}{}}
+\newlabel{eq:delta_y}{{5.31}{121}{State Integration}{equation.5.6.31}{}}
+\newlabel{eq:delta_theta}{{5.32}{121}{State Integration}{equation.5.6.32}{}}
+\@writefile{toc}{\contentsline {paragraph}{State Jacobian}{121}{section*.225}\protected@file@percent }
+\newlabel{eq:state_jacobian}{{5.33}{121}{State Jacobian}{equation.5.6.33}{}}
+\@writefile{toc}{\contentsline {paragraph}{Control Jacobian}{121}{section*.226}\protected@file@percent }
+\newlabel{eq:control_jacobian}{{5.34}{121}{Control Jacobian}{equation.5.6.34}{}}
+\@writefile{toc}{\contentsline {paragraph}{Process Noise}{121}{section*.227}\protected@file@percent }
+\newlabel{eq:process_noise}{{5.35}{121}{Process Noise}{equation.5.6.35}{}}
+\@writefile{toc}{\contentsline {paragraph}{Covariance Prediction}{121}{section*.228}\protected@file@percent }
+\newlabel{eq:covariance_prediction}{{5.36}{121}{Covariance Prediction}{equation.5.6.36}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.7}Autonomous System Node Structure}{122}{section.5.7}\protected@file@percent }
+\newlabel{sec:autonomous_system_nodes}{{5.7}{122}{Autonomous System Node Structure}{section.5.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7.1}Single Robot Architecture}{122}{subsection.5.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5.36}{\ignorespaces Level 3: Deep Dive - Single Robot Internal Architecture\relax }}{122}{figure.caption.229}\protected@file@percent }
+\newlabel{fig:deep_dive}{{5.36}{122}{Level 3: Deep Dive - Single Robot Internal Architecture\relax }{figure.caption.229}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7.2}Data Flow Pipeline}{122}{subsection.5.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.7.2.1}Perception Layer}{122}{subsubsection.5.7.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.7.2.2}Localization and Mapping Layer}{123}{subsubsection.5.7.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.7.2.3}Planning and Navigation Layer}{123}{subsubsection.5.7.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.7.2.4}Control Layer}{123}{subsubsection.5.7.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7.3}Topic Summary}{123}{subsection.5.7.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.14}{\ignorespaces Autonomous System Topic Summary\relax }}{124}{table.caption.230}\protected@file@percent }
+\newlabel{tab:topic_summary}{{5.14}{124}{Autonomous System Topic Summary\relax }{table.caption.230}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.8}Robot Description (URDF)}{124}{section.5.8}\protected@file@percent }
+\newlabel{sec:urdf}{{5.8}{124}{Robot Description (URDF)}{section.5.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.8.1}Xacro Architecture}{124}{subsection.5.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.8.2}Model Generation}{124}{subsection.5.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5.9}Future Work and Research}{125}{section.5.9}\protected@file@percent }
+\newlabel{sec:ch5_future_work}{{5.9}{125}{Future Work and Research}{section.5.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.9.1}Collaborative Algorithms (Planned)}{125}{subsection.5.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.9.2}Advanced Perception}{125}{subsection.5.9.2}\protected@file@percent }
+\@setckpt{chapters/chapter5_autonomous}{
+\setcounter{page}{126}
+\setcounter{equation}{36}
+\setcounter{enumi}{5}
+\setcounter{enumii}{0}
+\setcounter{enumiii}{0}
+\setcounter{enumiv}{0}
+\setcounter{footnote}{0}
+\setcounter{mpfootnote}{0}
+\setcounter{part}{0}
+\setcounter{chapter}{5}
+\setcounter{section}{9}
+\setcounter{subsection}{2}
+\setcounter{subsubsection}{0}
+\setcounter{paragraph}{0}
+\setcounter{subparagraph}{0}
+\setcounter{figure}{36}
+\setcounter{table}{14}
+\setcounter{parentequation}{0}
+\setcounter{caption@flags}{2}
+\setcounter{continuedfloat}{0}
+\setcounter{subfigure}{0}
+\setcounter{subtable}{0}
+\setcounter{Item}{126}
+\setcounter{Hfootnote}{0}
+\setcounter{bookmark@seq@number}{268}
+\setcounter{float@type}{16}
+\setcounter{LT@tables}{1}
+\setcounter{LT@chunks}{1}
+\setcounter{AlgoLine}{0}
+\setcounter{algocfline}{0}
+\setcounter{algocfproc}{0}
+\setcounter{algocf}{0}
+\setcounter{lstnumber}{4}
+\setcounter{tcbbreakpart}{0}
+\setcounter{tcblayer}{0}
+\setcounter{tcolorbox@number}{0}
+\setcounter{tcbrastercolumn}{1}
+\setcounter{tcbrasterrow}{1}
+\setcounter{tcbrasternum}{1}
+\setcounter{tcbraster}{0}
+\setcounter{tcblisting}{0}
+\setcounter{su@anzahl}{0}
+\setcounter{tabx@nest}{0}
+\setcounter{listtotal}{0}
+\setcounter{listcount}{0}
+\setcounter{liststart}{0}
+\setcounter{liststop}{0}
+\setcounter{citecount}{0}
+\setcounter{citetotal}{0}
+\setcounter{multicitecount}{0}
+\setcounter{multicitetotal}{0}
+\setcounter{instcount}{11}
+\setcounter{maxnames}{3}
+\setcounter{minnames}{1}
+\setcounter{maxitems}{3}
+\setcounter{minitems}{1}
+\setcounter{citecounter}{0}
+\setcounter{maxcitecounter}{0}
+\setcounter{savedcitecounter}{0}
+\setcounter{uniquelist}{0}
+\setcounter{uniquename}{0}
+\setcounter{refsection}{0}
+\setcounter{refsegment}{0}
+\setcounter{maxextratitle}{0}
+\setcounter{maxextratitleyear}{0}
+\setcounter{maxextraname}{0}
+\setcounter{maxextradate}{0}
+\setcounter{maxextraalpha}{0}
+\setcounter{abbrvpenalty}{50}
+\setcounter{highnamepenalty}{50}
+\setcounter{lownamepenalty}{25}
+\setcounter{maxparens}{3}
+\setcounter{parenlevel}{0}
+\setcounter{blx@maxsection}{0}
+\setcounter{blx@maxsegment@0}{0}
+\setcounter{blx@sectionciteorder@0}{11}
+\setcounter{mincomprange}{10}
+\setcounter{maxcomprange}{100000}
+\setcounter{mincompwidth}{1}
+\setcounter{afterword}{0}
+\setcounter{savedafterword}{0}
+\setcounter{annotator}{0}
+\setcounter{savedannotator}{0}
+\setcounter{author}{0}
+\setcounter{savedauthor}{0}
+\setcounter{bookauthor}{0}
+\setcounter{savedbookauthor}{0}
+\setcounter{commentator}{0}
+\setcounter{savedcommentator}{0}
+\setcounter{editor}{0}
+\setcounter{savededitor}{0}
+\setcounter{editora}{0}
+\setcounter{savededitora}{0}
+\setcounter{editorb}{0}
+\setcounter{savededitorb}{0}
+\setcounter{editorc}{0}
+\setcounter{savededitorc}{0}
+\setcounter{foreword}{0}
+\setcounter{savedforeword}{0}
+\setcounter{holder}{0}
+\setcounter{savedholder}{0}
+\setcounter{introduction}{0}
+\setcounter{savedintroduction}{0}
+\setcounter{namea}{0}
+\setcounter{savednamea}{0}
+\setcounter{nameb}{0}
+\setcounter{savednameb}{0}
+\setcounter{namec}{0}
+\setcounter{savednamec}{0}
+\setcounter{translator}{0}
+\setcounter{savedtranslator}{0}
+\setcounter{shortauthor}{0}
+\setcounter{savedshortauthor}{0}
+\setcounter{shorteditor}{0}
+\setcounter{savedshorteditor}{0}
+\setcounter{labelname}{0}
+\setcounter{savedlabelname}{0}
+\setcounter{institution}{0}
+\setcounter{savedinstitution}{0}
+\setcounter{lista}{0}
+\setcounter{savedlista}{0}
+\setcounter{listb}{0}
+\setcounter{savedlistb}{0}
+\setcounter{listc}{0}
+\setcounter{savedlistc}{0}
+\setcounter{listd}{0}
+\setcounter{savedlistd}{0}
+\setcounter{liste}{0}
+\setcounter{savedliste}{0}
+\setcounter{listf}{0}
+\setcounter{savedlistf}{0}
+\setcounter{location}{0}
+\setcounter{savedlocation}{0}
+\setcounter{organization}{0}
+\setcounter{savedorganization}{0}
+\setcounter{origlocation}{0}
+\setcounter{savedoriglocation}{0}
+\setcounter{origpublisher}{0}
+\setcounter{savedorigpublisher}{0}
+\setcounter{publisher}{0}
+\setcounter{savedpublisher}{0}
+\setcounter{language}{0}
+\setcounter{savedlanguage}{0}
+\setcounter{origlanguage}{0}
+\setcounter{savedoriglanguage}{0}
+\setcounter{pageref}{0}
+\setcounter{savedpageref}{0}
+\setcounter{textcitecount}{0}
+\setcounter{textcitetotal}{0}
+\setcounter{textcitemaxnames}{0}
+\setcounter{biburlbigbreakpenalty}{100}
+\setcounter{biburlbreakpenalty}{200}
+\setcounter{biburlnumpenalty}{0}
+\setcounter{biburlucpenalty}{0}
+\setcounter{biburllcpenalty}{0}
+\setcounter{smartand}{1}
+\setcounter{bbx:relatedcount}{0}
+\setcounter{bbx:relatedtotal}{0}
+\setcounter{cbx@tempcnta}{0}
+\setcounter{cbx@tempcntb}{10}
+\setcounter{cbx@tempcntc}{0}
+\setcounter{cbx@tempcntd}{-1}
+\setcounter{section@level}{2}
+\setcounter{lstlisting}{0}
+}

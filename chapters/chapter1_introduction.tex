@@ -1,0 +1,121 @@
+% ============================================================================
+% Chapter 1: Introduction
+% ============================================================================
+
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{Overview}
+\label{sec:overview}
+
+The field of robotics has witnessed tremendous growth over the past decades, evolving from single-purpose industrial manipulators to sophisticated autonomous systems capable of operating in complex, unstructured environments \cite{siciliano2016robotics}. Among the most promising advancements in this domain is the emergence of \textbf{swarm robotics} --- a paradigm inspired by biological systems such as ant colonies and beehives \cite{dorigo2021swarm}. It emphasizes collective behavior, where simple individual agents interact locally with one another and their environment to achieve complex global objectives.
+
+One of the most critical challenges in autonomous navigation is Simultaneous Localization and Mapping (SLAM) \cite{thrun2005probabilistic}. While single-robot SLAM has matured significantly, it remains limited by its reliance on a single point of failure and its linear progression in time. This project explores the implementation of a collaborative 2D mapping system using robotic swarms. By developing multiple agents equipped with LiDAR and depth cameras, the system can explore indoor environments and detect victims --- such as in office buildings, warehouses, or disaster zones --- concurrently, fusing individual data into a singular, cohesive global map.
+
+\section{Project Motivation}
+\label{sec:motivation}
+
+The motivation for developing a swarm-based 2D mapping system is rooted in the transition from centralized, rigid automation to decentralized, flexible intelligence. Beyond basic efficiency, the following factors provide the core impetus for this research:
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth, height=4.5cm]{Project_motivation.png}
+        \caption{Project Motivation}
+        \label{fig:proj_motivation}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth, height=4.5cm]{Victim_localization.png}
+        \caption{Swarm Victim Localization Example}
+        \label{fig:victim_loc}
+    \end{minipage}
+\end{figure}
+
+\subsection{Spatial Parallelism and Temporal Efficiency}
+In traditional SLAM, the time required to map an environment is directly proportional to the total area and the complexity of the floor plan. By utilizing a swarm, we implement spatial parallelism. The mapping task is treated as a distributed computing problem where each robot explores a unique ``frontier''. This reduces the total mission time significantly, which is a critical factor in time-sensitive scenarios like gas leak detection or post-earthquake structural assessment.
+
+\subsection{Scalability and Modular Deployment}
+One of the most compelling motivations for swarm robotics is scalability. Unlike single-robot systems, where adding capability requires a hardware overhaul, a swarm can be scaled by simply deploying additional low-cost units. This modularity allows the system to adapt to environments of varying sizes --- from a small apartment to a multi-story warehouse --- without needing to rewrite the underlying coordination algorithms. This approach inherently improves cost-effectiveness, as multiple simple robots can achieve tasks that would typically require a single, expensive, and complex robot.
+
+\subsection{Decentralized Intelligence and Reduced Communication Overhead}
+Centralized systems suffer from ``bottlenecking,'' where a single central server must process all incoming LiDAR data, leading to latency and potential crashes. Our motivation lies in leveraging decentralized coordination. By processing local maps on-board and only sharing essential ``map fragments'' or ``keyframes'' with neighbors, the swarm minimizes the bandwidth required. This makes the system viable in buildings with thick concrete walls or poor Wi-Fi signals where a central link would fail.
+
+% Add your content here...
+
+\section{Problem Statement}
+\label{sec:problem_statement}
+
+Despite the theoretical advantages of swarm robotics, practical implementation faces several challenges:
+
+\begin{enumerate}
+    \item \textbf{Lack of Unified Architecture:} Existing systems often use heterogeneous components that lack interoperability.
+    \item \textbf{Complex Coordination:} Achieving synchronized behavior among multiple autonomous agents requires sophisticated communication and decision-making protocols.
+    \item \textbf{Hardware Constraints:} Designing cost-effective, robust, and modular robot platforms remains challenging.
+    \item \textbf{Navigation Complexity:} Multi-robot path planning must account for collision avoidance, traffic management, and dynamic obstacles.
+\end{enumerate}
+
+This project addresses these challenges by developing a comprehensive, unified architecture that integrates mechanical design, electrical systems, and autonomous software into a cohesive framework.
+
+% Add your content here...
+
+\section{Project Objectives}
+\label{sec:objectives}
+
+The primary objectives of the \textbf{AUSRA} (Autonomous Unified Swarm Robotics Architecture) project are:
+
+\begin{enumerate}
+    \item \textbf{Mechanical Design:}
+    \begin{itemize}
+        \item Design a unified, modular robot chassis suitable for swarm applications.
+        \item Perform systematic selection of materials and actuators using decision matrices.
+        \item Validate the design through stress analysis and prototyping.
+    \end{itemize}
+    
+    \item \textbf{Electrical System:}
+    \begin{itemize}
+        \item Develop a robust power distribution and management system.
+        \item Integrate sensors (LiDAR, IMU, encoders) for perception and localization.
+        \item Design and implement low-level firmware for motor control and sensor interfacing.
+    \end{itemize}
+    
+    \item \textbf{Autonomous Stack:}
+    \begin{itemize}
+        \item Implement sensor fusion for accurate localization.
+        \item Develop path planning algorithms for navigation.
+        \item Create a communication framework for swarm coordination.
+        \item Design omnidirectional motion control for agile maneuvering.
+    \end{itemize}
+    
+    \item \textbf{Integration and Testing:}
+    \begin{itemize}
+        \item Integrate all subsystems into a functional prototype.
+        \item Conduct comprehensive testing and performance evaluation.
+        \item Demonstrate swarm behavior with multiple robots.
+    \end{itemize}
+\end{enumerate}
+
+% Add your content here...
+
+\section{Thesis Structure}
+\label{sec:thesis_structure}
+
+This thesis is organized into seven chapters as follows:
+
+\begin{description}
+    \item[Chapter 1: Introduction] Provides an overview of the project motivation, problem statement, objectives, and thesis organization.
+    
+    \item[Chapter 2: Literature Review] Reviews existing swarm architectures, mechanical design precedents, and control strategies.
+    
+    \item[Chapter 3: Mechanical Design \& Structural Analysis] Details the design requirements, mechanical trials, actuator selection, hardware assembly, and stress analysis.
+    
+    \item[Chapter 4: Electrical System \& Low-Level Configuration] Covers the electrical topology, component specifications, PCB design, and firmware implementation.
+    
+    \item[Chapter 5: High-Level Configuration \& Autonomous Stack] Describes the system architecture, communication stack, localization, planning, and control subsystems.
+    
+    \item[Chapter 6: Experimental Results \& Discussion] Presents the testing methodology, experimental results, and analysis.
+    
+    \item[Chapter 7: Conclusion \& Future Recommendations] Summarizes the achievements and suggests directions for future work.
+\end{description}

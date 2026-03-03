@@ -1,0 +1,172 @@
+% !TEX encoding = UTF-8 Unicode
+% Simplified AUSRA Thesis - Compatible with basic TeX Live installation
+% Compile with: pdflatex main_simple.tex
+
+\documentclass[12pt, a4paper, twoside]{report}
+
+% --- Essential Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}  % Latin Modern fonts (available by default)
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{{figures/}{figures/Logos/}{figures/Chapter 1/}{figures/Chapter 2/}{figures/Chapter 3/}{figures/Chapter 4/}{figures/Chapter 5/}{figures/Chapter 6/}{figures/Chapter 7/}}
+
+% --- Page Layout ---
+\usepackage[
+    a4paper,
+    inner=3cm,
+    outer=2.5cm,
+    top=2.5cm,
+    bottom=2cm,
+    bindingoffset=0cm
+]{geometry}
+
+% --- Line Spacing ---
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Mathematics ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% --- Tables ---
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{tabularx}
+
+% --- Diagrams ---
+\usepackage{tikz}
+\usetikzlibrary{shapes, arrows, positioning, calc, fit}
+
+% --- Code Listings ---
+\usepackage{listings}
+\usepackage[table,dvipsnames]{xcolor}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegray},
+    keywordstyle=\color{Magenta},
+    numberstyle=\tiny\color{codegray},
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,                 
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    frame=lines
+}
+
+% --- Boxes ---
+\usepackage[most]{tcolorbox}
+\definecolor{asuBlue}{RGB}{0, 61, 121}
+\newtcolorbox{notebox}{colback=blue!5, colframe=asuBlue, title={\textbf{Note}}, fonttitle=\bfseries, boxrule=1pt, arc=3pt}
+
+% --- Hyperlinks ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=asuBlue,
+    citecolor=asuBlue,
+    urlcolor=asuBlue,
+    pdfauthor={AUSRA Team},
+    pdftitle={Autonomous Unified Swarm Robotics Architecture},
+    pdfsubject={Graduation Project 2026}
+}
+
+% --- Headers & Footers ---
+\usepackage{fancyhdr}
+
+% Configure fancy style (for regular pages)
+\fancypagestyle{fancy}{
+  \fancyhf{}
+  \setlength{\headheight}{36pt}
+  \fancyhead[L]{\includegraphics[height=0.8cm]{figures/Logos/asu_logo.png}}
+  \fancyhead[R]{\leftmark}
+  \fancyfoot[L]{AUSRA TEAM}
+  \fancyfoot[R]{\thepage}
+  \renewcommand{\headrulewidth}{0.5pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% Configure plain style (for chapter first pages)
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \setlength{\headheight}{14pt}
+  \fancyfoot[L]{AUSRA TEAM}
+  \fancyfoot[R]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+
+% ============================================================================
+% DOCUMENT BEGINS
+% ============================================================================
+\begin{document}
+
+% --- Front Matter ---
+\pagestyle{empty}
+\input{frontmatter/titlepage}
+\clearpage
+
+% Declaration
+\input{frontmatter/declaration}
+\clearpage
+
+% Abstract
+\input{frontmatter/abstract}
+\clearpage
+
+% Dedication
+\input{frontmatter/dedication}
+\clearpage
+
+% Acknowledgments
+\input{frontmatter/acknowledgments}
+\clearpage
+
+% --- Lists ---
+\pagestyle{plain} 
+\pagenumbering{roman}
+
+\tableofcontents
+\listoftables
+\listoffigures
+
+% Acronyms
+\input{frontmatter/acronyms}
+\clearpage
+
+% --- Main Matter ---
+\pagenumbering{arabic}
+\pagestyle{fancy}
+
+% Chapters
+\include{chapters/chapter1_introduction}
+\include{chapters/chapter2_literature}
+\include{chapters/chapter3_mechanical}
+\include{chapters/chapter4_electrical}
+\include{chapters/chapter5_autonomous}
+\include{chapters/chapter6_results}
+\include{chapters/chapter7_conclusion}
+
+% --- Back Matter ---
+
+% Appendices
+\appendix
+\include{backmatter/appendices}
+
+% Arabic Summary
+\input{backmatter/arabic_summary}
+
+\end{document}
