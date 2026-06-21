@@ -59,7 +59,7 @@ The Cytron MDD3A (Dual Channel 3A Motor Driver) was selected to drive the locomo
 
 The NVIDIA Jetson Orin Nano dictates the primary power requirement, operating most efficiently at input voltages above 12V. To meet this constraint while ensuring safe swarm operation, a commercial Total P20S Industrial Power Tool Battery (20V nominal) was selected over custom series-LiPo packs.
 
-The 20V output ensures the Jetson and motor drivers operate in their high-efficiency regions, significantly reducing amperage draw. Crucially, the P20S features an integrated Battery Management System (BMS) that automatically balances cells and prevents dangerous over-discharge, which is a major risk with unprotected LiPo batteries. Its ruggedized casing also enabled the design of a ``Charge-in-Place'' architecture (Section \ref{subsec:isolation_logic}), allowing the robot to be charged safely via an external port without chassis disassembly, mimicking commercial Autonomous Mobile Robot standards.
+The 20V output ensures the Jetson and motor drivers operate in their high-efficiency regions, significantly reducing amperage draw. Crucially, the P20S features an integrated Battery Management System (BMS) that automatically balances cells and prevents dangerous over-discharge, which is a major risk with unprotected LiPo batteries. Its ruggedized casing also enabled the design of a ``Charge-in-Place'' architecture utilizing the isolated 3-state switch, allowing the robot to be charged safely via an external port without chassis disassembly, mimicking commercial Autonomous Mobile Robot standards.
 
 \begin{figure}[H]
     \centering
@@ -271,8 +271,7 @@ The two tasks exchange data through a single mutex-guarded \texttt{SharedRobotDa
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\linewidth]{figures/Chapter 4/FreeRTOS_Task_Diagram.png}
-    \vspace{4cm} % Placeholder space
+    \includegraphics[width=0.8\linewidth]{figures/Chapter 4/RTOS_dual_core.png}
     \caption{FreeRTOS Dual-Core Architecture and Data Flow}
     \label{fig:freertos_architecture}
 \end{figure}

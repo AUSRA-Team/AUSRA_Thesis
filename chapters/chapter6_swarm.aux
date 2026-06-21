@@ -1,143 +1,143 @@
 \relax 
 \providecommand\hyper@newdestlabel[2]{}
-\@writefile{toc}{\contentsline {chapter}{\numberline {6}Multi-Robot Swarm: Communication and Collaborative Mapping}{110}{chapter.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}Multi-Robot Swarm: Communication and Collaborative Mapping}{111}{chapter.6}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{loa}{\addvspace {10\p@ }}
-\newlabel{chap:swarm}{{6}{110}{Multi-Robot Swarm: Communication and Collaborative Mapping}{chapter.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6.1}Namespace-Based Scalability}{110}{section.6.1}\protected@file@percent }
-\newlabel{sec:namespace_scalability}{{6.1}{110}{Namespace-Based Scalability}{section.6.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.1}Firmware Namespace Support}{110}{subsection.6.1.1}\protected@file@percent }
-\newlabel{subsec:firmware_namespace}{{6.1.1}{110}{Firmware Namespace Support}{subsection.6.1.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.2}Namespaced Launch Architecture}{110}{subsection.6.1.2}\protected@file@percent }
-\newlabel{subsec:namespaced_launch}{{6.1.2}{110}{Namespaced Launch Architecture}{subsection.6.1.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6.2}Replicating the System Across Robots}{110}{section.6.2}\protected@file@percent }
-\newlabel{sec:replicating_robots}{{6.2}{110}{Replicating the System Across Robots}{section.6.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6.3}Designing a Bandwidth-Efficient Communication Layer}{110}{section.6.3}\protected@file@percent }
-\newlabel{sec:comms_bandwidth}{{6.3}{110}{Designing a Bandwidth-Efficient Communication Layer}{section.6.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces The AUSRA communication stack. DDS traffic is confined to each machine's loopback interface; only the Zenoh transport layer crosses WiFi, and it carries only the two allowlisted topics produced by the application-layer relay.\relax }}{111}{figure.caption.182}\protected@file@percent }
-\newlabel{fig:comms_stack}{{6.1}{111}{The AUSRA communication stack. DDS traffic is confined to each machine's loopback interface; only the Zenoh transport layer crosses WiFi, and it carries only the two allowlisted topics produced by the application-layer relay.\relax }{figure.caption.182}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.1}The DDS-over-WiFi Bottleneck}{111}{subsection.6.3.1}\protected@file@percent }
-\newlabel{subsec:dds_bottleneck}{{6.3.1}{111}{The DDS-over-WiFi Bottleneck}{subsection.6.3.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.2}Isolating Local Traffic: \texttt  {ROS\_LOCALHOST\_ONLY=1}}{112}{subsection.6.3.2}\protected@file@percent }
-\newlabel{subsec:localhost_only}{{6.3.2}{112}{Isolating Local Traffic: \texttt {ROS\_LOCALHOST\_ONLY=1}}{subsection.6.3.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.3}Choosing Zenoh as the Cross-Network Transport}{112}{subsection.6.3.3}\protected@file@percent }
-\newlabel{subsec:zenoh}{{6.3.3}{112}{Choosing Zenoh as the Cross-Network Transport}{subsection.6.3.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3.1}What Zenoh Is}{113}{subsubsection.6.3.3.1}\protected@file@percent }
-\newlabel{subsubsec:what_is_zenoh}{{6.3.3.1}{113}{What Zenoh Is}{subsubsection.6.3.3.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.3.2}Why Zenoh and Not Plain DDS}{113}{subsubsection.6.3.3.2}\protected@file@percent }
-\newlabel{subsubsec:why_zenoh}{{6.3.3.2}{113}{Why Zenoh and Not Plain DDS}{subsubsection.6.3.3.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.4}Bridge Integration: \texttt  {zenoh-bridge-ros2dds}}{114}{subsection.6.3.4}\protected@file@percent }
-\newlabel{subsec:bridge}{{6.3.4}{114}{Bridge Integration: \texttt {zenoh-bridge-ros2dds}}{subsection.6.3.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.4.1}The Allowlist}{115}{subsubsection.6.3.4.1}\protected@file@percent }
-\newlabel{subsubsec:allowlist}{{6.3.4.1}{115}{The Allowlist}{subsubsection.6.3.4.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.3.4.2}Domain Segregation and Quality-of-Service Preservation}{115}{subsubsection.6.3.4.2}\protected@file@percent }
-\newlabel{subsubsec:domain_qos}{{6.3.4.2}{115}{Domain Segregation and Quality-of-Service Preservation}{subsubsection.6.3.4.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.5}Map Compression as a Communication-Layer Concern}{116}{subsection.6.3.5}\protected@file@percent }
-\newlabel{subsec:map_compression}{{6.3.5}{116}{Map Compression as a Communication-Layer Concern}{subsection.6.3.5}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces Cross-WiFi topics in the default (compressed) configuration.\relax }}{117}{table.caption.183}\protected@file@percent }
-\newlabel{tab:cross_wifi_topics}{{6.1}{117}{Cross-WiFi topics in the default (compressed) configuration.\relax }{table.caption.183}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6.4}Evolution of the Communication Layer: Problems Faced and Lessons Learned}{117}{section.6.4}\protected@file@percent }
-\newlabel{sec:comms_evolution}{{6.4}{117}{Evolution of the Communication Layer: Problems Faced and Lessons Learned}{section.6.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.1}Initial Network Design: IBSS (Ad-Hoc) Mode}{118}{subsection.6.4.1}\protected@file@percent }
-\newlabel{subsec:ibss}{{6.4.1}{118}{Initial Network Design: IBSS (Ad-Hoc) Mode}{subsection.6.4.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.2}The Ping That Never Arrived, and the BSSID Behind It}{118}{subsection.6.4.2}\protected@file@percent }
-\newlabel{subsec:bssid}{{6.4.2}{118}{The Ping That Never Arrived, and the BSSID Behind It}{subsection.6.4.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.3}Retreat to Infrastructure WiFi --- but Still on Plain DDS}{119}{subsection.6.4.3}\protected@file@percent }
-\newlabel{subsec:plain_dds}{{6.4.3}{119}{Retreat to Infrastructure WiFi --- but Still on Plain DDS}{subsection.6.4.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.4}The Switch to Zenoh}{120}{subsection.6.4.4}\protected@file@percent }
-\newlabel{subsec:zenoh_switch}{{6.4.4}{120}{The Switch to Zenoh}{subsection.6.4.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.5}A Second Attempt at Full Decentralisation: New Cards, IBSS, and batman-adv}{120}{subsection.6.4.5}\protected@file@percent }
-\newlabel{subsec:batman}{{6.4.5}{120}{A Second Attempt at Full Decentralisation: New Cards, IBSS, and batman-adv}{subsection.6.4.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.2}{\ignorespaces The A--B--C range limitation. Node A reaches B and B reaches C, but A and C are out of direct WiFi range. A direct A--C path would require B to forward traffic on their behalf --- multi-hop routing that ad-hoc WiFi does not provide on its own.\relax }}{121}{figure.caption.184}\protected@file@percent }
-\newlabel{fig:abc}{{6.2}{121}{The A--B--C range limitation. Node A reaches B and B reaches C, but A and C are out of direct WiFi range. A direct A--C path would require B to forward traffic on their behalf --- multi-hop routing that ad-hoc WiFi does not provide on its own.\relax }{figure.caption.184}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.3}{\ignorespaces The three-layer stack a true robot-to-robot mesh would require. The middle layer, \texttt  {batman-adv}, is the piece that was identified as necessary but deliberately not implemented; without it, Zenoh alone cannot route across the A--B--C gap.\relax }}{121}{figure.caption.185}\protected@file@percent }
-\newlabel{fig:batman_stack}{{6.3}{121}{The three-layer stack a true robot-to-robot mesh would require. The middle layer, \texttt {batman-adv}, is the piece that was identified as necessary but deliberately not implemented; without it, Zenoh alone cannot route across the A--B--C gap.\relax }{figure.caption.185}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.6}The Configuration That Works}{122}{subsection.6.4.6}\protected@file@percent }
-\newlabel{subsec:final_arch}{{6.4.6}{122}{The Configuration That Works}{subsection.6.4.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6.2}{\ignorespaces The original IBSS design against the deployed infrastructure design.\relax }}{122}{table.caption.186}\protected@file@percent }
-\newlabel{tab:ibss_vs_infra}{{6.2}{122}{The original IBSS design against the deployed infrastructure design.\relax }{table.caption.186}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.7}Time Synchronisation: Clocks That Reset on Every Boot}{122}{subsection.6.4.7}\protected@file@percent }
-\newlabel{subsec:time_sync}{{6.4.7}{122}{Time Synchronisation: Clocks That Reset on Every Boot}{subsection.6.4.7}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6.5}Multi-Robot Collaborative Map Merging}{123}{section.6.5}\protected@file@percent }
-\newlabel{sec:collaborative_map_merge}{{6.5}{123}{Multi-Robot Collaborative Map Merging}{section.6.5}{}}
-\newlabel{sec:map_merge}{{6.5}{123}{Multi-Robot Collaborative Map Merging}{section.6.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.1}System Architecture}{124}{subsection.6.5.1}\protected@file@percent }
-\newlabel{subsec:map_merge_architecture}{{6.5.1}{124}{System Architecture}{subsection.6.5.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.4}{\ignorespaces Decentralized multi-robot map merging architecture. Each robot runs a local SLAM Toolbox instance, whose dynamic output is anchored by a per-robot Map Expansion Node before being broadcast over the Zenoh DDS Bridge. Every robot in the swarm runs its own Map Merge Node, subscribing to all peer maps and producing an independent, globally-aligned fused occupancy grid.\relax }}{124}{figure.caption.187}\protected@file@percent }
-\newlabel{fig:map_merge_diagram}{{6.4}{124}{Decentralized multi-robot map merging architecture. Each robot runs a local SLAM Toolbox instance, whose dynamic output is anchored by a per-robot Map Expansion Node before being broadcast over the Zenoh DDS Bridge. Every robot in the swarm runs its own Map Merge Node, subscribing to all peer maps and producing an independent, globally-aligned fused occupancy grid.\relax }{figure.caption.187}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.2}Algorithmic Theory and Methodology}{125}{subsection.6.5.2}\protected@file@percent }
-\newlabel{subsec:map_merge_algorithm}{{6.5.2}{125}{Algorithmic Theory and Methodology}{subsection.6.5.2}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.2.1}The Heartbeat Timer Architecture}{125}{subsubsection.6.5.2.1}\protected@file@percent }
-\newlabel{subsubsec:heartbeat}{{6.5.2.1}{125}{The Heartbeat Timer Architecture}{subsubsection.6.5.2.1}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.2.2}The ``Moving Floor'' Fix: Spatial Coordinate Anchoring}{126}{subsubsection.6.5.2.2}\protected@file@percent }
-\newlabel{subsubsec:spatial_math}{{6.5.2.2}{126}{The ``Moving Floor'' Fix: Spatial Coordinate Anchoring}{subsubsection.6.5.2.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{Step 1: Local-to-Global Frame Conversion}{126}{section*.188}\protected@file@percent }
-\newlabel{eq:global_origin}{{6.1}{126}{Step 1: Local-to-Global Frame Conversion}{equation.6.5.1}{}}
-\@writefile{toc}{\contentsline {paragraph}{Step 2: Global Position to Fixed Canvas Pixel}{126}{section*.189}\protected@file@percent }
-\newlabel{eq:canvas_offset}{{6.2}{126}{Step 2: Global Position to Fixed Canvas Pixel}{equation.6.5.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{Invariance Proof}{126}{section*.190}\protected@file@percent }
-\newlabel{eq:invariance}{{6.3}{126}{Invariance Proof}{equation.6.5.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.2.3}Fault Tolerance: The Ghost Map Behavior}{126}{subsubsection.6.5.2.3}\protected@file@percent }
-\newlabel{subsubsec:ghost_map}{{6.5.2.3}{126}{Fault Tolerance: The Ghost Map Behavior}{subsubsection.6.5.2.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.3}ROS\nobreakspace  {}2 Implementation and Network Strategy}{127}{subsection.6.5.3}\protected@file@percent }
-\newlabel{subsec:map_merge_ros2}{{6.5.3}{127}{ROS~2 Implementation and Network Strategy}{subsection.6.5.3}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.3.1}Node Interfaces}{127}{subsubsection.6.5.3.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6.3}{\ignorespaces ROS\nobreakspace  {}2 Node Interfaces for the \texttt  {ausra\_map\_merge\_HW} Package\relax }}{127}{table.caption.191}\protected@file@percent }
-\newlabel{tab:map_merge_nodes}{{6.3}{127}{ROS~2 Node Interfaces for the \texttt {ausra\_map\_merge\_HW} Package\relax }{table.caption.191}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.3.2}Configurable Parameters}{127}{subsubsection.6.5.3.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {6.4}{\ignorespaces Map Expansion Node ROS\nobreakspace  {}2 Parameters\relax }}{127}{table.caption.192}\protected@file@percent }
-\newlabel{tab:map_merge_params}{{6.4}{127}{Map Expansion Node ROS~2 Parameters\relax }{table.caption.192}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.3.3}Namespace Isolation and Swarm Scalability}{128}{subsubsection.6.5.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.3.4}QoS Profile and Bandwidth Strategy}{128}{subsubsection.6.5.3.4}\protected@file@percent }
-\newlabel{eq:bandwidth}{{6.4}{128}{QoS Profile and Bandwidth Strategy}{equation.6.5.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.4}Simulation Validation}{128}{subsection.6.5.4}\protected@file@percent }
-\newlabel{subsec:map_merge_sim_validation}{{6.5.4}{128}{Simulation Validation}{subsection.6.5.4}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.4.1}Phase 1: Initialization Stability Test}{128}{subsubsection.6.5.4.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6.5}{\ignorespaces Simulation Phase 1: The three-robot swarm at their initial spawn positions in the Gazebo environment prior to any movement. The successful launch of all nodes without crashes confirms the stability of the heartbeat timer initialization architecture.\relax }}{129}{figure.caption.193}\protected@file@percent }
-\newlabel{fig:sim_init}{{6.5}{129}{Simulation Phase 1: The three-robot swarm at their initial spawn positions in the Gazebo environment prior to any movement. The successful launch of all nodes without crashes confirms the stability of the heartbeat timer initialization architecture.\relax }{figure.caption.193}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.4.2}Phase 2: Initial Map State and Pre-Exploration Alignment}{129}{subsubsection.6.5.4.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6.6}{\ignorespaces Simulation Phase 2: The initial \texttt  {/map\_merged} state in RViz with all three robots stationary at their spawn poses. Each robot's immediate local scan is correctly positioned on the global canvas, demonstrating correct coordinate anchoring from boot.\relax }}{130}{figure.caption.194}\protected@file@percent }
-\newlabel{fig:sim_dynamic_before}{{6.6}{130}{Simulation Phase 2: The initial \texttt {/map\_merged} state in RViz with all three robots stationary at their spawn poses. Each robot's immediate local scan is correctly positioned on the global canvas, demonstrating correct coordinate anchoring from boot.\relax }{figure.caption.194}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.4.3}Phase 3: Dynamic Stability and Mid-Exploration Geometric Alignment}{130}{subsubsection.6.5.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6.7}{\ignorespaces Simulation Phase 3: Mid-exploration \texttt  {/map\_merged} output in RViz. Obstacle boundaries from all three robot perspectives overlap correctly at their physical world positions, providing geometric evidence of correct spatial coordinate anchoring under dynamic SLAM conditions. No drift or map tearing was observed throughout the session.\relax }}{131}{figure.caption.195}\protected@file@percent }
-\newlabel{fig:sim_geometric}{{6.7}{131}{Simulation Phase 3: Mid-exploration \texttt {/map\_merged} output in RViz. Obstacle boundaries from all three robot perspectives overlap correctly at their physical world positions, providing geometric evidence of correct spatial coordinate anchoring under dynamic SLAM conditions. No drift or map tearing was observed throughout the session.\relax }{figure.caption.195}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.4.4}Phase 4: Ghost Map Fault Tolerance Test}{131}{subsubsection.6.5.4.4}\protected@file@percent }
-\newlabel{fig:sim_ghost_before}{{6.8a}{132}{All three robots actively mapping before Robot~2 is terminated\relax }{figure.caption.196}{}}
-\newlabel{sub@fig:sim_ghost_before}{{a}{132}{All three robots actively mapping before Robot~2 is terminated\relax }{figure.caption.196}{}}
-\newlabel{fig:sim_ghost_after}{{6.8b}{132}{After Robot~2 termination: its explored territory remains frozen and intact\relax }{figure.caption.196}{}}
-\newlabel{sub@fig:sim_ghost_after}{{b}{132}{After Robot~2 termination: its explored territory remains frozen and intact\relax }{figure.caption.196}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.8}{\ignorespaces Simulation Phase 4: Ghost Map fault tolerance test. Robot\nobreakspace  {}2's \texttt  {slam\_toolbox} process is manually killed mid-mission. Its previously mapped territory is permanently preserved in the global merged map, while Robots\nobreakspace  {}1 and\nobreakspace  {}3 continue active exploration uninterrupted.\relax }}{132}{figure.caption.196}\protected@file@percent }
-\newlabel{fig:sim_ghost}{{6.8}{132}{Simulation Phase 4: Ghost Map fault tolerance test. Robot~2's \texttt {slam\_toolbox} process is manually killed mid-mission. Its previously mapped territory is permanently preserved in the global merged map, while Robots~1 and~3 continue active exploration uninterrupted.\relax }{figure.caption.196}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.4.5}Phase 5: Full Exploration Completion}{132}{subsubsection.6.5.4.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {6.9}{\ignorespaces Simulation Phase 5: Final \texttt  {/map\_merged} output upon mission completion. The three-robot swarm has produced a single, coherent global occupancy grid of the entire simulated environment, with no misalignments or discontinuities between individual robot map contributions.\relax }}{133}{figure.caption.197}\protected@file@percent }
-\newlabel{fig:sim_final}{{6.9}{133}{Simulation Phase 5: Final \texttt {/map\_merged} output upon mission completion. The three-robot swarm has produced a single, coherent global occupancy grid of the entire simulated environment, with no misalignments or discontinuities between individual robot map contributions.\relax }{figure.caption.197}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.5}Hardware Validation}{133}{subsection.6.5.5}\protected@file@percent }
-\newlabel{subsec:map_merge_hw_validation}{{6.5.5}{133}{Hardware Validation}{subsection.6.5.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.5.1}Phase 1: Hardware Initialization Stability}{133}{subsubsection.6.5.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.5.2}Phase 2: The Tape Measure Geometric Accuracy Test}{134}{subsubsection.6.5.5.2}\protected@file@percent }
-\newlabel{fig:hw_physical_setup}{{6.10a}{134}{Physical hardware at initial starting poses\relax }{figure.caption.198}{}}
-\newlabel{sub@fig:hw_physical_setup}{{a}{134}{Physical hardware at initial starting poses\relax }{figure.caption.198}{}}
-\newlabel{fig:hw_rviz_result}{{6.10b}{134}{\texttt {/map\_merged} output in RViz at starting poses\relax }{figure.caption.198}{}}
-\newlabel{sub@fig:hw_rviz_result}{{b}{134}{\texttt {/map\_merged} output in RViz at starting poses\relax }{figure.caption.198}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.10}{\ignorespaces Hardware Phase 2: Geometric Accuracy Test. The two robots at their physical starting poses (left) produce a correctly aligned merged map in RViz (right), where shared environmental features observed by both robots overlap as a single line, confirming the accuracy of the physical-to-digital coordinate transformation.\relax }}{134}{figure.caption.198}\protected@file@percent }
-\newlabel{fig:hw_geometric}{{6.10}{134}{Hardware Phase 2: Geometric Accuracy Test. The two robots at their physical starting poses (left) produce a correctly aligned merged map in RViz (right), where shared environmental features observed by both robots overlap as a single line, confirming the accuracy of the physical-to-digital coordinate transformation.\relax }{figure.caption.198}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.5.3}Phase 3: Dynamic Stability on Physical Hardware}{134}{subsubsection.6.5.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.5.4}Phase 4: Hardware Fault Tolerance}{135}{subsubsection.6.5.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.5.5}Phase 5: Full Physical Exploration Result}{135}{subsubsection.6.5.5.5}\protected@file@percent }
-\newlabel{fig:hw_final_real}{{6.11a}{135}{Physical robots at their final exploration poses\relax }{figure.caption.199}{}}
-\newlabel{sub@fig:hw_final_real}{{a}{135}{Physical robots at their final exploration poses\relax }{figure.caption.199}{}}
-\newlabel{fig:hw_final_rviz}{{6.11b}{135}{Final \texttt {/map\_merged} output in RViz\relax }{figure.caption.199}{}}
-\newlabel{sub@fig:hw_final_rviz}{{b}{135}{Final \texttt {/map\_merged} output in RViz\relax }{figure.caption.199}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6.11}{\ignorespaces Hardware Phase 5: Full physical exploration result. The robots at their final poses (left) have collectively mapped the environment into the coherent global occupancy grid shown in RViz (right), validating end-to-end operation of the \texttt  {ausra\_map\_merge\_HW} pipeline on physical hardware.\relax }}{135}{figure.caption.199}\protected@file@percent }
-\newlabel{fig:hw_final}{{6.11}{135}{Hardware Phase 5: Full physical exploration result. The robots at their final poses (left) have collectively mapped the environment into the coherent global occupancy grid shown in RViz (right), validating end-to-end operation of the \texttt {ausra\_map\_merge\_HW} pipeline on physical hardware.\relax }{figure.caption.199}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.6}Conclusion and Limitations}{136}{subsection.6.5.6}\protected@file@percent }
-\newlabel{subsec:map_merge_conclusion}{{6.5.6}{136}{Conclusion and Limitations}{subsection.6.5.6}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.5.6.1}Current Limitations}{136}{subsubsection.6.5.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6.6}Swarm System: Conclusion}{136}{section.6.6}\protected@file@percent }
-\newlabel{sec:swarm_conclusion}{{6.6}{136}{Swarm System: Conclusion}{section.6.6}{}}
+\newlabel{chap:swarm}{{6}{111}{Multi-Robot Swarm: Communication and Collaborative Mapping}{chapter.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.1}Namespace-Based Scalability}{111}{section.6.1}\protected@file@percent }
+\newlabel{sec:namespace_scalability}{{6.1}{111}{Namespace-Based Scalability}{section.6.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.1}Firmware Namespace Support}{111}{subsection.6.1.1}\protected@file@percent }
+\newlabel{subsec:firmware_namespace}{{6.1.1}{111}{Firmware Namespace Support}{subsection.6.1.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1.2}Namespaced Launch Architecture}{111}{subsection.6.1.2}\protected@file@percent }
+\newlabel{subsec:namespaced_launch}{{6.1.2}{111}{Namespaced Launch Architecture}{subsection.6.1.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.2}Replicating the System Across Robots}{111}{section.6.2}\protected@file@percent }
+\newlabel{sec:replicating_robots}{{6.2}{111}{Replicating the System Across Robots}{section.6.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.3}Designing a Bandwidth-Efficient Communication Layer}{111}{section.6.3}\protected@file@percent }
+\newlabel{sec:comms_bandwidth}{{6.3}{111}{Designing a Bandwidth-Efficient Communication Layer}{section.6.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.1}{\ignorespaces The AUSRA communication stack. DDS traffic is confined to each machine's loopback interface; only the Zenoh transport layer crosses WiFi, and it carries only the two allowlisted topics produced by the application-layer relay.\relax }}{112}{figure.caption.215}\protected@file@percent }
+\newlabel{fig:comms_stack}{{6.1}{112}{The AUSRA communication stack. DDS traffic is confined to each machine's loopback interface; only the Zenoh transport layer crosses WiFi, and it carries only the two allowlisted topics produced by the application-layer relay.\relax }{figure.caption.215}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.1}The DDS-over-WiFi Bottleneck}{112}{subsection.6.3.1}\protected@file@percent }
+\newlabel{subsec:dds_bottleneck}{{6.3.1}{112}{The DDS-over-WiFi Bottleneck}{subsection.6.3.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.2}Isolating Local Traffic: \texttt  {ROS\_LOCALHOST\_ONLY=1}}{113}{subsection.6.3.2}\protected@file@percent }
+\newlabel{subsec:localhost_only}{{6.3.2}{113}{Isolating Local Traffic: \texttt {ROS\_LOCALHOST\_ONLY=1}}{subsection.6.3.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.3}Choosing Zenoh as the Cross-Network Transport}{114}{subsection.6.3.3}\protected@file@percent }
+\newlabel{subsec:zenoh}{{6.3.3}{114}{Choosing Zenoh as the Cross-Network Transport}{subsection.6.3.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{What Zenoh Is}{114}{section*.216}\protected@file@percent }
+\newlabel{subsubsec:what_is_zenoh}{{6.3.3}{114}{What Zenoh Is}{section*.216}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Why Zenoh and Not Plain DDS}{115}{section*.217}\protected@file@percent }
+\newlabel{subsubsec:why_zenoh}{{6.3.3}{115}{Why Zenoh and Not Plain DDS}{section*.217}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.4}Bridge Integration: \texttt  {zenoh-bridge-ros2dds}}{116}{subsection.6.3.4}\protected@file@percent }
+\newlabel{subsec:bridge}{{6.3.4}{116}{Bridge Integration: \texttt {zenoh-bridge-ros2dds}}{subsection.6.3.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{The Allowlist}{117}{section*.218}\protected@file@percent }
+\newlabel{subsubsec:allowlist}{{6.3.4}{117}{The Allowlist}{section*.218}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Domain Segregation and Quality-of-Service Preservation}{118}{section*.219}\protected@file@percent }
+\newlabel{subsubsec:domain_qos}{{6.3.4}{118}{Domain Segregation and Quality-of-Service Preservation}{section*.219}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3.5}Map Compression as a Communication-Layer Concern}{119}{subsection.6.3.5}\protected@file@percent }
+\newlabel{subsec:map_compression}{{6.3.5}{119}{Map Compression as a Communication-Layer Concern}{subsection.6.3.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces Cross-WiFi topics in the default (compressed) configuration.\relax }}{120}{table.caption.220}\protected@file@percent }
+\newlabel{tab:cross_wifi_topics}{{6.1}{120}{Cross-WiFi topics in the default (compressed) configuration.\relax }{table.caption.220}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.4}Evolution of the Communication Layer: Problems Faced and Lessons Learned}{120}{section.6.4}\protected@file@percent }
+\newlabel{sec:comms_evolution}{{6.4}{120}{Evolution of the Communication Layer: Problems Faced and Lessons Learned}{section.6.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.1}Initial Network Design: IBSS (Ad-Hoc) Mode}{121}{subsection.6.4.1}\protected@file@percent }
+\newlabel{subsec:ibss}{{6.4.1}{121}{Initial Network Design: IBSS (Ad-Hoc) Mode}{subsection.6.4.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.2}The Ping That Never Arrived, and the BSSID Behind It}{121}{subsection.6.4.2}\protected@file@percent }
+\newlabel{subsec:bssid}{{6.4.2}{121}{The Ping That Never Arrived, and the BSSID Behind It}{subsection.6.4.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.3}Retreat to Infrastructure WiFi --- but Still on Plain DDS}{122}{subsection.6.4.3}\protected@file@percent }
+\newlabel{subsec:plain_dds}{{6.4.3}{122}{Retreat to Infrastructure WiFi --- but Still on Plain DDS}{subsection.6.4.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.4}The Switch to Zenoh}{123}{subsection.6.4.4}\protected@file@percent }
+\newlabel{subsec:zenoh_switch}{{6.4.4}{123}{The Switch to Zenoh}{subsection.6.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.5}A Second Attempt at Full Decentralisation: New Cards, IBSS, and batman-adv}{124}{subsection.6.4.5}\protected@file@percent }
+\newlabel{subsec:batman}{{6.4.5}{124}{A Second Attempt at Full Decentralisation: New Cards, IBSS, and batman-adv}{subsection.6.4.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.2}{\ignorespaces The A--B--C range limitation. Node A reaches B and B reaches C, but A and C are out of direct WiFi range. A direct A--C path would require B to forward traffic on their behalf --- multi-hop routing that ad-hoc WiFi does not provide on its own.\relax }}{124}{figure.caption.221}\protected@file@percent }
+\newlabel{fig:abc}{{6.2}{124}{The A--B--C range limitation. Node A reaches B and B reaches C, but A and C are out of direct WiFi range. A direct A--C path would require B to forward traffic on their behalf --- multi-hop routing that ad-hoc WiFi does not provide on its own.\relax }{figure.caption.221}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.3}{\ignorespaces The three-layer stack a true robot-to-robot mesh would require. The middle layer, \texttt  {batman-adv}, is the piece that was identified as necessary but deliberately not implemented; without it, Zenoh alone cannot route across the A--B--C gap.\relax }}{125}{figure.caption.222}\protected@file@percent }
+\newlabel{fig:batman_stack}{{6.3}{125}{The three-layer stack a true robot-to-robot mesh would require. The middle layer, \texttt {batman-adv}, is the piece that was identified as necessary but deliberately not implemented; without it, Zenoh alone cannot route across the A--B--C gap.\relax }{figure.caption.222}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.6}The Configuration That Works}{125}{subsection.6.4.6}\protected@file@percent }
+\newlabel{subsec:final_arch}{{6.4.6}{125}{The Configuration That Works}{subsection.6.4.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6.2}{\ignorespaces The original IBSS design against the deployed infrastructure design.\relax }}{126}{table.caption.223}\protected@file@percent }
+\newlabel{tab:ibss_vs_infra}{{6.2}{126}{The original IBSS design against the deployed infrastructure design.\relax }{table.caption.223}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4.7}Time Synchronisation: Clocks That Reset on Every Boot}{126}{subsection.6.4.7}\protected@file@percent }
+\newlabel{subsec:time_sync}{{6.4.7}{126}{Time Synchronisation: Clocks That Reset on Every Boot}{subsection.6.4.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.5}Multi-Robot Collaborative Map Merging}{127}{section.6.5}\protected@file@percent }
+\newlabel{sec:collaborative_map_merge}{{6.5}{127}{Multi-Robot Collaborative Map Merging}{section.6.5}{}}
+\newlabel{sec:map_merge}{{6.5}{127}{Multi-Robot Collaborative Map Merging}{section.6.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.1}System Architecture}{128}{subsection.6.5.1}\protected@file@percent }
+\newlabel{subsec:map_merge_architecture}{{6.5.1}{128}{System Architecture}{subsection.6.5.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.4}{\ignorespaces Decentralized multi-robot map merging architecture. Each robot runs a local SLAM Toolbox instance, whose dynamic output is anchored by a per-robot Map Expansion Node before being broadcast over the Zenoh DDS Bridge. Every robot in the swarm runs its own Map Merge Node, subscribing to all peer maps and producing an independent, globally-aligned fused occupancy grid.\relax }}{129}{figure.caption.224}\protected@file@percent }
+\newlabel{fig:map_merge_diagram}{{6.4}{129}{Decentralized multi-robot map merging architecture. Each robot runs a local SLAM Toolbox instance, whose dynamic output is anchored by a per-robot Map Expansion Node before being broadcast over the Zenoh DDS Bridge. Every robot in the swarm runs its own Map Merge Node, subscribing to all peer maps and producing an independent, globally-aligned fused occupancy grid.\relax }{figure.caption.224}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.2}Algorithmic Theory and Methodology}{130}{subsection.6.5.2}\protected@file@percent }
+\newlabel{subsec:map_merge_algorithm}{{6.5.2}{130}{Algorithmic Theory and Methodology}{subsection.6.5.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{The Heartbeat Timer Architecture}{130}{section*.225}\protected@file@percent }
+\newlabel{subsubsec:heartbeat}{{6.5.2}{130}{The Heartbeat Timer Architecture}{section*.225}{}}
+\@writefile{toc}{\contentsline {subsubsection}{The ``Moving Floor'' Fix: Spatial Coordinate Anchoring}{131}{section*.226}\protected@file@percent }
+\newlabel{subsubsec:spatial_math}{{6.5.2}{131}{The ``Moving Floor'' Fix: Spatial Coordinate Anchoring}{section*.226}{}}
+\@writefile{toc}{\contentsline {paragraph}{Step 1: Local-to-Global Frame Conversion}{131}{section*.227}\protected@file@percent }
+\newlabel{eq:global_origin}{{6.1}{131}{Step 1: Local-to-Global Frame Conversion}{equation.6.5.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Step 2: Global Position to Fixed Canvas Pixel}{131}{section*.228}\protected@file@percent }
+\newlabel{eq:canvas_offset}{{6.2}{131}{Step 2: Global Position to Fixed Canvas Pixel}{equation.6.5.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Invariance Proof}{131}{section*.229}\protected@file@percent }
+\newlabel{eq:invariance}{{6.3}{131}{Invariance Proof}{equation.6.5.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Fault Tolerance: The Ghost Map Behavior}{132}{section*.230}\protected@file@percent }
+\newlabel{subsubsec:ghost_map}{{6.5.2}{132}{Fault Tolerance: The Ghost Map Behavior}{section*.230}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.3}ROS\nobreakspace  {}2 Implementation and Network Strategy}{132}{subsection.6.5.3}\protected@file@percent }
+\newlabel{subsec:map_merge_ros2}{{6.5.3}{132}{ROS~2 Implementation and Network Strategy}{subsection.6.5.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Node Interfaces}{132}{section*.231}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.3}{\ignorespaces ROS\nobreakspace  {}2 Node Interfaces for the \texttt  {ausra\_map\_merge\_HW} Package\relax }}{132}{table.caption.232}\protected@file@percent }
+\newlabel{tab:map_merge_nodes}{{6.3}{132}{ROS~2 Node Interfaces for the \texttt {ausra\_map\_merge\_HW} Package\relax }{table.caption.232}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Configurable Parameters}{132}{section*.233}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {6.4}{\ignorespaces Map Expansion Node ROS\nobreakspace  {}2 Parameters\relax }}{133}{table.caption.234}\protected@file@percent }
+\newlabel{tab:map_merge_params}{{6.4}{133}{Map Expansion Node ROS~2 Parameters\relax }{table.caption.234}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Namespace Isolation and Swarm Scalability}{133}{section*.235}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{QoS Profile and Bandwidth Strategy}{133}{section*.236}\protected@file@percent }
+\newlabel{eq:bandwidth}{{6.4}{134}{QoS Profile and Bandwidth Strategy}{equation.6.5.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.4}Simulation Validation}{134}{subsection.6.5.4}\protected@file@percent }
+\newlabel{subsec:map_merge_sim_validation}{{6.5.4}{134}{Simulation Validation}{subsection.6.5.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Phase 1: Initialization Stability Test}{134}{section*.237}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.5}{\ignorespaces Simulation Phase 1: The three-robot swarm at their initial spawn positions in the Gazebo environment prior to any movement. The successful launch of all nodes without crashes confirms the stability of the heartbeat timer initialization architecture.\relax }}{135}{figure.caption.238}\protected@file@percent }
+\newlabel{fig:sim_init}{{6.5}{135}{Simulation Phase 1: The three-robot swarm at their initial spawn positions in the Gazebo environment prior to any movement. The successful launch of all nodes without crashes confirms the stability of the heartbeat timer initialization architecture.\relax }{figure.caption.238}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Phase 2: Initial Map State and Pre-Exploration Alignment}{135}{section*.239}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.6}{\ignorespaces Simulation Phase 2: The initial \texttt  {/map\_merged} state in RViz with all three robots stationary at their spawn poses. Each robot's immediate local scan is correctly positioned on the global canvas, demonstrating correct coordinate anchoring from boot.\relax }}{136}{figure.caption.240}\protected@file@percent }
+\newlabel{fig:sim_dynamic_before}{{6.6}{136}{Simulation Phase 2: The initial \texttt {/map\_merged} state in RViz with all three robots stationary at their spawn poses. Each robot's immediate local scan is correctly positioned on the global canvas, demonstrating correct coordinate anchoring from boot.\relax }{figure.caption.240}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Phase 3: Dynamic Stability and Mid-Exploration Geometric Alignment}{136}{section*.241}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.7}{\ignorespaces Simulation Phase 3: Mid-exploration \texttt  {/map\_merged} output in RViz. Obstacle boundaries from all three robot perspectives overlap correctly at their physical world positions, providing geometric evidence of correct spatial coordinate anchoring under dynamic SLAM conditions. No drift or map tearing was observed throughout the session.\relax }}{137}{figure.caption.242}\protected@file@percent }
+\newlabel{fig:sim_geometric}{{6.7}{137}{Simulation Phase 3: Mid-exploration \texttt {/map\_merged} output in RViz. Obstacle boundaries from all three robot perspectives overlap correctly at their physical world positions, providing geometric evidence of correct spatial coordinate anchoring under dynamic SLAM conditions. No drift or map tearing was observed throughout the session.\relax }{figure.caption.242}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Phase 4: Ghost Map Fault Tolerance Test}{137}{section*.243}\protected@file@percent }
+\newlabel{fig:sim_ghost_before}{{6.8a}{138}{All three robots actively mapping before Robot~2 is terminated\relax }{figure.caption.244}{}}
+\newlabel{sub@fig:sim_ghost_before}{{a}{138}{All three robots actively mapping before Robot~2 is terminated\relax }{figure.caption.244}{}}
+\newlabel{fig:sim_ghost_after}{{6.8b}{138}{After Robot~2 termination: its explored territory remains frozen and intact\relax }{figure.caption.244}{}}
+\newlabel{sub@fig:sim_ghost_after}{{b}{138}{After Robot~2 termination: its explored territory remains frozen and intact\relax }{figure.caption.244}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.8}{\ignorespaces Simulation Phase 4: Ghost Map fault tolerance test. Robot\nobreakspace  {}2's \texttt  {slam\_toolbox} process is manually killed mid-mission. Its previously mapped territory is permanently preserved in the global merged map, while Robots\nobreakspace  {}1 and\nobreakspace  {}3 continue active exploration uninterrupted.\relax }}{138}{figure.caption.244}\protected@file@percent }
+\newlabel{fig:sim_ghost}{{6.8}{138}{Simulation Phase 4: Ghost Map fault tolerance test. Robot~2's \texttt {slam\_toolbox} process is manually killed mid-mission. Its previously mapped territory is permanently preserved in the global merged map, while Robots~1 and~3 continue active exploration uninterrupted.\relax }{figure.caption.244}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Phase 5: Full Exploration Completion}{138}{section*.245}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6.9}{\ignorespaces Simulation Phase 5: Final \texttt  {/map\_merged} output upon mission completion. The three-robot swarm has produced a single, coherent global occupancy grid of the entire simulated environment, with no misalignments or discontinuities between individual robot map contributions.\relax }}{139}{figure.caption.246}\protected@file@percent }
+\newlabel{fig:sim_final}{{6.9}{139}{Simulation Phase 5: Final \texttt {/map\_merged} output upon mission completion. The three-robot swarm has produced a single, coherent global occupancy grid of the entire simulated environment, with no misalignments or discontinuities between individual robot map contributions.\relax }{figure.caption.246}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.5}Hardware Validation}{139}{subsection.6.5.5}\protected@file@percent }
+\newlabel{subsec:map_merge_hw_validation}{{6.5.5}{139}{Hardware Validation}{subsection.6.5.5}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Phase 1: Hardware Initialization Stability}{140}{section*.247}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Phase 2: The Tape Measure Geometric Accuracy Test}{140}{section*.248}\protected@file@percent }
+\newlabel{fig:hw_physical_setup}{{6.10a}{141}{Physical hardware at initial starting poses\relax }{figure.caption.249}{}}
+\newlabel{sub@fig:hw_physical_setup}{{a}{141}{Physical hardware at initial starting poses\relax }{figure.caption.249}{}}
+\newlabel{fig:hw_rviz_result}{{6.10b}{141}{\texttt {/map\_merged} output in RViz at starting poses\relax }{figure.caption.249}{}}
+\newlabel{sub@fig:hw_rviz_result}{{b}{141}{\texttt {/map\_merged} output in RViz at starting poses\relax }{figure.caption.249}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.10}{\ignorespaces Hardware Phase 2: Geometric Accuracy Test. The two robots at their physical starting poses (left) produce a correctly aligned merged map in RViz (right), where shared environmental features observed by both robots overlap as a single line, confirming the accuracy of the physical-to-digital coordinate transformation.\relax }}{141}{figure.caption.249}\protected@file@percent }
+\newlabel{fig:hw_geometric}{{6.10}{141}{Hardware Phase 2: Geometric Accuracy Test. The two robots at their physical starting poses (left) produce a correctly aligned merged map in RViz (right), where shared environmental features observed by both robots overlap as a single line, confirming the accuracy of the physical-to-digital coordinate transformation.\relax }{figure.caption.249}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Phase 3: Dynamic Stability on Physical Hardware}{141}{section*.250}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Phase 4: Hardware Fault Tolerance}{142}{section*.251}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Phase 5: Full Physical Exploration Result}{142}{section*.252}\protected@file@percent }
+\newlabel{fig:hw_final_real}{{6.11a}{142}{Physical robots at their final exploration poses\relax }{figure.caption.253}{}}
+\newlabel{sub@fig:hw_final_real}{{a}{142}{Physical robots at their final exploration poses\relax }{figure.caption.253}{}}
+\newlabel{fig:hw_final_rviz}{{6.11b}{142}{Final \texttt {/map\_merged} output in RViz\relax }{figure.caption.253}{}}
+\newlabel{sub@fig:hw_final_rviz}{{b}{142}{Final \texttt {/map\_merged} output in RViz\relax }{figure.caption.253}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6.11}{\ignorespaces Hardware Phase 5: Full physical exploration result. The robots at their final poses (left) have collectively mapped the environment into the coherent global occupancy grid shown in RViz (right), validating end-to-end operation of the \texttt  {ausra\_map\_merge\_HW} pipeline on physical hardware.\relax }}{142}{figure.caption.253}\protected@file@percent }
+\newlabel{fig:hw_final}{{6.11}{142}{Hardware Phase 5: Full physical exploration result. The robots at their final poses (left) have collectively mapped the environment into the coherent global occupancy grid shown in RViz (right), validating end-to-end operation of the \texttt {ausra\_map\_merge\_HW} pipeline on physical hardware.\relax }{figure.caption.253}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5.6}Conclusion and Limitations}{143}{subsection.6.5.6}\protected@file@percent }
+\newlabel{subsec:map_merge_conclusion}{{6.5.6}{143}{Conclusion and Limitations}{subsection.6.5.6}{}}
+\@writefile{toc}{\contentsline {subsubsection}{Current Limitations}{143}{section*.254}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6.6}Swarm System: Conclusion}{143}{section.6.6}\protected@file@percent }
+\newlabel{sec:swarm_conclusion}{{6.6}{143}{Swarm System: Conclusion}{section.6.6}{}}
 \@setckpt{chapters/chapter6_swarm}{
-\setcounter{page}{138}
+\setcounter{page}{145}
 \setcounter{equation}{4}
 \setcounter{enumi}{4}
 \setcounter{enumii}{0}
@@ -154,14 +154,14 @@
 \setcounter{subparagraph}{0}
 \setcounter{figure}{11}
 \setcounter{table}{4}
-\setcounter{Item}{110}
+\setcounter{Item}{103}
 \setcounter{Hfootnote}{0}
-\setcounter{bookmark@seq@number}{304}
+\setcounter{bookmark@seq@number}{182}
+\setcounter{float@type}{16}
 \setcounter{caption@flags}{0}
 \setcounter{continuedfloat}{0}
 \setcounter{subfigure}{2}
 \setcounter{subtable}{0}
-\setcounter{float@type}{16}
 \setcounter{parentequation}{0}
 \setcounter{LT@tables}{1}
 \setcounter{LT@chunks}{1}
@@ -188,7 +188,7 @@
 \setcounter{citetotal}{0}
 \setcounter{multicitecount}{0}
 \setcounter{multicitetotal}{0}
-\setcounter{instcount}{31}
+\setcounter{instcount}{30}
 \setcounter{maxnames}{3}
 \setcounter{minnames}{1}
 \setcounter{maxitems}{3}
@@ -212,7 +212,7 @@
 \setcounter{parenlevel}{0}
 \setcounter{blx@maxsection}{0}
 \setcounter{blx@maxsegment@0}{0}
-\setcounter{blx@sectionciteorder@0}{30}
+\setcounter{blx@sectionciteorder@0}{29}
 \setcounter{mincomprange}{10}
 \setcounter{maxcomprange}{100000}
 \setcounter{mincompwidth}{1}
@@ -296,7 +296,7 @@
 \setcounter{bbx:relatedcount}{0}
 \setcounter{bbx:relatedtotal}{0}
 \setcounter{cbx@tempcnta}{0}
-\setcounter{cbx@tempcntb}{29}
+\setcounter{cbx@tempcntb}{28}
 \setcounter{cbx@tempcntc}{0}
 \setcounter{cbx@tempcntd}{-1}
 \setcounter{section@level}{1}
