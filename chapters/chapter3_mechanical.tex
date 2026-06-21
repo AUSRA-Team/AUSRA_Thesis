@@ -46,86 +46,21 @@ After defining the main requirements and the hardware architecture, this section
 The locomotion and actuation group constitutes the physical "base" layer of the Ausra robot. This group is responsible for translating digital control signals into precise mechanical movement \cite{corke2017robotics}. To meet the requirements of holonomic motion and a 5kg weight limit, the following components were selected through a series of trade-off analyses.
 
 \subsubsection{Locomotion System (Wheel Selection)}
-Three locomotion systems were evaluated --- standard differential, mecanum, and omnidirectional wheels --- against seven criteria: holonomic motion, unit cost, wheel count, environment compatibility, control simplicity, traction, and space/weight. The weighted scores are shown in Table~\ref{tab:wheel_matrix}.
+An omnidirectional locomotion system was selected for the platform. The 3-wheel 120\degree\ configuration provides full 3-DOF holonomic motion, essential for the swarm's collaborative tasks such as map merging and tight-formation maneuvering. This setup minimizes the actuator count compared to a 4-wheel mecanum drive, lowering per-unit cost and weight. Unlike mecanum wheels, which rely on 45\degree\ rollers that often induce longitudinal vibrations and slippage on smooth floors, standard omni-wheels feature 90\degree\ peripheral rollers. These orthogonal rollers allow for smooth, vibration-free lateral sliding on flat indoor surfaces, significantly reducing the noise injected into the inertial and odometric sensors.
 
-\begin{table}[H]
-\centering
-\caption{Wheel Selection Matrix}
-\label{tab:wheel_matrix}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|l|c|c|c|c|c|c|c|}
-\hline
-\multirow{2}{*}{\textbf{Criteria}} & \multirow{2}{*}{\textbf{Weights}} & \multicolumn{2}{c|}{\textbf{Standard fixed}} & \multicolumn{2}{c|}{\textbf{Mecanum}} & \multicolumn{2}{c|}{\textbf{Omni}} \\ \cline{3-8} 
- &  & Rating/5 & Score & Rating/5 & Score & Rating/5 & Score \\ \hline
-Holonomic motion & 5 & 1 & 5 & 5 & 25 & 5 & 25 \\ \hline
-Unit cost & 4 & 5 & 20 & 3 & 12 & 4 & 16 \\ \hline
-No. of wheels & 4 & 3 & 12 & 2 & 8 & 3 & 12 \\ \hline
-Env. Compatibility & 3 & 4 & 12 & 5 & 15 & 5 & 15 \\ \hline
-Control Simplicity & 3 & 5 & 15 & 3 & 9 & 4 & 12 \\ \hline
-Traction & 3 & 4 & 12 & 3 & 9 & 3 & 9 \\ \hline
-Space/weight & 2 & 5 & 10 & 3 & 6 & 4 & 8 \\ \hline
-\textbf{Final Scores} &  &  & \textbf{84} &  & \textbf{84} &  & \textbf{97} \\ \hline
-\end{tabular}%
-}
-\end{table}
-
-\paragraph{Selection Rationale}
-The omni-wheel achieved the highest weighted score (97/100). Its 3-wheel 120\degree\ configuration reduces the motor and driver count by 25\% relative to the 4-wheel mecanum alternative, directly lowering per-unit cost across a three-robot swarm. The lateral sliding capability on flat indoor floors provides the full 3-DOF holonomic motion required for swarm coordination without the vibration penalty of 45\degree\ mecanum rollers.
 
 \subsubsection{Chassis Geometry \& Configuration}
-The chassis serves as the structural backbone of the robot, providing the mounting surfaces for the actuation group, the electronic stack, and the perception sensors. For a three-wheel omnidirectional platform, the geometric configuration of the chassis is not merely an aesthetic choice; it dictates the robot's footprint, stability, and its "sweep area" during rotation.
+The chassis serves as the structural backbone of the robot, providing the mounting surfaces for the actuation group, the electronic stack, and the perception sensors. A circular geometry with a 30~cm diameter was selected over rectangular or triangular alternatives. The primary engineering justification for this shape is its rotational invariance: a circular chassis possesses a constant sweep radius. This means the robot's footprint in the 2D occupancy map remains strictly invariant under rotation, a critical property that vastly simplifies the obstacle avoidance and path planning algorithms. When the robot must spin freely in confined spaces or tight corridors, the navigation stack does not need to compute dynamic boundary collisions. Furthermore, the 30~cm circular plate maximizes the usable surface area relative to its maximum width, allowing the heavy battery and electronic stack to be positioned tightly around the central axis, minimizing the moment of inertia and keeping the center of gravity (CoG) perfectly balanced.
 
-\paragraph{Selection Matrix}
-Three configurations were evaluated --- rectangular, triangular, and circular --- against five criteria. Scores are shown below.
-
-\begin{table}[H]
-\centering
-\caption{Chassis Selection Matrix}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|l|c|c|c|c|c|c|c|}
-\hline
-\multirow{2}{*}{\textbf{Criteria}} & \multirow{2}{*}{\textbf{Weights}} & \multicolumn{2}{c|}{\textbf{Rectangular}} & \multicolumn{2}{c|}{\textbf{Circular}} & \multicolumn{2}{c|}{\textbf{Triangular}} \\ \cline{3-8} 
- &  & Rating/5 & Score & Rating/5 & Score & Rating/5 & Score \\ \hline
-Mounting Surface area & 5 & 5 & 25 & 5 & 25 & 2 & 10 \\ \hline
-No of wheels & 4 & 1 & 4 & 5 & 20 & 5 & 20 \\ \hline
-Collision Avoidance Ease & 4 & 2 & 8 & 5 & 20 & 3 & 12 \\ \hline
-Weight Efficiency & 3 & 3 & 9 & 4 & 12 & 5 & 15 \\ \hline
-Structural Integrity & 3 & 5 & 15 & 4 & 12 & 3 & 9 \\ \hline
-\textbf{Final Scores} &  &  & \textbf{61} &  & \textbf{89} &  & \textbf{66} \\ \hline
-\end{tabular}%
-}
-\end{table}
-
-\paragraph{Selection Rationale}
-The circular geometry (score 89) was selected for two decisive reasons. First, its constant radius means the robot's footprint in the 2D occupancy map is invariant under rotation --- a property that simplifies collision avoidance in a swarm where robots must spin freely in confined spaces. Second, a 30~cm diameter circular plate provides substantially more usable mounting area than a triangular profile of equivalent span, allowing all electronics to be positioned close to the centre of rotation and keeping the CoG well-balanced.
 
 \newpage
 
 \subsubsection{Material Selection of Robot Plate}
 
-Three candidate plate materials were evaluated --- steel, aluminium, and acrylic --- against four criteria weighted by their impact on swarm performance (Table~\ref{tab:material_matrix}).
+Acrylic was selected as the primary plate material due to its low density, electrical insulation properties, and high manufacturability. While metals like aluminium offer higher stiffness-to-weight ratios, they act as conductive planes that can short exposed PCB traces and interfere with the Wi-Fi/DDS signals crucial for swarm communication. Acrylic provides a lightweight, rigid structural base that is highly transparent to radio frequencies and can be rapidly prototyped using laser cutting for sub-millimeter precision. 
 
-\paragraph{Selection Matrix}
+In addition to the flat acrylic plates, the robot's cylindrical outer wall and internal fixations are 3D-printed in Polylactic Acid (PLA). Additive manufacturing enables the complex integrated geometry necessary to position the three motor mounts at precise 120\degree\ intervals, something that would be prohibitively expensive to machine out of metal. The combination of laser-cut acrylic planes and 3D-printed PLA joints creates a modular, non-conductive, and highly repeatable physical architecture across all swarm agents.
 
-\begin{table}[H]
-\centering
-\caption{Plate Material Selection Matrix}
-\label{tab:material_matrix}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|l|c|c|c|c|c|c|c|}
-\hline
-\multirow{2}{*}{\textbf{Criteria}} & \multirow{2}{*}{\textbf{Weights}} & \multicolumn{2}{c|}{\textbf{Steel}} & \multicolumn{2}{c|}{\textbf{Aluminum}} & \multicolumn{2}{c|}{\textbf{Acrylic}} \\ \cline{3-8} 
- &  & Rating/5 & Score & Rating/5 & Score & Rating/5 & Score \\ \hline
-Stiffness to Weight Ratio & 4 & 5 & 20 & 4 & 16 & 2 & 8 \\ \hline
-Manufacturability & 5 & 4 & 20 & 5 & 25 & 5 & 25 \\ \hline
-Price & 4 & 5 & 20 & 3 & 12 & 5 & 20 \\ \hline
-Density & 5 & 1 & 5 & 4 & 20 & 5 & 25 \\ \hline
-\textbf{Final Scores} &  &  & \textbf{65} &  & \textbf{73} &  & \textbf{78} \\ \hline
-\end{tabular}%
-}
-\end{table}
-
-Based on the selection matrix, Acrylic was selected as the plate material for its low weight (density) and manufacturability, despite having the lowest stiffness-to-weight ratio of the three candidates. In addition to the flat plates, the robot's cylindrical outer wall and internal fixations are 3D-printed in PLA, which allows the complex integrated geometry required to position the three motor mounts at exactly $120^{\circ}$ intervals.
 
 \newpage
 
@@ -166,137 +101,27 @@ To size the actuators correctly, the desired robot performance must be mapped to
     \end{itemize}
 \end{enumerate}
 
-Three motors were evaluated: the JGA25-370 spur-gear motor, the JGY-370-1285 worm-gear motor, and the E-S Planetary geared motor. The E-S Planetary was immediately rejected because its physical length ($>$90~mm with encoder), combined with the wheel, coupler, shaft, and bearing brackets, would cause the robot's total diameter to exceed the 30~cm constraint. The JGA25-370 was rejected for insufficient torque under the 5~kg payload.
+Based on these kinematic and torque requirements, the JGY-370 Worm Gear motor (98 RPM) was selected as the optimal actuator. The integrated worm-gear reduction provides the necessary high-rated torque to reliably propel the 5~kg platform under full load, absorbing physical shocks without stripping gears. The 98 RPM output speed provides sufficient headroom to achieve the 0.2~m/s target velocity while remaining in the motor's highest efficiency band. 
 
-\paragraph{Selection Matrix}
+Beyond raw torque, the JGY-370 offers two critical architectural advantages. First, the worm-gear mechanism is inherently self-locking: it mechanically holds the robot's position without consuming electrical power for active braking. This static holding capability is highly beneficial for static 2D map-merging tasks and maintaining rigid swarm formations. Second, the right-angle form factor of the gearbox means the motor body sits parallel to the chassis edge, fitting perfectly within the 30~cm diameter constraint while leaving the central hub clear for the battery and electronics.
 
-\begin{table}[H]
-\centering
-\caption{Motor Selection Matrix}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|l|c|c|c|c|c|c|c|}
-\hline
-\multirow{2}{*}{\textbf{Criteria}} & \multirow{2}{*}{\textbf{Weights}} & \multicolumn{2}{c|}{\textbf{JGA25-370}} & \multicolumn{2}{c|}{\textbf{JGY-370 (Worm)}} & \multicolumn{2}{c|}{\textbf{E-S Planetary}} \\ \cline{3-8} 
- &  & Rating/5 & Score & Rating/5 & Score & Rating/5 & Score \\ \hline
-Torque Performance & 5 & 2 & 10 & 4 & 20 & 5 & 25 \\ \hline
-Size/Footprint & 4 & 4 & 16 & 3 & 12 & 1 & 4 \\ \hline
-Speed/RPM & 4 & 4 & 16 & 3 & 12 & 5 & 20 \\ \hline
-Self-Locking /Stability & 3 & 2 & 6 & 4 & 12 & 3 & 9 \\ \hline
-Unit cost & 3 & 5 & 15 & 5 & 15 & 2 & 6 \\ \hline
-\textbf{Final Scores} &  &  & \textbf{63} &  & \textbf{71} &  & \textbf{64} \\ \hline
-\end{tabular}%
-}
-\end{table}
-
-\paragraph{E. Selection Rationale}
-The JGY-370 Worm Gear motor (98 RPM) was selected as the optimal actuator for the Ausra robot.
-The primary driver for this selection was the high rated torque provided by the worm-gear reduction. As the robot is designed for a maximum mass of 5 kg, the JGA25-370 was deemed insufficient for reliable long-term operation under full load. The JGY-370's 98 RPM speed is well-optimized for the 3-wheel kinematics, providing enough headroom to achieve the 0.2 m/s target velocity without excessive power consumption.
-A unique advantage of the JGY-370 is its self-locking property. In a swarm environment, the ability of the robot to maintain its position without consuming power (braking) is highly beneficial for static 2D mapping tasks and formation holding. Although the worm-gear orientation requires careful mounting, it fits within the 30 cm diameter constraint, unlike the E-S Planetary motor which was rejected for its prohibitive length and high unit cost.
 
 
 \newpage
 
-\section{Detailed CAD Design}
+\section{Kinematic Hardware Summary}
 \label{sec:cad_design}
 
-\subsection{CAD Modeling \& Geometry}
-The physical realization of the Ausra robot follows modular "Tri-Level Stack" architecture. This design allows for a clear separation between high-current power systems, low-level control logic, and high-level perception hardware. The assembly was modeled in SolidWorks to ensure precise tolerances, specifically for the radial symmetry of the locomotion system. The assembly of the full robot is based on mounting all the hardware components we selected previously.
+The physical realization of the Ausra robot follows a modular stack architecture, separating high-current power, low-level logic, and high-level perception to minimize interference and optimize weight distribution.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\linewidth]{figures/Chapter 3/vertical_exploded_view.jpg}
-    \caption{Vertical Exploded View of the Robot Stack}
-    \label{fig:exploded_stack}
-\end{figure}
-
-\newpage
-
-\subsubsection{Layer 1: The Locomotion \& Power Drive Base Plate}
-The first layer of the Ausra robot acts as the structural and mechanical foundation of the entire system. Its primary role is to serve as a rigid, high-torque platform that translates digital control vectors into physical movement. In an omni-directional swarm robot, the base plate must not only support the static weight of the upper electronics stack but also withstand the dynamic, multi-directional forces generated during rapid translations and rotations. Consequently, the design of this layer focuses heavily on structural rigidity, mechanical load distribution, and power transmission integrity.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{figures/Chapter 3/Locomotion_and_Power_Drive_Base_Plate_exploded_view.jpg}
-    \caption{Base Plate Exploded View}
-    \label{fig:base_plate}
-\end{figure}
-
-\paragraph{A. Actuation and Drivetrain Assembly}
-Each motor is anchored to the base plate via a high-strength bracket positioned at one of the three 120\degree\ radial intervals, ensuring balanced kinematics and a centred CoG. A critical departure from hobby-grade designs is the auxiliary bearing bracket fitted to each drive line: it houses a ball bearing that supports the distal end of the steel driveshaft, absorbing radial shocks before they can reach the worm-gear's brass internals and extending motor service life. The driveshaft (8~mm diameter, 50~mm length, precision-ground steel) couples the motor's 6~mm D-bore output to the Omni-wheel via aluminium set-screw couplers at each end, providing zero-slip torque transmission without adding significant mass.
-
-\paragraph{C. Integrated Power Control and Signal Integrity}
-The top surface of the first layer functions as the high-current "Engine Room" of the robot. To protect the sensitive perception sensors and microcontrollers on the upper layers from Electromagnetic Interference (EMI) and electrical noise, the high-power components are localized here. Two Cytron motor drivers are mounted directly to the base plate, positioned in close proximity to the actuators. This strategic placement minimizes the length of high-current wiring, which in turn reduces voltage drops and parasitic inductance that can occur during rapid motor reversals.
-Furthermore, this layer includes a dedicated Buck Converter specifically for logic regulation. This converter steps down the main 12V battery supply to a stable logic-level voltage for the motor drivers. By isolating the driver logic with a dedicated regulator on the base layer, the system gains a layer of protection against "brownouts." Even during peak current draws—such as when the robot must overcome high static friction—the drivers' logic remains stable, ensuring the ESP32 always maintains consistent control over the actuators.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\linewidth]{figures/Chapter 3/Integrated_Power_Control_and_Signal_Integrity.jpg}
-    \caption{Integrated Power Control and Signal Integrity}
-    \label{fig:power_control}
-\end{figure}
-
-\subsubsection{Layer 2: Energy Storage \& Signal Processing}
-The battery is mounted on the underside of Layer~2 in a custom 3D-printed holder, positioning the heaviest component as low as possible to minimise the CoG height and reduce tipping moments during high-acceleration manoeuvres. The ESP32 and its shield occupy the top surface, physically separated from the base-layer high-current wiring to reduce EMI crosstalk. A secondary buck converter provides clean 5~V/3.3~V rails for the ESP32 and sensors, a centralised SPL connector block distributes raw battery voltage to each subsystem in a star topology, and a perimeter-mounted master switch provides a hardware kill capability.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\linewidth]{figures/Chapter 3/Layer_2_assembeled.jpg}
-    \caption{Assembled Layer 2 Control Hub}
-    \label{fig:layer2_assembled}
-\end{figure}
-
-
-\subsubsection{Layer 3: Perception \& High-Level Intelligence}
-The third and final layer of the Ausra robot represents the "apex" of its design, both physically and functionally. While the lower layers handle the brute force of locomotion and the steady logic of power management, the third layer is dedicated entirely to perception, spatial reasoning, and high-level autonomous decision-making. Positioned at the highest point of the stack, this layer provides the sensors with an unobstructed view of the environment, which is paramount for a swarm system tasked with collaborative 2D and 3D mapping.
-
-\paragraph{A. High-Level Computing and Spatial AI Integration}
-At the heart of this layer sits the NVIDIA Jetson Orin Nano, which serves as the robot’s primary processing unit. By mounting the Jetson centrally on the top plate, the design ensures that its heat sink remains exposed to ambient air for better thermal management while keeping its mass balanced over the robot's center of rotation. This board runs the heavy ROS2 (Robot Operating System 2) stack, orchestrating the complex communication between individual swarm members and processing the high-bandwidth data coming from the perception sensors.
-Adjacent to the computing board is the OAK-D camera, the robot's primary source of "Spatial AI." In this project, the camera isn't just a passive video feed; it is used to perform real-time object detection and depth estimation. To ensure the reliability of this data, the camera is secured via a custom-designed, 3D-printed vibration-dampening holder. This holder is critical because even minor vibrations from the omni-wheels could introduce "jitter" into the depth frames, leading to errors in the SLAM (Simultaneous Localization and Mapping) process. The camera is strategically positioned at the very edge of the plate, angled to maximize its field of view without the robot's own chassis obscuring the "vision" of the lower-plane obstacles.
-
-\paragraph{B. Navigation Sensors and SLAM Hardware}
-To achieve precise 2D mapping, the Ausra robot relies on the fusion of LiDAR and inertial data. The mounting strategy for these components on the third layer is driven by the need for geometric accuracy:
 \begin{itemize}
-    \item \textbf{Elevated LiDAR Platform:} The LiDAR unit is the "eyes" of the 2D SLAM system. To prevent the laser from hitting the robot’s internal components or the protective outer shell, it is mounted on an elevated, secondary plate. This elevation ensures a completely unobstructed 360\degree\ horizontal scan, allowing the robot to detect walls, furniture, and other swarm members at a distance without "blind spots" created by its own structure.
-    \item \textbf{Precision IMU Placement:} Orientation data is handled by the Inertial Measurement Unit (IMU), which is fixed to a small, dedicated PCB. For a mechatronics platform, the placement of the IMU is vital; it is mounted as close as possible to the robot's vertical axis of rotation. This minimizes "centripetal acceleration" noise the false readings that occur when an IMU is mounted far from the center ensuring that when the robot spins in place, the orientation data remains clean and drift-free.
+    \item \textbf{Base Layer (Locomotion):} The primary acrylic base plate serves as the high-torque foundation, anchoring the three JGY-370 motors at precise 120\degree\ radial intervals. It acts as the high-current "Engine Room", localizing the Cytron motor drivers and a 12V buck converter near the actuators to minimize parasitic inductance and EMI crosstalk.
+    \item \textbf{Mid Layer (Control Hub):} The intermediate layer houses the heavy 20V battery to maintain a low center of gravity. The ESP32-S3 microcontroller is mounted here, physically separated from the noisy motor wiring to maintain clean signal integrity for the micro-ROS serial line.
+    \item \textbf{Top Layer (Perception):} The apex of the stack is dedicated entirely to spatial reasoning. The NVIDIA Jetson Orin Nano, OAK-D camera, and 2D LiDAR are mounted centrally to provide an unobstructed 360\degree\ horizontal scan and maintain rotational invariance for the SLAM algorithms. The IMU is placed directly on the vertical axis of rotation to eliminate centripetal acceleration noise.
 \end{itemize}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{figures/Chapter 3/layer_3_assembeled.jpg}
-    \caption{Assembled Layer 3 Perception Stack}
-    \label{fig:layer3_assembled}
-\end{figure}
+A 3D-printed PLA outer shell protects the sensitive internal electronics from external impacts and provides a uniform physical boundary for the swarm.
 
-
-\newpage
-\subsubsection{Protective Enclosure (The Outer Shell \& Top Cover)}
-Surrounding these three layers is an external wall and cover made from 3D-printed PLA. From a design standpoint, this shell serves two purposes: protecting the sensitive internal electronics from external impacts and providing a clean, aesthetic finish to the swarm unit. Recognizing the need for frequent hardware adjustments during the research phase, the shell was designed as a "split-shell" system. It consists of 2 parts that lock together. This allows us to remove half of the shell to access the Jetson’s ports or the ESP32’s micro-USB connection on the layer below without having to fully disassemble the robot or disturb the calibration of the LiDAR and camera on the top plate.
-This layering strategy ensures that the Ausra robot is not just a collection of parts, but a highly organized, modular system where each component is placed specifically to optimize its functional performance and ease of maintenance.
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/Chapter 3/3d_printed_enclosure_v1.jpg}
-        \caption{Part 1}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/Chapter 3/3d_printed_enclosure_v2.jpg}
-        \caption{Part 2}
-    \end{subfigure}
-    
-    \vspace{0.5cm}
-    
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/Chapter 3/3d_printed_enclosure_v3.jpg}
-        \caption{Assembled}
-    \end{subfigure}
-    \caption{Protective Enclosure Design}
-    \label{fig:enclosure}
-\end{figure}
 
 
 \section{Kinematic Modeling and URDF Generation}
