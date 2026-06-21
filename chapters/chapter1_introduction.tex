@@ -8,9 +8,46 @@
 \section{Overview}
 \label{sec:overview}
 
-The field of robotics has witnessed tremendous growth over the past decades, evolving from single-purpose industrial manipulators to sophisticated autonomous systems capable of operating in complex, unstructured environments \cite{siciliano2016robotics}. Among the most promising advancements in this domain is the emergence of \textbf{swarm robotics} --- a paradigm inspired by biological systems such as ant colonies and beehives \cite{dorigo2021swarm}. It emphasizes collective behavior, where simple individual agents interact locally with one another and their environment to achieve complex global objectives.
+The field of robotics has witnessed tremendous growth over the past decades, evolving from single-purpose industrial manipulators to sophisticated autonomous systems capable of operating in complex, unstructured environments \cite{siciliano2016robotics}. Among the most promising advancements in this domain is the emergence of \textbf{swarm robotics} --- a paradigm inspired by biological systems such as ant colonies and beehives \cite{dorigo2021swarm}. It emphasizes collective behavior, where simple individual agents interact locally with one another and their environment to achieve complex global objectives that exceed the capabilities of any single unit.
 
-One of the most critical challenges in autonomous navigation is Simultaneous Localization and Mapping (SLAM) \cite{thrun2005probabilistic}. While single-robot SLAM has matured significantly, it remains limited by its reliance on a single point of failure and its linear progression in time. This project explores the implementation of a collaborative 2D mapping system using robotic swarms. By developing multiple agents equipped with LiDAR and depth cameras, the system can explore indoor environments and detect victims --- such as in office buildings, warehouses, or disaster zones --- concurrently, fusing individual data into a singular, cohesive global map.
+This thesis presents the \textbf{Autonomous Unified Swarm Robotics Architecture (AUSRA)} --- a cost-effective, modular platform of three-wheel omnidirectional mobile robots designed for collaborative two-dimensional mapping, autonomous exploration, and victim localization in indoor and disaster-response scenarios such as office buildings, warehouses, and post-earthquake structures. One of the most critical challenges in autonomous navigation is Simultaneous Localization and Mapping (SLAM) \cite{thrun2005probabilistic}. While single-robot SLAM has matured significantly, it remains constrained by a single point of failure and by mapping time that scales linearly with the explored area. AUSRA addresses these limitations by deploying multiple agents that explore an unknown environment concurrently and fuse their individual maps into a single, cohesive global map.
+
+The work spans the complete engineering lifecycle and was carried out over two academic semesters. The \textbf{first semester} established the foundations: mechanical design and material selection, a high-fidelity Gazebo simulation environment, a custom omnidirectional motion-control plugin developed from scratch for the three-wheel holonomic platform, and a single-robot autonomy stack (SLAM, EKF sensor fusion, and navigation) validated in simulation, alongside the manufacturing and bring-up of the first physical chassis. The \textbf{second semester} carried the system onto real hardware: full compute and sensor bring-up, low-level controller tuning, real-world SLAM, EKF, and \textbf{Nav2} navigation, and the extension of the platform into a coordinated multi-robot swarm with collaborative map merging and global exploration.
+
+The result is a validated physical platform. A single robot operates fully autonomously and robustly on real hardware --- performing tuned SLAM, Extended Kalman Filter (EKF) sensor fusion, holonomic \textbf{Nav2} navigation, and frontier-based exploration. Building on this, collaborative map merging and localization were demonstrated on a physical swarm of \textbf{two and three robots}: each robot maps a portion of the environment, and a merged global map together with the active exploration frontiers is observed at a base station. Global frontier-based exploration was validated in both simulation and real life, with three robots cooperatively mapping a large indoor area faster than a single agent. AUSRA is positioned as a \textbf{proof-of-concept and reference architecture} for collaborative map merging in swarm robotics: it deliberately prioritizes solving the integration and coordination challenges of the concept over exhaustively optimizing any single subsystem. At approximately \textbf{\$420 per unit} % [CONFIRM cost vs real BOM]
+and achieving \textbf{[XX]\% SLAM coverage}, % [CONFIRM coverage figure from Ch.9 results]
+AUSRA demonstrates that capable swarm robotics research platforms can be built from commercially available components and open-source software.
+
+\begin{figure}[H]
+    \centering
+    % [FIGURE: AUSRA system architecture block diagram --- one robot (Jetson Orin Nano
+    %  <-> ESP32-S3 over micro-ROS; LiDAR, IMU, wheel encoders) replicated x3, linked over
+    %  Wi-Fi to a base-station map-merging node. Highest-value figure in the chapter.]
+    % \includegraphics[width=\textwidth]{system_architecture_overview.png}
+    \caption{AUSRA system architecture: a swarm of omnidirectional robots, each pairing a Jetson Orin Nano with an ESP32-S3 micro-ROS controller, sharing maps over Wi-Fi for collaborative merging at the base station.}
+    \label{fig:system_architecture}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        % [FIGURE: annotated photo/render of the built single robot, components labeled
+        %  (Jetson, ESP32-S3, LiDAR, IMU, omni wheels, battery).]
+        % \includegraphics[width=\linewidth]{ausra_robot_annotated.png}
+        \caption{The assembled AUSRA robot with key components labeled.}
+        \label{fig:robot_annotated}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        % [FIGURE: results teaser --- merged global map + frontiers as seen at the base
+        %  station during a 2--3 robot real-world exploration run.]
+        % \includegraphics[width=\linewidth]{merged_map_basestation.png}
+        \caption{Merged global map and exploration frontiers observed at the base station during a multi-robot run.}
+        \label{fig:merged_map_teaser}
+    \end{minipage}
+\end{figure}
 
 \section{Project Motivation}
 \label{sec:motivation}
@@ -43,8 +80,6 @@ One of the most compelling motivations for swarm robotics is scalability. Unlike
 \subsection{Decentralized Intelligence and Reduced Communication Overhead}
 Centralized systems suffer from ``bottlenecking,'' where a single central server must process all incoming LiDAR data, leading to latency and potential crashes. Our motivation lies in leveraging decentralized coordination. By processing local maps on-board and only sharing essential ``map fragments'' or ``keyframes'' with neighbors, the swarm minimizes the bandwidth required. This makes the system viable in buildings with thick concrete walls or poor Wi-Fi signals where a central link would fail.
 
-% Add your content here...
-
 \section{Problem Statement}
 \label{sec:problem_statement}
 
@@ -55,11 +90,10 @@ Despite the theoretical advantages of swarm robotics, practical implementation f
     \item \textbf{Complex Coordination:} Achieving synchronized behavior among multiple autonomous agents requires sophisticated communication and decision-making protocols.
     \item \textbf{Hardware Constraints:} Designing cost-effective, robust, and modular robot platforms remains challenging.
     \item \textbf{Navigation Complexity:} Multi-robot path planning must account for collision avoidance, traffic management, and dynamic obstacles.
+    \item \textbf{Simulation-to-Reality Gap:} Algorithms validated in simulation frequently degrade on physical hardware due to sensor noise, odometry drift, communication latency, and real-time computational limits.
 \end{enumerate}
 
-This project addresses these challenges by developing a comprehensive, unified architecture that integrates mechanical design, electrical systems, and autonomous software into a cohesive framework.
-
-% Add your content here...
+This project addresses these challenges by developing a comprehensive, unified architecture that integrates mechanical design, electrical systems, and autonomous software into a cohesive framework, and by validating that framework on a physical robot swarm. The work is framed as a proof-of-concept: the emphasis is on building and validating a complete, working architecture for collaborative exploration and map merging, rather than on the exhaustive optimization of any individual subsystem.
 
 \section{Project Objectives}
 \label{sec:objectives}
@@ -70,17 +104,17 @@ The primary objectives of the \textbf{AUSRA} (Autonomous Unified Swarm Robotics 
     \item \textbf{Mechanical Design:}
     \begin{itemize}
         \item Design a unified, modular robot chassis suitable for swarm applications.
-        \item Perform systematic selection of materials and actuators using decision matrices.
+        \item Perform systematic engineering trade-off analysis for the selection of materials and actuators.
         \item Validate the design through stress analysis and prototyping.
     \end{itemize}
-    
+
     \item \textbf{Electrical System:}
     \begin{itemize}
         \item Develop a robust power distribution and management system.
         \item Integrate sensors (LiDAR, IMU, encoders) for perception and localization.
         \item Design and implement low-level firmware for motor control and sensor interfacing.
     \end{itemize}
-    
+
     \item \textbf{Autonomous Stack:}
     \begin{itemize}
         \item Implement sensor fusion for accurate localization.
@@ -88,34 +122,57 @@ The primary objectives of the \textbf{AUSRA} (Autonomous Unified Swarm Robotics 
         \item Create a communication framework for swarm coordination.
         \item Design omnidirectional motion control for agile maneuvering.
     \end{itemize}
-    
-    \item \textbf{Integration and Testing:}
+
+    \item \textbf{Hardware Implementation and Swarm Integration:}
     \begin{itemize}
-        \item Integrate all subsystems into a functional prototype.
-        \item Conduct comprehensive testing and performance evaluation.
-        \item Demonstrate swarm behavior with multiple robots.
+        \item Deploy and validate the complete autonomous stack on a physical robot.
+        \item Tune low-level control, sensor fusion, SLAM, and navigation under real-world conditions.
+        \item Scale the system to a coordinated multi-robot swarm with shared, merged mapping.
+        \item Conduct comprehensive testing and performance evaluation of the integrated system.
     \end{itemize}
 \end{enumerate}
 
-% Add your content here...
+\section{Scope, Contributions, and Deliverables}
+\label{sec:scope_contributions}
+
+\subsection{Scope}
+This thesis covers the full design, construction, and validation of the AUSRA platform, from mechanical design through to a coordinated physical swarm. A single robot was built and validated as a fully autonomous, robust agent: localization, SLAM, navigation, and frontier-based exploration are all demonstrated on real hardware. Building on this foundation, the multi-robot collaborative layer --- inter-robot communication, global frontier sharing, and map merging --- was developed in simulation and then demonstrated on a physical swarm of two and three robots, with the merged global map and active frontiers visualized at a base station. The intended application is the cooperative exploration of unknown indoor environments, where deploying several robots maps a large area faster than a single unit. Consistent with its proof-of-concept scope, the system has known operating limits: inter-robot bandwidth currently constrains the volume of data that can be shared during a mission, and real-world obstacle avoidance in the multi-robot configuration is still being hardened, even though it operates reliably in simulation. These limitations define the boundary of the present work and motivate the future directions discussed in Chapter~\ref{chap:conclusion}.
+
+\subsection{Key Contributions}
+The principal contributions of this work are:
+\begin{enumerate}
+    \item A unified, modular, and cost-effective swarm robot platform (approximately \$420 per unit) integrating omnidirectional mobility, edge-AI compute, and native multi-robot support.
+    \item A validated sim-to-real workflow that carries the autonomous stack from a high-fidelity Gazebo simulation to a tuned, operational physical robot.
+    \item A holonomic navigation and exploration pipeline built on ROS~2 Humble, Nav2, \texttt{slam\_toolbox}, EKF sensor fusion, and frontier-based exploration, tuned for true omnidirectional motion.
+    \item A namespace-based multi-robot architecture with Wi-Fi inter-robot communication and a collaborative map-merging strategy that fuses individual robot maps into a shared global map.
+    \item A reproducible, containerized, and documented open-source code base intended to serve as a reference for future swarm robotics research.
+\end{enumerate}
+
+\subsection{Deliverables}
+The tangible deliverables of the project are a fully assembled physical robot prototype (extensible to a three-robot swarm), a complete ROS~2 software stack, a validated simulation environment with collaborative behaviors, and this accompanying documentation.
 
 \section{Thesis Structure}
 \label{sec:thesis_structure}
 
-This thesis is organized into seven chapters as follows:
+This thesis is organized into nine chapters, progressing from design and simulation to physical implementation and swarm integration:
 
 \begin{description}
-    \item[Chapter 1: Introduction] Provides an overview of the project motivation, problem statement, objectives, and thesis organization.
-    
-    \item[Chapter 2: Literature Review] Reviews existing swarm architectures, mechanical design precedents, and control strategies.
-    
-    \item[Chapter 3: Mechanical Design \& Structural Analysis] Details the design requirements, mechanical trials, actuator selection, hardware assembly, and stress analysis.
-    
-    \item[Chapter 4: Electrical System \& Low-Level Configuration] Covers the electrical topology, component specifications, PCB design, and firmware implementation.
-    
-    \item[Chapter 5: High-Level Configuration \& Autonomous Stack] Describes the system architecture, communication stack, localization, planning, and control subsystems.
-    
-    \item[Chapter 6: Experimental Results \& Discussion] Presents the testing methodology, experimental results, and analysis.
-    
-    \item[Chapter 7: Conclusion \& Future Recommendations] Summarizes the achievements and suggests directions for future work.
+    \item[Chapter 1: Introduction] Provides an overview of the project motivation, problem statement, objectives, scope, contributions, and thesis organization.
+
+    \item[Chapter 2: Literature Review] Reviews existing swarm architectures, mechanical design precedents, control strategies, multi-robot SLAM, and collaborative mapping approaches.
+
+    \item[Chapter 3: Hardware Selection \& Mechanical Design] Details the design requirements, mechanical trials, actuator selection, hardware assembly, and structural analysis.
+
+    \item[Chapter 4: Electrical System Architecture \& Embedded Design] Covers the electrical topology, component specifications, PCB design, and firmware implementation including the FreeRTOS real-time control loop.
+
+    \item[Chapter 5: Autonomous Navigation Stack --- Architecture \& Simulation] Describes the system architecture, communication stack, localization, planning, control subsystems, and their validation in simulation.
+
+    \item[Chapter 6: Hardware Implementation \& Single-Robot Integration] Presents the transition from simulation to physical hardware, including compute bring-up, firmware tuning, real-world SLAM, sensor fusion, navigation, and autonomous exploration on a single robot.
+
+    \item[Chapter 7: Multi-Robot Swarm, Collaborative Mapping and Perception] Details namespace-based scalability, inter-robot Wi-Fi communication, collaborative map merging, and global frontier-based exploration across the swarm. The chapter also covers the perception and victim-detection pipeline --- dataset collection, YOLO model training and selection, and integration of the OAK-D Lite into the autonomous stack for SAR deployment.
+
+    \item[Chapter 8: Experimental Results \& Discussion] Presents the testing methodology, consolidated simulation and hardware results across all subsystems, and analysis.
+
+    \item[Chapter 9: Conclusion \& Future Recommendations] Summarizes the achievements and suggests directions for future work.
 \end{description}
+

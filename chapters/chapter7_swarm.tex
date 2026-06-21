@@ -1,0 +1,120 @@
+% ============================================================================
+% Chapter 7: Multi-Robot Swarm, Collaborative Mapping and Perception
+% (Merged from former Ch.7 — Swarm/Communication and Ch.8 — Perception)
+% ============================================================================
+
+\chapter{Multi-Robot Swarm, Collaborative Mapping and Perception}
+\label{chap:swarm}
+
+% [TODO: short chapter lead-in: scaling from single-robot autonomy to a coordinated
+%        swarm, and extending the stack with the perception pipeline for victim
+%        detection in the SAR mission]
+
+% ============================================================================
+\section{Namespace-Based Scalability}
+\label{sec:namespace_scalability}
+% [TODO: ROS 2 namespacing of nodes/topics/TF; robot_name sets namespace AND
+%        TF prefix; zero-code-change scaling — adding a third robot requires only
+%        a new namespace value, no source changes]
+
+\subsection{Firmware Namespace Support}
+\label{subsec:firmware_namespace}
+% [TODO: ESP32 receives namespace over serial before micro-ROS init;
+%        micro_ros_agent namespaced via __ns; ensures joint_states and
+%        joint_group_velocity_controller/commands are robot-specific]
+
+\subsection{Namespaced Launch Architecture}
+\label{subsec:namespaced_launch}
+% [TODO: hardware_full_stack.launch.py staged bring-up; PushRosNamespace,
+%        RewrittenYaml frame injection; per-robot TF frames (ausra_1/base_link,
+%        ausra_2/base_link, etc.)]
+
+% ============================================================================
+\section{Replicating the System Across Robots}
+\label{sec:replicating_robots}
+% [TODO: copying the stack to robot 2 and robot 3; verification of correct
+%        movement and mapping per robot; network configuration for multi-agent
+%        ROS 2 discovery (ROS_DOMAIN_ID, FastDDS settings)]
+
+% ============================================================================
+\section{Inter-Robot Communication}
+\label{sec:inter_robot_comms}
+% [TODO: Wi-Fi-based communication; shared topics required for map merging
+%        (/ausra_1/map, /ausra_2/map -> /map_merged); communication architecture;
+%        bandwidth considerations for map topic relay]
+
+% ============================================================================
+\section{Collaborative Map Merging}
+\label{sec:collaborative_map_merge}
+
+\subsection{Map Expansion to a Fixed Global Canvas}
+\label{subsec:map_expansion}
+% [TODO: ausra_map_merge_HW; dynamic SLAM grid -> fixed 1000x1000 canvas;
+%        heartbeat publisher keeps the merge node alive; segfault avoidance
+%        strategy for grid-size mismatches]
+
+\subsection{Known Initial Poses and Spawn Offsets}
+\label{subsec:spawn_offsets}
+% [TODO: tape-measured spawn offsets baked into canvas; known_init_poses=true;
+%        merge into shared global map -> /map_merged; rationale for known-pose
+%        strategy over feature-based merging in sparse disaster-area grids
+%        (see also Section~\ref{subsec:map_merging} in the literature review)]
+
+% ============================================================================
+\section{Global Frontier-Based Exploration}
+\label{sec:global_frontiers}
+% [TODO: exploration driven by the shared /map_merged rather than individual
+%        local maps; each robot's explore_lite instance subscribes to the merged
+%        costmap; validated in simulation, ready for hardware transfer;
+%        inter-robot frontier deconfliction strategy]
+
+% ============================================================================
+\section{Perception and Victim Detection}
+\label{sec:perception}
+\label{chap:perception}   % secondary alias so any future \ref{chap:perception} resolves
+
+% [TODO: section lead-in — role of the OAK-D Lite and the YOLO-based detection
+%        pipeline in the SAR mission; how the merged global map gives victim
+%        detections a world-frame position; tight coupling with the swarm layer
+%        motivates placing this here rather than in a separate chapter]
+
+\subsection{Perception Requirements and Approach}
+\label{sec:perception_requirements}
+% [TODO: victim-detection objective; OAK-D Lite role (onboard MyriadX VPU);
+%        on-robot inference vs. host inference trade-off; integration point
+%        with hardware_full_stack.launch.py]
+
+\subsection{Dataset and Model Training}
+\label{sec:perception_dataset}
+% [TODO: dataset collection and labeling methodology; victim classes defined;
+%        training environment (Google Colab / local GPU); augmentation strategy]
+
+\subsection{Model Iterations and Selection}
+\label{sec:perception_models}
+% [TODO: the multiple model versions/trials evaluated; key metrics (mAP, FPS
+%        on MyriadX, false-positive rate); selection rationale for the final
+%        deployed model]
+
+\subsection{Simulation Perception Model}
+\label{sec:perception_sim}
+% [TODO: Gazebo victim model / actor; detection in the simulated environment;
+%        sim-specific model weights; RViz visualization of detections]
+
+\subsection{Real-World Perception Model}
+\label{sec:perception_real}
+% [TODO: model created for real-world victim detection; deployment on OAK-D Lite
+%        via DepthAI SDK; latency and accuracy on physical hardware]
+
+\subsection{Integration with the Autonomous Stack}
+\label{sec:perception_integration}
+% [TODO: ausra_yolo ROS 2 node; detection -> victim pose stamped in world frame
+%        using depth + TF; reporting to base station; integration into
+%        hardware_full_stack launch pipeline]
+
+% ============================================================================
+\section{Summary}
+\label{sec:swarm_summary}
+% [TODO: chapter summary covering both the multi-robot coordination layer
+%        (namespacing, map merging, global frontier exploration) and the
+%        perception pipeline (YOLO-based victim detection, OAK-D integration);
+%        forward-pointer to Chapter~\ref{chap:results} for measured outcomes]
