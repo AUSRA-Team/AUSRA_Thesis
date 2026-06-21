@@ -154,25 +154,24 @@ The tangible deliverables of the project are a fully assembled physical robot pr
 \section{Thesis Structure}
 \label{sec:thesis_structure}
 
-This thesis is organized into nine chapters, progressing from design and simulation to physical implementation and swarm integration:
+This thesis is organized into eight chapters, progressing from design and simulation to physical implementation and multi-robot swarm integration:
 
 \begin{description}
     \item[Chapter 1: Introduction] Provides an overview of the project motivation, problem statement, objectives, scope, contributions, and thesis organization.
 
-    \item[Chapter 2: Literature Review] Reviews existing swarm architectures, mechanical design precedents, control strategies, multi-robot SLAM, and collaborative mapping approaches.
+    \item[Chapter 2: Literature Review] Reviews existing swarm architectures, mechanical design precedents, control strategies, multi-robot SLAM, collaborative mapping approaches, and frontier exploration methods.
 
     \item[Chapter 3: Hardware Selection \& Mechanical Design] Details the design requirements, mechanical trials, actuator selection, hardware assembly, and structural analysis.
 
-    \item[Chapter 4: Electrical System Architecture \& Embedded Design] Covers the electrical topology, component specifications, PCB design, and firmware implementation including the FreeRTOS real-time control loop.
+    \item[Chapter 4: Electrical System Architecture \& Embedded Design] Covers the electrical topology, component specifications, PCB design, and firmware implementation including the FreeRTOS real-time control loop with dual-core PID and velocity ramping.
 
-    \item[Chapter 5: Autonomous Navigation Stack --- Architecture \& Simulation] Describes the system architecture, communication stack, localization, planning, control subsystems, and their validation in simulation.
+    \item[Chapter 5: Autonomous Navigation, Hardware Implementation, and Perception] A consolidated chapter covering three interconnected topics: (i) the system architecture, communication stack, localization, planning, and control subsystems validated in simulation; (ii) the transition from simulation to physical hardware, including compute bring-up, firmware tuning, real-world SLAM, sensor fusion, Nav2 deployment, and autonomous exploration on a single robot; and (iii) the perception and victim-detection pipeline, including dataset collection, YOLO model training and selection, and integration of the OAK-D Lite into the autonomous stack for SAR deployment.
 
-    \item[Chapter 6: Hardware Implementation \& Single-Robot Integration] Presents the transition from simulation to physical hardware, including compute bring-up, firmware tuning, real-world SLAM, sensor fusion, navigation, and autonomous exploration on a single robot.
+    \item[Chapter 6: Multi-Robot Swarm: Communication and Collaborative Mapping] Details namespace-based scalability, the iterative development of the inter-robot Wi-Fi communication layer (IBSS trials, plain DDS, and the final Zenoh-based architecture), collaborative map merging with the custom \texttt{ausra\_map\_merge\_HW} package, and global frontier-based exploration across the swarm.
 
-    \item[Chapter 7: Multi-Robot Swarm, Collaborative Mapping and Perception] Details namespace-based scalability, inter-robot Wi-Fi communication, collaborative map merging, and global frontier-based exploration across the swarm. The chapter also covers the perception and victim-detection pipeline --- dataset collection, YOLO model training and selection, and integration of the OAK-D Lite into the autonomous stack for SAR deployment.
+    \item[Chapter 7: Experimental Results \& Discussion] Presents the testing methodology, consolidated simulation and hardware results across all subsystems, and analysis of the complete system performance.
 
-    \item[Chapter 8: Experimental Results \& Discussion] Presents the testing methodology, consolidated simulation and hardware results across all subsystems, and analysis.
-
-    \item[Chapter 9: Conclusion \& Future Recommendations] Summarizes the achievements and suggests directions for future work.
+    \item[Chapter 8: Conclusion \& Future Recommendations] Summarizes the achievements, reflects on the design decisions and lessons learned, and suggests directions for future work.
 \end{description}
+
 

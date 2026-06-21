@@ -2,7 +2,7 @@
 % Chapter 5: High-Level Configuration & Autonomous Stack
 % ============================================================================
 
-\chapter{Autonomous Navigation Stack: Architecture and Simulation}
+\chapter{Autonomous Navigation, Hardware Implementation, and Perception}
 \label{chap:autonomous}
 
 This chapter presents the hardware selection, software architecture, and autonomous navigation stack of the AUSRA system, including the high-level computing platform, localization, path planning, motion control, and swarm communication.
@@ -1923,24 +1923,153 @@ This replaces all \texttt{\$\{robot\_name\}} occurrences with \texttt{ausra\_1},
 
 See Appendix \ref{app:urdf_code} for the core chassis definition.
 
-\section{Future Work and Research}
-\label{sec:ch5_future_work}
+% ============================================================================
+% PART II: HARDWARE IMPLEMENTATION AND SINGLE-ROBOT INTEGRATION
+% (content merged from former Chapter 6)
+% ============================================================================
 
-The architecture is designed to support advanced collaborative features currently in research and development.
+\section{From Simulation to Hardware: Overview}
+\label{sec:sim_to_hw_overview}
+% [TODO: real-hardware data-flow diagram: teleop -> Jetson -> micro-ROS agent
+%        -> ESP32 -> motors/encoders -> omni driver -> EKF -> SLAM]
 
-\subsection{Collaborative Algorithms (Planned)}
+\section{Compute Platform Bring-Up}
+\label{sec:compute_bringup}
+% [TODO: Jetson Orin Nano flashing (JetPack), ROS 2 Humble, micro-ROS agent,
+%        sensor driver installation; software stack + versions table]
 
-\begin{itemize}
-    \item \textbf{Single Pose Graph SLAM:} All robots contribute to a unified constraint graph, allowing Loop Closures triggered by Agent A to correct Agent B's pose drift, creating a mathematically consistent global map
-    \item \textbf{mTSP Task Allocation:} Integration of a centralized ``Multiple Traveling Salesman Problem'' solver (using Google OR-Tools) to replace frontier assignment with globally optimal scheduling, minimizing total coverage time
-    \item \textbf{Lazy Traffic Controller:} Decentralized avoidance using ``Velocity Obstacles'' where agents broadcast velocity vectors to neighbors, computing collision-free trajectories in velocity space without central planning
-\end{itemize}
+\section{Sensor Verification (Unit Tests)}
+\label{sec:sensor_verification}
 
-\subsection{Advanced Perception}
+\subsection{LiDAR (RPLIDAR A1)}
+\label{subsec:hw_lidar_test}
+% [TODO: scan in RViz, rate, range; figure lidar_laser_rviz.png]
 
-Future upgrades include:
-\begin{itemize}
-    \item Inter-Process Communication (IPC) for high-frequency camera data handling
-    \item AprilTag detection for automated victim identification and localization
-\end{itemize}
+\subsection{Inertial Measurement Unit}
+\label{subsec:hw_imu_test}
+% [TODO: live IMU data verification; figures IMU_rviz.png, IMU_terminal.png]
+
+\subsection{Depth Camera (OAK-D Lite)}
+\label{subsec:hw_camera_test}
+% [TODO: camera feed / depth verification]
+
+\subsection{Wheel Encoders}
+\label{subsec:hw_encoder_test}
+% [TODO: encoder tick verification]
+
+\section{Micro-ROS Agent--Client Link}
+\label{sec:microros_link}
+% [TODO: serial bring-up, namespace handshake, agent/client verification,
+%        topology diagram; correct baud rate to match firmware]
+
+\section{Manual Teleoperation: \texttt{ausra\_numpad\_teleop}}
+\label{sec:numpad_teleop}
+% [TODO: purpose, keybindings, latched 50 Hz publishing, QoS rationale;
+%        rqt_graph: teleop -> cmd_vel -> omni_driver -> commands -> ESP32]
+
+\section{Omnidirectional Driver on Hardware}
+\label{sec:omni_driver_hw}
+% [TODO: cmd_vel -> inverse kinematics -> per-wheel targets;
+%        encoder joint_states -> forward kinematics -> odom;
+%        hardware_params.yaml listing + launch composition]
+
+\section{Low-Level Firmware Overhaul and PID Tuning}
+\label{sec:firmware_pid_tuning}
+% [TODO: firmware redo; PlotJuggler tuning with wheels off ground;
+%        before/after step response figures; final gains table]
+
+\section{On-Ground Validation and Critical Fixes}
+\label{sec:onground_validation}
+
+\subsection{Odometry vs. Ground-Truth Distance}
+\label{subsec:odom_vs_truth}
+% [TODO: commanded vs measured vs odom-reported distance; path plot]
+
+\subsection{Synchronized Velocity Ramping}
+\label{subsec:ramp_input_fix}
+% [TODO: rotate-then-translate artifact solved by firmware ramping (MAX_ACCEL);
+%        trajectory before/after figures]
+
+\subsection{Encoder CPR Correction}
+\label{subsec:cpr_correction}
+% [TODO: manual PPR check, corrected count, measured odom improvement]
+
+\section{SLAM with Encoder-Only Odometry (Baseline)}
+\label{sec:slam_baseline}
+% [TODO: first slam_toolbox attempt, LiDAR + raw wheel odom, untuned;
+%        drift/jumps/ghosting; figures ghosting_problem.png, initial_odom_drift.png]
+
+\section{Sensor Fusion: IMU + Wheel Odometry via EKF}
+\label{sec:ekf_fusion_hw}
+
+\subsection{IMU Driver Modifications}
+\label{subsec:imu_driver_mods}
+% [TODO: filtering after calibration, covariance assignment for odom vs IMU]
+
+\subsection{EKF Configuration}
+\label{subsec:ekf_config_hw}
+% [TODO: sensor contributions (odom -> x,y,vx,vy; IMU -> yaw,vyaw),
+%        config matrices, process noise, rejection thresholds; yaw drift plot]
+
+\section{Joint EKF and SLAM Tuning}
+\label{sec:joint_ekf_slam_tuning}
+% [TODO: simultaneous tuning loop; key parameters (correlation resolution,
+%        distance_variance_penalty, loop-closure); progressive map quality trio]
+
+\section{Nav2 Deployment on Hardware}
+\label{sec:nav2_hw}
+% [TODO: holonomic Nav2 stack on real robot; DWB critics, SmacPlanner2D,
+%        costmaps, behaviors; obstacle/pathway tuning]
+
+\section{Autonomous Frontier Exploration on Hardware}
+\label{sec:explore_hw}
+% [TODO: explore_lite frontier goals -> Nav2; tuned explore params;
+%        fully autonomous single-robot run]
+
+\section{Integrated Single-Robot Stack}
+\label{sec:integrated_single_robot}
+% [TODO: full stack running together; resource usage; end-to-end latency;
+%        final RViz composite]
+
+% ============================================================================
+% PART III: PERCEPTION AND VICTIM DETECTION
+% (content merged from former Chapter 8 skeleton)
+% ============================================================================
+
+\section{Perception and Victim Detection}
+\label{sec:perception}
+\label{chap:perception}
+% [TODO: section lead-in -- role of the OAK-D Lite and the YOLO-based detection
+%        pipeline in the SAR mission; tight coupling with hardware stack]
+
+\subsection{Perception Requirements and Approach}
+\label{sec:perception_requirements}
+% [TODO: victim-detection objective; OAK-D Lite role; on-robot vs. host inference]
+
+\subsection{Dataset and Model Training}
+\label{sec:perception_dataset}
+% [TODO: dataset collection/labeling; classes; training methodology]
+
+\subsection{Model Iterations and Selection}
+\label{sec:perception_models}
+% [TODO: the multiple models/trials evaluated; metrics; selection rationale]
+
+\subsection{Simulation Perception Model}
+\label{sec:perception_sim}
+% [TODO: model created for simulation; victim model in Gazebo worlds;
+%        detection in the simulated environment]
+
+\subsection{Real-World Perception Model}
+\label{sec:perception_real}
+% [TODO: model created for real-world victim detection; deployment on OAK-D]
+
+\subsection{Integration with the Autonomous Stack}
+\label{sec:perception_integration}
+% [TODO: ausra_yolo node; detection -> localization/reporting;
+%        integration into hardware_full_stack launch]
+
+\section{Chapter Summary}
+\label{sec:ch5_summary}
+% [TODO: summary paragraph covering simulation validation, hardware bring-up
+%        milestones, and perception pipeline; forward-pointer to Chapter~6]
 

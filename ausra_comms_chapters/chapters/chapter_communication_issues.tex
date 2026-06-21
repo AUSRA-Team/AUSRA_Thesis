@@ -1,0 +1,127 @@
+% ============================================================================
+% Chapter: Communication Layer -- Problems Faced and Issues Solved
+% ============================================================================
+
+\chapter{Evolution of the Communication Layer: Problems Faced and Lessons Learned}
+\label{chap:comms_issues}
+
+The communication layer described in Chapter~\ref{chap:communication} is the configuration that works. It is not the configuration the project started with, nor the second, nor the third. This chapter is the honest engineering account of how that endpoint was reached: the approaches that were tried, the failures that were genuinely confusing at the time, the deliberate decision to set one architectural goal aside, and the hardware that was bought to chase it before that decision was made. The dead ends are kept in on purpose --- they are where most of the learning happened, and they explain why the deployed system has the shape it does.
+
+The narrative runs in the order the problems were actually encountered: an ad-hoc link that reported success but carried no traffic; a routing error that mutated as it was debugged; the layer-2 fault behind both; a retreat to a conventional router but still on plain DDS, which flooded the link; the switch to Zenoh that finally made map sharing reliable; a later, well-resourced second attempt at full decentralisation that worked at the link level but revealed a routing requirement too complex to justify; and, last, a timing problem that broke the transport on every reboot until it was tamed.
+
+\section{Initial Network Design: IBSS (Ad-Hoc) Mode}
+\label{sec:ibss}
+
+The original networking design used IBSS --- ad-hoc WiFi --- so that the robots could form a network directly among themselves with no infrastructure. This was a deliberate and reasonable starting point. The project's stated goal is a decentralised swarm, and an ad-hoc, robot-to-robot link matches that philosophy far better than routing every message through a single central access point. In principle, IBSS means the robots themselves \emph{are} the network: there is no privileged node, nothing extra to carry or power, and the network survives the loss of any one robot.
+
+That is the theory. In practice, IBSS is where the communication layer spent the majority of its early troubleshooting effort, and the experience is a large part of the reason the deployed system looks the way it does.
+
+\section{The Ping That Never Arrived, and the BSSID Behind It}
+\label{sec:bssid}
+
+The first concrete symptom was as confusing as it was simple: the devices reported a successful IBSS connection. Each interface showed a ``connected'' status, no errors were raised, and an address could be assigned --- and yet a \texttt{ping} between nodes never succeeded, no matter what was tried. By every per-device indication the link was up; by the only end-to-end test that mattered, there was no link at all.
+
+IBSS provides no DHCP, so addresses had to be assigned by hand, and the first debugging effort went into the IP layer. The earliest symptom was a ``Destination Host Unreachable'' error on ping --- the classic signature of a host that has no usable path to the target on its local segment. Investigating that, the team found that NetworkManager was silently interfering with the manual configuration, overriding settings that had been applied by hand. After NetworkManager was worked around so that the static configuration actually persisted, the error \emph{changed} --- to ``No route to host.'' The mutation of the message from one failure mode to another, as the configuration around it was corrected, was an early hint that the real fault lay below IP entirely.
+
+\begin{notebox}
+\textbf{Addressing detail.} During the ad-hoc experiments the static addresses were, to the best of the project's records, in approximately the \texttt{192.168.1.x} range. This is distinct from the \texttt{192.168.0.x} range used in the final router-based deployment described in Section~\ref{sec:final_arch}, so the two phases are not confused.
+\end{notebox}
+
+The fault below IP turned out to be the BSSID, the identifier that names an ad-hoc cell. In IBSS mode, two stations only share a layer-2 network if they share a BSSID. What the investigation found was that the BSSID was never consistent across the devices, no matter how it was configured manually. Each card came up in what it reported as ``the'' ad-hoc network, but with a different BSSID, which means the cards had in fact formed \emph{separate} cells that never merged at layer~2. That is why neither ping nor any routing fix ever succeeded: there was no common layer-2 segment for IP to run over, even though every device individually believed it was connected. The team was, in effect, configuring routing on top of a link that did not exist.
+
+\begin{notebox}
+\textbf{Why this was hard to see.} Every per-device status check passed --- association succeeded, the interface was ``up,'' an address was assigned. The failure only ever surfaced end-to-end, at the ping. A green light on each node masked a network that did not actually exist between them. This is exactly the class of fault that ad-hoc mode is prone to: cells that silently fail to merge while each node looks perfectly healthy in isolation.
+\end{notebox}
+
+\section{Retreat to Infrastructure WiFi --- but Still on Plain DDS}
+\label{sec:plain_dds}
+
+With the ad-hoc cells refusing to merge, the link itself was changed: the robots were moved off IBSS and onto a conventional infrastructure network, every device associating with a single WiFi router. This immediately solved the layer-2 problem --- one access point means one cell, so the machines could finally reach each other, and a ping between them succeeded for the first time.
+
+What had \emph{not} yet changed at this stage was the ROS~2 transport. The system was still using plain DDS directly over WiFi, and that introduced a different and equally serious problem. As explained in Chapter~\ref{chap:communication}, DDS does not distinguish between local and shared topics; it exposes the entire domain. Each robot publishes on the order of forty to fifty topics --- every sensor stream, transform, costmap, and internal navigation topic --- and DDS placed all of them, and their discovery traffic, onto the shared WiFi link. With two robots launched at once, that meant roughly a hundred topics competing for the same airtime, the overwhelming majority of which no other machine needed.
+
+The effect was a link saturated with traffic that served no purpose. The symptom was telling, because it was not a total failure: on each Jetson the map could be visualised locally and looked perfectly healthy, since that data never had to cross the network. The problem only appeared when the laptop base station --- in its pre-Zenoh form --- tried to pull the maps across for merging. The merged map took several minutes to begin arriving, and even then it came through incomplete. The application-layer throttling in the relay was already in place and was constantly engaged, repeatedly backing off because the round-trip latency it monitored was continuously elevated by the flood. Plain DDS over WiFi, in short, was reachable but not usable: it could share a map in principle, but not reliably, and not in a time that any operator would accept.
+
+\section{The Switch to Zenoh}
+\label{sec:zenoh_switch}
+
+The plain-DDS experience is what motivated the move to Zenoh, and the rationale and mechanics of that transport are the subject of Chapter~\ref{chap:communication}. In the order of this narrative, the important point is the result: once DDS was confined to each machine's loopback interface and Zenoh became the only thing crossing WiFi --- carrying just the compressed map and a heartbeat instead of a hundred unfiltered topics --- map sharing became reliable. The merged map arrived in seconds rather than minutes, complete rather than partial, and the relay's adaptive throttling settled instead of constantly backing off, because the link was no longer saturated. This Zenoh-over-infrastructure-WiFi configuration is the one the swarm has run on ever since, and it is the working baseline against which the remaining experiments were measured.
+
+\section{A Second Attempt at Full Decentralisation: New Cards, IBSS, and batman-adv}
+\label{sec:batman}
+
+With a reliable system in hand, the team returned to the original ambition that infrastructure WiFi had forced them to abandon: true decentralisation, with no dependence on a central router. The dependence on a single access point is a real architectural compromise --- it is a single point of failure for cross-machine communication --- and the project did not want to leave it unexamined simply because the router happened to work. To give the ad-hoc approach the best possible chance this time, new wireless cards (Intel AX210) were purchased and installed specifically for the attempt.
+
+This second attempt at IBSS succeeded at the link level: with the new cards, the ad-hoc network came up and the nodes could reach one another, clearing the BSSID and routing failures that had defeated the first attempt. But success at the link level exposed the deeper, structural problem that had been waiting underneath all along, and it is a problem of \emph{topology} rather than configuration. A WiFi radio only provides a direct link between nodes that are within range of each other. As soon as the swarm spreads out, the connectivity forms chains rather than a fully-connected graph: a node A can reach a node B, and B can reach a node C, but A and C are out of direct range of each other, as illustrated in Figure~\ref{fig:abc}. A genuine mesh requires \emph{multi-hop routing} --- B forwarding traffic on behalf of A and C --- and ad-hoc WiFi on its own does not provide it.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        robot/.style={circle, draw=asuBlue, thick, fill=blue!5,
+                      minimum size=1.3cm, font=\bfseries},
+        link/.style={very thick, asuBlue},
+        nolink/.style={very thick, red!70, dashed}]
+        \node[robot] (A) at (0,0) {A};
+        \node[robot] (B) at (4,0) {B};
+        \node[robot] (C) at (8,0) {C};
+        \draw[link] (A) -- (B) node[midway, above, font=\small\itshape, black] {in range};
+        \draw[link] (B) -- (C) node[midway, above, font=\small\itshape, black] {in range};
+        \draw[nolink] (A) to[bend right=35] node[midway, below, font=\small\itshape, black] {out of range --- no direct link} (C);
+    \end{tikzpicture}
+    \caption{The A--B--C range limitation. Node A reaches B and B reaches C, but A and C are out of direct WiFi range. A direct A--C path would require B to forward traffic on their behalf --- multi-hop routing that ad-hoc WiFi does not provide on its own.}
+    \label{fig:abc}
+\end{figure}
+
+Zenoh's peer mesh operates at the application layer; it routes data between Zenoh sessions, but it cannot manufacture a layer-2 or layer-3 path where the network itself does not provide one. Achieving genuine multi-hop forwarding between robots over ad-hoc WiFi would mean adding \texttt{batman-adv} --- a layer-2 mesh routing protocol --- \emph{underneath} Zenoh and on top of IBSS. That is the three-layer stack shown in Figure~\ref{fig:batman_stack}: IBSS at the link layer, batman-adv providing multi-hop routing over it, and Zenoh carrying the ROS~2 data on top.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        layer/.style={rectangle, draw=asuBlue, thick, rounded corners,
+                      minimum width=10cm, minimum height=1.2cm, align=center,
+                      fill=blue!4}]
+        \node[layer] (z) {\textbf{Zenoh} --- ROS~2 data transport (application layer)};
+        \node[layer, below=0.45cm of z] (b) {\textbf{batman-adv} --- multi-hop mesh routing (\emph{never implemented})};
+        \node[layer, below=0.45cm of b, fill=red!4] (i) {\textbf{IBSS} --- ad-hoc WiFi link layer};
+    \end{tikzpicture}
+    \caption{The three-layer stack a true robot-to-robot mesh would require. The middle layer, \texttt{batman-adv}, is the piece that was identified as necessary but deliberately not implemented; without it, Zenoh alone cannot route across the A--B--C gap.}
+    \label{fig:batman_stack}
+\end{figure}
+
+At this point a deliberate decision was made: stop pursuing that path. \texttt{batman-adv} was identified as the correct technical solution for multi-hop robot-to-robot routing, but layering and debugging a three-tier IBSS-plus-batman-adv-plus-Zenoh stack would have added substantial complexity to the project for a capability that the working Zenoh-over-WiFi system already approximated well enough for the intended scenarios. The ad-hoc experiment was therefore wound down even though the link itself now worked, the AX210 cards were left running in ordinary infrastructure mode, and the system returned to the reliable Zenoh-over-WiFi baseline. This is a scoped, documented engineering decision rather than an unsolved bug: the team knows exactly what full mesh connectivity would take and chose not to build it within this project.
+
+\section{The Configuration That Works}
+\label{sec:final_arch}
+
+The deployed system, then, is the one arrived at after all of the above: standard infrastructure WiFi, with every device --- both Jetsons and the laptop --- associating with one common router, the AX210 cards running in ordinary station mode, and Zenoh as the only cross-network transport, carrying only the compressed map and the heartbeat. The router provides DHCP, so each device receives its own address in the \texttt{192.168.0.x} range, and the small amount of multicast that Zenoh's own peer discovery needs works dependably through the access point. Table~\ref{tab:ibss_vs_infra} sets the original ad-hoc design and the deployed design side by side, and it doubles as a summary of the journey this chapter has described.
+
+\begin{table}[H]
+    \centering
+    \caption{The original IBSS design against the deployed infrastructure design.}
+    \label{tab:ibss_vs_infra}
+    \begin{tabularx}{\textwidth}{@{}l X X@{}}
+        \toprule
+        \textbf{Concern} & \textbf{IBSS (original goal)} & \textbf{Infrastructure (deployed)} \\
+        \midrule
+        L2 cell consistency & BSSIDs never merged on first attempt & Single AP; one consistent cell \\
+        Addressing & Manual static IPs; NetworkManager fought it & DHCP from router (\texttt{192.168.0.x}) \\
+        End-to-end ping & Failed first attempt; worked with new cards & Works \\
+        ROS~2 transport & --- & Zenoh (DDS pinned to loopback) \\
+        Plain DDS over the link & Floods $\sim$100 topics; map merge unreliable & Avoided; only 2 topics cross WiFi \\
+        Multi-hop between robots & Would require batman-adv & Not provided (scoped out) \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Time Synchronisation: Clocks That Reset on Every Boot}
+\label{sec:time_sync}
+
+The last problem the layer faced was timing, and unlike the others it reappeared on every single power cycle rather than being a one-time configuration fight. The Jetson Orin Nano boards used as the robots' onboard computers have no real-time clock battery, so their system clocks reset to a default time every time they boot. The robot network has no internet access, so the Network Time Protocol is not available to correct this automatically: every boot starts with the clock wrong, often by a large margin.
+
+This is not a cosmetic problem for the communication layer, because Zenoh timestamps the data it carries using a Hybrid Logical Clock, which combines the machine's wall clock with a logical counter to order events across the swarm. When two machines' wall clocks disagree by more than roughly 500~milliseconds, Zenoh rejects the offending timestamps, and the log fills with rejection messages. After a fresh boot the skew was not a few hundred milliseconds but potentially hours, far outside any tolerance the logical clock was designed to absorb.
+
+\begin{notebox}
+\textbf{Honest detail.} The timestamp rejection is documented as non-fatal: Zenoh replaces the offending timestamp and still delivers the data, so maps do continue to flow even while the log floods. Tight clock agreement was nonetheless treated as a hard prerequisite, for two reasons. A flooded log hides genuine problems behind thousands of repeated warnings, and a large skew is itself a signal that something is wrong before the system has even started doing useful work.
+\end{notebox}
+
+The fix is a per-boot step rather than a background service, precisely because there is nothing on the robot network to synchronise against. The laptop base station is designated the single source of truth, and at the start of each session a small script pushes the laptop's clock to each Jetson over SSH, sending the time as a sub-second epoch value so that the residual skew after the network round-trip stays comfortably inside the 500~millisecond tolerance. One ordering caveat was learned in practice: because setting the clock causes a time jump, if the Zenoh bridge is already running when the correction is applied, the backward jump confuses it. The clock is therefore always synchronised before the stack is launched, and if it is corrected afterwards the bridge is restarted. With that single step in the startup routine, the timing problem is fully contained, and it is the last piece of the communication layer as it stands today.

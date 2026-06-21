@@ -1,6 +1,6 @@
 % ============================================================================
-% Chapter 8: Experimental Results & Discussion
-% (Renumbered from Ch.9 after Ch.7+Ch.8 swarm/perception merge)
+% Chapter 7: Experimental Results & Discussion
+% (formerly Chapter 9)
 % ============================================================================
 
 \chapter{Experimental Results and Discussion}
@@ -648,14 +648,14 @@ Figure~\ref{fig:frontier_exploration_sequence} presents the temporal progression
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Frontier_exploration_1.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Frontier_exploration_1.png}
         \caption{Initial state: Robot at center with limited coverage. Unknown space (gray) dominates. First frontiers (green) at sensor boundary.}
         \label{fig:frontier_1}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Frontier_exploration_2.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Frontier_exploration_2.png}
         \caption{Early exploration ($\sim$45s): Robot navigated to first frontier. Mapped area (white) expands. New frontiers emerge at boundaries.}
         \label{fig:frontier_2}
     \end{subfigure}
@@ -664,14 +664,14 @@ Figure~\ref{fig:frontier_exploration_sequence} presents the temporal progression
     
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Frontier_exploration_3.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Frontier_exploration_3.png}
         \caption{Mid-exploration ($\sim$90s): Coverage $\approx$50\%. Obstacles (black) mapped. Frontier clusters along unexplored boundaries.}
         \label{fig:frontier_3}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Frontier_exploration_4.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Frontier_exploration_4.png}
         \caption{Advanced exploration ($\sim$135s): Coverage exceeds 80\%. Remaining frontiers in corners and narrow passages.}
         \label{fig:frontier_4}
     \end{subfigure}
@@ -682,7 +682,7 @@ Figure~\ref{fig:frontier_exploration_sequence} presents the temporal progression
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{figures/Chapter 6/Frontier_exploration_5.png}
+    \includegraphics[width=0.6\textwidth]{figures/Chapter 7/Frontier_exploration_5.png}
     \caption{Exploration complete ($<$3 min): 97\% coverage achieved. All accessible frontiers eliminated. Unmapped regions represent areas blocked by obstacle configurations.}
     \label{fig:frontier_5}
 \end{figure}
@@ -724,7 +724,7 @@ Figure~\ref{fig:robot_heading_simulation} demonstrates the omnidirectional motio
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{figures/Chapter 6/Robot_heading_in_simulation.png}
+    \includegraphics[width=0.85\textwidth]{figures/Chapter 7/Robot_heading_in_simulation.png}
     \caption{Demonstration of omnidirectional motion in Gazebo simulation. The RViz velocity marker (red arrow) indicates a pure lateral velocity command ($v_y$) with zero forward velocity ($v_x = 0$) and zero angular velocity ($\omega = 0$). The robot translates sideways while maintaining constant heading, demonstrating the decoupled motion capabilities enabled by the omnidirectional kinematic model (Section~\ref{subsec:omni_driver}).}
     \label{fig:robot_heading_simulation}
 \end{figure}
@@ -770,14 +770,14 @@ Figure~\ref{fig:complete_stack_sequence} presents the progression of a complete 
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Complete_stack_1.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Complete_stack_1.png}
         \caption{System initialization: Gazebo world loaded (left), RViz displays initial robot pose with empty map (right). SLAM, Nav2, and exploration nodes active. TF tree established.}
         \label{fig:complete_stack_1}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Complete_stack_2.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Complete_stack_2.png}
         \caption{Early exploration ($\sim$20s): First LiDAR scans processed by \texttt{slam\_toolbox}. Occupancy grid begins forming. Initial frontiers detected and first navigation goal set.}
         \label{fig:complete_stack_2}
     \end{subfigure}
@@ -786,14 +786,14 @@ Figure~\ref{fig:complete_stack_sequence} presents the progression of a complete 
     
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Complete_stack_3.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Complete_stack_3.png}
         \caption{Mid-exploration ($\sim$50s): Significant map coverage achieved. Nav2 global planner (green line) computes paths to frontier goals. Local planner handles real-time obstacle avoidance.}
         \label{fig:complete_stack_3}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Complete_stack_4.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Complete_stack_4.png}
         \caption{Advanced exploration ($\sim$80s): Map nearing completion. Frontier exploration targets remaining unmapped corners. SLAM loop closures improve map consistency.}
         \label{fig:complete_stack_4}
     \end{subfigure}
@@ -802,7 +802,7 @@ Figure~\ref{fig:complete_stack_sequence} presents the progression of a complete 
     
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/Chapter 6/Complete_stack_5.png}
+        \includegraphics[width=\textwidth]{figures/Chapter 7/Complete_stack_5.png}
         \caption{Mission complete (1:40): 95\% coverage achieved. No remaining frontiers. Complete occupancy grid map generated, ready for localization-only mode deployment.}
         \label{fig:complete_stack_5}
     \end{subfigure}

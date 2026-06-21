@@ -1,0 +1,680 @@
+% ============================================================================
+% Chapter 6: Multi-Robot Swarm: Communication and Collaborative Mapping
+% (formerly Chapter 7)
+% ============================================================================
+
+\chapter{Multi-Robot Swarm: Communication and Collaborative Mapping}
+\label{chap:swarm}
+
+% [TODO: short chapter lead-in: scaling from single-robot autonomy to a coordinated
+%        swarm, and extending the stack with the perception pipeline for victim
+%        detection in the SAR mission]
+
+% ============================================================================
+\section{Namespace-Based Scalability}
+\label{sec:namespace_scalability}
+% [TODO: ROS 2 namespacing of nodes/topics/TF; robot_name sets namespace AND
+%        TF prefix; zero-code-change scaling — adding a third robot requires only
+%        a new namespace value, no source changes]
+
+\subsection{Firmware Namespace Support}
+\label{subsec:firmware_namespace}
+% [TODO: ESP32 receives namespace over serial before micro-ROS init;
+%        micro_ros_agent namespaced via __ns; ensures joint_states and
+%        joint_group_velocity_controller/commands are robot-specific]
+
+\subsection{Namespaced Launch Architecture}
+\label{subsec:namespaced_launch}
+% [TODO: hardware_full_stack.launch.py staged bring-up; PushRosNamespace,
+%        RewrittenYaml frame injection; per-robot TF frames (ausra_1/base_link,
+%        ausra_2/base_link, etc.)]
+
+% ============================================================================
+\section{Replicating the System Across Robots}
+\label{sec:replicating_robots}
+% [TODO: copying the stack to robot 2 and robot 3; verification of correct
+%        movement and mapping per robot; network configuration for multi-agent
+%        ROS 2 discovery (ROS_DOMAIN_ID, FastDDS settings)]
+
+% ============================================================================
+\section{Designing a Bandwidth-Efficient Communication Layer}
+\label{sec:comms_bandwidth}
+
+The AUSRA swarm shares one resource that is both scarce and unreliable: the WiFi link between the robots and the base station. Every robot runs a complete autonomy stack on its own onboard computer, but the maps each robot builds are only useful to the rest of the swarm if they can cross that link without saturating it. This section describes how the communication layer was designed to move map data between machines efficiently: the transport that was chosen, the way local traffic is isolated from cross-network traffic, and the compression pipeline that reduces a map from roughly one megabyte to roughly one kilobyte before it is ever placed on the air.
+
+A short framing makes the rest of the section easier to read. Bandwidth on a shared 802.11 link is not merely limited, it is \emph{contended}: every robot, the base station, and any unrelated device on the same channel compete for the same airtime, and the effective throughput collapses under broadcast or multicast load to a small fraction of the headline link rate. The design goal of this layer is therefore not raw speed but discipline --- placing as little as possible on the wire, and placing only what genuinely needs to be shared between machines. The map-\emph{merging} algorithm that ultimately consumes this data is treated separately; the concern here is strictly the efficient and reliable delivery of bytes between machines. Figure~\ref{fig:comms_stack} shows the three layers this section works through, from the physical link at the bottom to the application-level relay at the top.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        layer/.style={rectangle, draw=asuBlue, thick, rounded corners,
+                      minimum width=11cm, minimum height=1.5cm, align=center,
+                      fill=blue!4}]
+        \node[layer] (app) {\textbf{Application layer}\\ relay node: compression, adaptive throttling, delta detection, heartbeat};
+        \node[layer, below=0.5cm of app] (trans) {\textbf{Transport layer}\\ Zenoh bridge (peer mesh) --- crosses WiFi, strict topic allowlist};
+        \node[layer, below=0.5cm of trans] (phys) {\textbf{Physical layer}\\ WiFi 802.11 --- all machines associated to one infrastructure access point};
+        \draw[->, thick, asuBlue] (app.south) -- (trans.north);
+        \draw[->, thick, asuBlue] (trans.south) -- (phys.north);
+    \end{tikzpicture}
+    \caption{The AUSRA communication stack. DDS traffic is confined to each machine's loopback interface; only the Zenoh transport layer crosses WiFi, and it carries only the two allowlisted topics produced by the application-layer relay.}
+    \label{fig:comms_stack}
+\end{figure}
+
+\subsection{The DDS-over-WiFi Bottleneck}
+\label{subsec:dds_bottleneck}
+
+ROS~2 communicates through the Data Distribution Service (DDS), the middleware layer that sits beneath the ROS~2 application interface. By default, DDS discovers peers using UDP multicast: when a node starts, it announces every topic it publishes or subscribes to and listens for the announcements of others, so that the middleware can automatically match publishers to subscribers across the network. On a wired local-area network this discovery traffic is effectively invisible. On WiFi it is not.
+
+The root of the problem is that DDS does not distinguish between topics that are meant to stay on one machine and topics that are meant to cross the network. It gossips discovery traffic for \emph{every} node and \emph{every} topic on every machine that shares a \texttt{ROS\_DOMAIN\_ID}. A single AUSRA robot does not run a handful of nodes; it runs SLAM Toolbox, the full Nav2 navigation stack, the lifecycle managers that bring those nodes up, the costmap layers, the transform tree, and the sensor drivers. Each of those is a DDS participant with many endpoints, and each endpoint announces itself repeatedly. Across two or three robots this becomes hundreds of endpoints, all broadcasting their existence over the same contended channel.
+
+The consequence is a discovery storm. WiFi access points handle multicast poorly: multicast frames are typically transmitted at a low basic rate and are throttled under load, which is precisely the condition this traffic creates. The flood of discovery packets then starves the few messages that actually matter --- the map and pose updates the swarm depends on. The observable symptoms were exactly what this model predicts: the global map and pose topics arrived late or were dropped outright, and Nav2 periodically reported that it had lost connection to topics it expected to be continuous.
+
+It is worth being clear about what does \emph{not} solve this. Throttling the rate at which the application publishes large messages --- which the AUSRA relay does, and which is described in Section~\ref{subsec:map_compression} --- reduces the volume of \emph{data} traffic, but it cannot touch the \emph{discovery} traffic, because discovery is generated by the middleware below the application. No matter how infrequently the application publishes, DDS keeps announcing every endpoint. The discovery storm is therefore structural: solving it requires changing how discovery works, not how often the application sends data. This realisation is what motivated every design decision that follows.
+
+\subsection{Isolating Local Traffic: \texttt{ROS\_LOCALHOST\_ONLY=1}}
+\label{subsec:localhost_only}
+
+The first design decision follows directly from that diagnosis. If DDS multicast is the source of the storm, then DDS should not be allowed to reach the WiFi interface at all. Setting the environment variable \texttt{ROS\_LOCALHOST\_ONLY=1} on every machine pins all DDS traffic to the loopback interface. Each machine's middleware can then discover and exchange messages only with nodes on the same machine.
+
+This sounds drastic, and it is meant to. The effect is to split the system cleanly into two transport domains:
+
+\begin{itemize}
+    \item \textbf{On-machine traffic (loopback DDS).} Everything a robot needs for its own autonomy stays here: SLAM, Nav2, the costmaps, the transform tree, laser scans, odometry. All of it continues to run at full rate over loopback, which is fast and free, and none of it is ever visible to another machine.
+    \item \textbf{Cross-machine traffic.} A single, explicitly chosen channel --- described in Section~\ref{subsec:zenoh} --- carries only the small set of topics the swarm actually needs to share. Nothing reaches this channel unless it has been deliberately selected.
+\end{itemize}
+
+With DDS confined to loopback, the WiFi link is left clean for the one transport that is permitted to use it. This is the architectural pivot of the whole layer: the network is no longer a shared bus that every node implicitly broadcasts onto, but a private, curated channel that carries a known, minimal payload.
+
+All machines additionally share \texttt{ROS\_DOMAIN\_ID=0}. In a conventional ROS~2 deployment the domain ID is what separates one logical network from another over the wire; here, because DDS no longer crosses the network, the domain ID has a narrower role --- it simply groups the nodes within a single machine. Keeping it identical and fixed across machines removes it as a variable and avoids any accidental mismatch between machines.
+
+\begin{notebox}
+\texttt{ROS\_LOCALHOST\_ONLY=1} is mandatory whenever the cross-machine bridge is in use, and it is a deliberate trade-off. The same setting that isolates the discovery storm also isolates \emph{any} component that legitimately needs DDS on a real network interface --- for example a micro-ROS link to a microcontroller that speaks DDS-XRCE over the network. The variable is therefore scoped to the autonomy stack and explicitly unset when the system is reverted to plain DDS for testing.
+\end{notebox}
+
+\subsection{Choosing Zenoh as the Cross-Network Transport}
+\label{subsec:zenoh}
+
+Isolating DDS to loopback leaves a gap: the swarm still needs \emph{some} mechanism to move map data between machines. The mechanism chosen for AUSRA is Zenoh, bridged into ROS~2 through the \texttt{zenoh-bridge-ros2dds} component. Because Zenoh is less familiar than DDS, this subsection first explains what Zenoh is and how it differs architecturally from a standard DDS implementation, and then makes the concrete case for choosing it over simply continuing to run DDS over WiFi.
+
+\subsubsection{What Zenoh Is}
+\label{subsubsec:what_is_zenoh}
+
+Zenoh is a publish/subscribe and query protocol designed from the outset for resource-constrained devices and for networks that are wide-area, wireless, or lossy --- rather than for the well-behaved wired local networks that classical DDS assumes. It treats data as values associated with hierarchical keys, and it moves that data between participants over explicit sessions. Two architectural differences from a standard DDS implementation are directly relevant to the AUSRA bandwidth problem.
+
+\begin{itemize}
+    \item \textbf{Discovery model.} A standard DDS implementation relies on multicast to discover peers and to match every publisher with every subscriber across the entire domain. This all-to-all matching is what produces the discovery storm on WiFi. Zenoh instead uses a lightweight scouting mechanism to locate peers and then routes data over point-to-point sessions. It does not need to flood the network continuously in order to function; discovery is a small, bounded cost rather than an ongoing broadcast load.
+    \item \textbf{Routing and brokering.} Zenoh is built around routing keyed data between sessions, and it can operate as a flat peer mesh or through dedicated routers. Because routing is explicit, a Zenoh deployment can forward only the data that some participant has actually asked for, rather than mirroring an entire discovery domain onto every link. This selectivity is the property AUSRA exploits most directly.
+\end{itemize}
+
+\begin{notebox}
+\textbf{What is established versus what is reasoned.} The concrete facts of the AUSRA deployment --- that the bridge runs in a peer mesh on \texttt{tcp/7447}, that it is driven by an explicit topic allowlist, that it preserves the quality-of-service settings of bridged topics, and that it reconnects cleanly after a WiFi interruption --- are taken directly from the project's own design and deployment notes. The broader description of Zenoh as a protocol aimed at wide-area, lossy, and constrained networks, and the contrast drawn between its discovery model and DDS multicast, is the author's framing of \emph{why} those configured properties hold. It is consistent with the project's design but is stated at a more general level than the project's own notes do.
+\end{notebox}
+
+\subsubsection{Why Zenoh and Not Plain DDS}
+\label{subsubsec:why_zenoh}
+
+The alternative to introducing Zenoh was to keep running a vanilla DDS implementation --- such as Fast~DDS or Cyclone~DDS --- directly over WiFi, perhaps with tuning. That option was considered and rejected, for three concrete reasons rooted in the bandwidth and discovery problems already described.
+
+\begin{enumerate}
+    \item \textbf{Multicast discovery does not scale on a constrained WiFi link.} As established in Section~\ref{subsec:dds_bottleneck}, plain DDS announces every node and every topic by multicast, and that is exactly the traffic a contended WiFi channel cannot absorb. Zenoh's scouting locates peers with a small, bounded exchange rather than a continuous topic-discovery broadcast, which removes the root cause of the storm rather than merely reducing its symptoms.
+    \item \textbf{Selective bridging rather than mirroring the whole domain.} Zenoh bridges only an explicit allowlist of topics; everything else remains on loopback DDS and never appears on the network. A plain DDS-over-WiFi setup offers no such selectivity --- once DDS is on the interface, the entire domain is exposed, which is what produced the storm in the first place. Zenoh lets the design state precisely what crosses the wire, which in AUSRA is the compressed map and a heartbeat, and nothing more.
+    \item \textbf{Lower overhead on limited compute.} A single Zenoh session per machine replaces the all-pairs DDS endpoint matching across the network. On the Jetson Orin Nano, where SLAM, Nav2, and --- in the decentralised topology --- map merging already share one modest CPU, avoiding the discovery and matching overhead of a network-wide DDS domain is a real saving, not a marginal one.
+\end{enumerate}
+
+Staying on vanilla Fast~DDS or Cyclone~DDS over WiFi was therefore not sufficient, and the reason is important: both implementations produce the same multicast discovery storm, because the storm is a property of the DDS discovery \emph{design}, not of any one vendor's defaults. Switching DDS vendors would change the implementation details but not the fundamental behaviour on a constrained wireless link.
+
+\begin{notebox}
+\textbf{Honest scope of the comparison.} There is a middle option between plain multicast DDS and Zenoh: a DDS Discovery Server, which replaces multicast discovery with a unicast, server-mediated scheme and would suppress much of the storm. It is recognised in the project as the natural fallback if Zenoh were ever abandoned. However, it was not benchmarked head-to-head against Zenoh in this work. The claim made here is the one that was actually observed --- that plain multicast DDS over WiFi reproduced the storm --- and not that every possible DDS configuration was exhaustively evaluated.
+\end{notebox}
+
+\subsection{Bridge Integration: \texttt{zenoh-bridge-ros2dds}}
+\label{subsec:bridge}
+
+Zenoh is integrated through \texttt{zenoh-bridge-ros2dds}, pinned to a specific stable release that is compatible with the ROS~2 distribution in use, and run as a separate process on every machine. The bridge subscribes to allowlisted ROS~2 topics on the local loopback DDS, carries them across the Zenoh peer mesh, and re-publishes them as ordinary DDS topics on the receiving machine's loopback. To any ROS~2 node on either side, the bridged topics simply appear as normal topics; the bridge is transparent, and no application node needs to be aware that Zenoh exists. Running the bridge as its own process also isolates it: if it crashes it can be restarted automatically without disturbing SLAM, Nav2, or the relay, all of which continue to operate on local DDS.
+
+\subsubsection{The Allowlist}
+\label{subsubsec:allowlist}
+
+The bridge is configured by a JSON5 file per machine class, and its central feature is the allowlist --- an explicit set of topic-name regular expressions that are permitted to cross WiFi. This is the mechanism that turns the broad ``isolate everything'' decision of Section~\ref{subsec:localhost_only} into a precise ``share exactly these'' policy. In the default compressed-map configuration the allowlist is just two patterns in each direction.
+
+\noindent\textbf{Listing: Zenoh bridge allowlist (Jetson side, default compressed mode).}
+\begin{lstlisting}
+allow: {
+  publishers:  ["/ausra_.*/map_compressed", "/ausra_.*/heartbeat"],
+  subscribers: ["/ausra_.*/map_compressed", "/ausra_.*/heartbeat"],
+  // service and action allowlists deliberately empty: pub/sub only
+}
+\end{lstlisting}
+
+Everything not matched by these patterns --- laser scans, odometry, the transform tree, the raw uncompressed map --- stays on loopback and never reaches the air. Three details of this allowlist are deliberate. First, it uses regular expressions, so a single pattern such as \texttt{/ausra\_.*/map\_compressed} matches the corresponding topic for every robot in the swarm without the file needing to be edited per robot. Second, the publisher and subscriber lists are specified separately, so the direction of each topic's flow is explicit. Third, the service and action allowlists are intentionally left empty: cross-network remote procedure calls are out of scope for this layer, and leaving the lists empty means none can be opened by accident.
+
+\begin{notebox}
+The allowlist exists in two files --- one for the Jetsons and one for the laptop base station --- and they must be kept in step. Adding a topic to the shared set means editing both files, rebuilding, and restarting the bridge, because the configuration is read once at startup and there is no live reload. This two-files-in-sync requirement is the single most common operational mistake in maintaining the layer, which is why it is called out explicitly rather than left implicit.
+\end{notebox}
+
+\subsubsection{Domain Segregation and Quality-of-Service Preservation}
+\label{subsubsec:domain_qos}
+
+Two further properties make the bridge dependable enough to build the swarm on.
+
+\begin{itemize}
+    \item \textbf{Domain segregation.} Every machine runs on \texttt{ROS\_DOMAIN\_ID=0}, and the bridge plugin is likewise configured for domain~0. Because DDS is confined to loopback, the domain ID now only groups nodes within a machine, while Zenoh handles all cross-machine routing. The two concerns --- local grouping and network transport --- no longer overlap, which removes a whole class of subtle misconfiguration in which a domain mismatch silently prevents discovery.
+    \item \textbf{Quality-of-service preservation.} The compressed map topic is published with \texttt{TRANSIENT\_LOCAL} durability and \texttt{RELIABLE} reliability. \texttt{RELIABLE} ensures the map is retransmitted until it is acknowledged rather than silently dropped, and \texttt{TRANSIENT\_LOCAL} ensures that a machine joining late still receives the most recent map rather than waiting for the next publication. The bridge is configured so that this contract is carried end-to-end across the network. This matters because the failure mode is silent: if durability degraded to \texttt{VOLATILE} somewhere in the path, a late-joining consumer would receive nothing at all, and the only symptom would be an empty map with no error message. Preserving quality-of-service across the bridge is therefore load-bearing, not a nicety.
+\end{itemize}
+
+Peer discovery between the bridges uses Zenoh's own scouting multicast group, which is a single lightweight exchange to locate peers and is entirely distinct from --- and far cheaper than --- DDS topic discovery. Where even that small amount of multicast is unreliable, as on the ad-hoc link discussed in Section~\ref{sec:comms_evolution}, the bridges can instead be given a static list of peer endpoints to connect to directly over \texttt{tcp/7447}, removing any dependence on multicast for discovery.
+
+\subsection{Map Compression as a Communication-Layer Concern}
+\label{subsec:map_compression}
+
+The single largest item that crosses the wire is the occupancy-grid map. A raw \texttt{OccupancyGrid} for a room-scale environment is on the order of one megabyte, which is far too large to send at any useful rate over a WiFi link shared with the rest of the swarm. Compression is therefore not an optimisation bolted on afterwards; it is part of the communication layer itself, the step that makes map data small enough to transmit at all. As elsewhere in this section, the concern is delivery efficiency: how the merging stage uses the maps is out of scope.
+
+The on-robot relay node performs three optimisations before any map data reaches the bridge, each targeting a different dimension of the cost.
+
+\begin{enumerate}
+    \item \textbf{Lossless compression.} The occupancy grid is compressed with zlib and shipped as a \texttt{UInt8MultiArray} on the \texttt{/ausra\_X/map\_compressed} topic. Occupancy grids built during exploration are dominated by ``unknown'' cells, and such grids are extremely compressible: in practice they shrink by well over 99~percent, taking a map of roughly one megabyte down to roughly one kilobyte on sparse maps. The payload is carried as a plain \texttt{UInt8MultiArray} --- a raw byte buffer --- rather than a bespoke message type, so that any consumer can decompress it without first agreeing on a custom message definition. On the receiving machine a decompressor node reconstructs the original \texttt{OccupancyGrid}, so that every stage downstream of the bridge is identical whether or not compression was used.
+    \item \textbf{Adaptive throttling.} A background thread on the robot monitors the round-trip latency to the base station and uses it as a proxy for link health. The map is published at most once every five seconds under normal conditions, and if latency rises above roughly 150~milliseconds --- the signature of a congested link --- the publish interval backs off further, to fifteen or thirty seconds. This deliberately trades map freshness for link stability at exactly the moment the link is under stress, rather than pushing more data onto an already-struggling channel.
+    \item \textbf{Delta detection.} The relay computes a hash of the map payload and compares it against the previously sent map. If the map has not changed, it is not published at all. A robot that is stationary, or that has finished exploring its immediate surroundings, therefore contributes no map traffic, freeing the channel for robots that are actively mapping.
+\end{enumerate}
+
+It is worth working a concrete number to show why this combination matters. A raw room-scale grid of roughly one megabyte, published once per second as a naive implementation might, would demand about 8~megabits per second per robot from the data path alone --- before any discovery overhead, and multiplied by the number of robots. That is already a large fraction of the usable throughput of a contended WiFi channel. The compressed topic, by contrast, is on the order of one kilobyte, published at most once every five seconds, and suppressed entirely when the map has not changed. The worst-case sustained load per robot therefore falls from megabits per second to a few kilobits per second --- a reduction of roughly three orders of magnitude --- which is what makes a multi-robot deployment viable on ordinary WiFi at all. The complete set of topics that AUSRA places on the link is summarised in Table~\ref{tab:cross_wifi_topics}.
+
+\begin{table}[H]
+    \centering
+    \caption{Cross-WiFi topics in the default (compressed) configuration.}
+    \label{tab:cross_wifi_topics}
+    \begin{tabularx}{\textwidth}{@{}l l X@{}}
+        \toprule
+        \textbf{Topic} & \textbf{Rate} & \textbf{Role on the wire} \\
+        \midrule
+        \texttt{/ausra\_X/map\_compressed} & $\leq$ 0.2 Hz & zlib-compressed map ($\sim$1\,MB $\rightarrow$ $\sim$1\,KB), \texttt{TRANSIENT\_LOCAL}+\texttt{RELIABLE} \\
+        \texttt{/ausra\_X/heartbeat} & 1 Hz & liveness / peer presence ($<$100\,B) \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The quality-of-service settings on \texttt{/ausra\_X/map\_compressed} are the same \texttt{TRANSIENT\_LOCAL} and \texttt{RELIABLE} contract discussed in Section~\ref{subsubsec:domain_qos}: together they guarantee that a machine joining the swarm late still receives the most recent compressed map rather than nothing. Compression, quality-of-service, and the bridge allowlist together define the entire footprint that AUSRA places on the WiFi link --- two topics, one of them tiny and the other compressed, throttled, and de-duplicated. That minimal, disciplined footprint is precisely what is meant by a bandwidth-efficient communication layer.
+
+% ============================================================================
+\section{Evolution of the Communication Layer: Problems Faced and Lessons Learned}
+\label{sec:comms_evolution}
+
+The communication layer described in Section~\ref{sec:comms_bandwidth} is the configuration that works. It is not the configuration the project started with, nor the second, nor the third. This section is the honest engineering account of how that endpoint was reached: the approaches that were tried, the failures that were genuinely confusing at the time, the deliberate decision to set one architectural goal aside, and the hardware that was bought to chase it before that decision was made. The dead ends are kept in on purpose --- they are where most of the learning happened, and they explain why the deployed system has the shape it does.
+
+The narrative runs in the order the problems were actually encountered: an ad-hoc link that reported success but carried no traffic; a routing error that mutated as it was debugged; the layer-2 fault behind both; a retreat to a conventional router but still on plain DDS, which flooded the link; the switch to Zenoh that finally made map sharing reliable; a later, well-resourced second attempt at full decentralisation that worked at the link level but revealed a routing requirement too complex to justify; and, last, a timing problem that broke the transport on every reboot until it was tamed.
+
+\subsection{Initial Network Design: IBSS (Ad-Hoc) Mode}
+\label{subsec:ibss}
+
+The original networking design used IBSS --- ad-hoc WiFi --- so that the robots could form a network directly among themselves with no infrastructure. This was a deliberate and reasonable starting point. The project's stated goal is a decentralised swarm, and an ad-hoc, robot-to-robot link matches that philosophy far better than routing every message through a single central access point. In principle, IBSS means the robots themselves \emph{are} the network: there is no privileged node, nothing extra to carry or power, and the network survives the loss of any one robot.
+
+That is the theory. In practice, IBSS is where the communication layer spent the majority of its early troubleshooting effort, and the experience is a large part of the reason the deployed system looks the way it does.
+
+\subsection{The Ping That Never Arrived, and the BSSID Behind It}
+\label{subsec:bssid}
+
+The first concrete symptom was as confusing as it was simple: the devices reported a successful IBSS connection. Each interface showed a ``connected'' status, no errors were raised, and an address could be assigned --- and yet a \texttt{ping} between nodes never succeeded, no matter what was tried. By every per-device indication the link was up; by the only end-to-end test that mattered, there was no link at all.
+
+IBSS provides no DHCP, so addresses had to be assigned by hand, and the first debugging effort went into the IP layer. The earliest symptom was a ``Destination Host Unreachable'' error on ping --- the classic signature of a host that has no usable path to the target on its local segment. Investigating that, the team found that NetworkManager was silently interfering with the manual configuration, overriding settings that had been applied by hand. After NetworkManager was worked around so that the static configuration actually persisted, the error \emph{changed} --- to ``No route to host.'' The mutation of the message from one failure mode to another, as the configuration around it was corrected, was an early hint that the real fault lay below IP entirely.
+
+\begin{notebox}
+\textbf{Addressing detail.} During the ad-hoc experiments the static addresses were, to the best of the project's records, in approximately the \texttt{192.168.1.x} range. This is distinct from the \texttt{192.168.0.x} range used in the final router-based deployment described in Section~\ref{subsec:final_arch}, so the two phases are not confused.
+\end{notebox}
+
+The fault below IP turned out to be the BSSID, the identifier that names an ad-hoc cell. In IBSS mode, two stations only share a layer-2 network if they share a BSSID. What the investigation found was that the BSSID was never consistent across the devices, no matter how it was configured manually. Each card came up in what it reported as ``the'' ad-hoc network, but with a different BSSID, which means the cards had in fact formed \emph{separate} cells that never merged at layer~2. That is why neither ping nor any routing fix ever succeeded: there was no common layer-2 segment for IP to run over, even though every device individually believed it was connected. The team was, in effect, configuring routing on top of a link that did not exist.
+
+\begin{notebox}
+\textbf{Why this was hard to see.} Every per-device status check passed --- association succeeded, the interface was ``up,'' an address was assigned. The failure only ever surfaced end-to-end, at the ping. A green light on each node masked a network that did not actually exist between them. This is exactly the class of fault that ad-hoc mode is prone to: cells that silently fail to merge while each node looks perfectly healthy in isolation.
+\end{notebox}
+
+\subsection{Retreat to Infrastructure WiFi --- but Still on Plain DDS}
+\label{subsec:plain_dds}
+
+With the ad-hoc cells refusing to merge, the link itself was changed: the robots were moved off IBSS and onto a conventional infrastructure network, every device associating with a single WiFi router. This immediately solved the layer-2 problem --- one access point means one cell, so the machines could finally reach each other, and a ping between them succeeded for the first time.
+
+What had \emph{not} yet changed at this stage was the ROS~2 transport. The system was still using plain DDS directly over WiFi, and that introduced a different and equally serious problem. As explained in Section~\ref{sec:comms_bandwidth}, DDS does not distinguish between local and shared topics; it exposes the entire domain. Each robot publishes on the order of forty to fifty topics --- every sensor stream, transform, costmap, and internal navigation topic --- and DDS placed all of them, and their discovery traffic, onto the shared WiFi link. With two robots launched at once, that meant roughly a hundred topics competing for the same airtime, the overwhelming majority of which no other machine needed.
+
+The effect was a link saturated with traffic that served no purpose. The symptom was telling, because it was not a total failure: on each Jetson the map could be visualised locally and looked perfectly healthy, since that data never had to cross the network. The problem only appeared when the laptop base station --- in its pre-Zenoh form --- tried to pull the maps across for merging. The merged map took several minutes to begin arriving, and even then it came through incomplete. The application-layer throttling in the relay was already in place and was constantly engaged, repeatedly backing off because the round-trip latency it monitored was continuously elevated by the flood. Plain DDS over WiFi, in short, was reachable but not usable: it could share a map in principle, but not reliably, and not in a time that any operator would accept.
+
+\subsection{The Switch to Zenoh}
+\label{subsec:zenoh_switch}
+
+The plain-DDS experience is what motivated the move to Zenoh, and the rationale and mechanics of that transport are the subject of Section~\ref{sec:comms_bandwidth}. In the order of this narrative, the important point is the result: once DDS was confined to each machine's loopback interface and Zenoh became the only thing crossing WiFi --- carrying just the compressed map and a heartbeat instead of a hundred unfiltered topics --- map sharing became reliable. The merged map arrived in seconds rather than minutes, complete rather than partial, and the relay's adaptive throttling settled instead of constantly backing off, because the link was no longer saturated. This Zenoh-over-infrastructure-WiFi configuration is the one the swarm has run on ever since, and it is the working baseline against which the remaining experiments were measured.
+
+\subsection{A Second Attempt at Full Decentralisation: New Cards, IBSS, and batman-adv}
+\label{subsec:batman}
+
+With a reliable system in hand, the team returned to the original ambition that infrastructure WiFi had forced them to abandon: true decentralisation, with no dependence on a central router. The dependence on a single access point is a real architectural compromise --- it is a single point of failure for cross-machine communication --- and the project did not want to leave it unexamined simply because the router happened to work. To give the ad-hoc approach the best possible chance this time, new wireless cards (Intel AX210) were purchased and installed specifically for the attempt.
+
+This second attempt at IBSS succeeded at the link level: with the new cards, the ad-hoc network came up and the nodes could reach one another, clearing the BSSID and routing failures that had defeated the first attempt. But success at the link level exposed the deeper, structural problem that had been waiting underneath all along, and it is a problem of \emph{topology} rather than configuration. A WiFi radio only provides a direct link between nodes that are within range of each other. As soon as the swarm spreads out, the connectivity forms chains rather than a fully-connected graph: a node A can reach a node B, and B can reach a node C, but A and C are out of direct range of each other, as illustrated in Figure~\ref{fig:abc}. A genuine mesh requires \emph{multi-hop routing} --- B forwarding traffic on behalf of A and C --- and ad-hoc WiFi on its own does not provide it.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        robot/.style={circle, draw=asuBlue, thick, fill=blue!5,
+                      minimum size=1.3cm, font=\bfseries},
+        link/.style={very thick, asuBlue},
+        nolink/.style={very thick, red!70, dashed}]
+        \node[robot] (A) at (0,0) {A};
+        \node[robot] (B) at (4,0) {B};
+        \node[robot] (C) at (8,0) {C};
+        \draw[link] (A) -- (B) node[midway, above, font=\small\itshape, black] {in range};
+        \draw[link] (B) -- (C) node[midway, above, font=\small\itshape, black] {in range};
+        \draw[nolink] (A) to[bend right=35] node[midway, below, font=\small\itshape, black] {out of range --- no direct link} (C);
+    \end{tikzpicture}
+    \caption{The A--B--C range limitation. Node A reaches B and B reaches C, but A and C are out of direct WiFi range. A direct A--C path would require B to forward traffic on their behalf --- multi-hop routing that ad-hoc WiFi does not provide on its own.}
+    \label{fig:abc}
+\end{figure}
+
+Zenoh's peer mesh operates at the application layer; it routes data between Zenoh sessions, but it cannot manufacture a layer-2 or layer-3 path where the network itself does not provide one. Achieving genuine multi-hop forwarding between robots over ad-hoc WiFi would mean adding \texttt{batman-adv} --- a layer-2 mesh routing protocol --- \emph{underneath} Zenoh and on top of IBSS. That is the three-layer stack shown in Figure~\ref{fig:batman_stack}: IBSS at the link layer, batman-adv providing multi-hop routing over it, and Zenoh carrying the ROS~2 data on top.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        layer/.style={rectangle, draw=asuBlue, thick, rounded corners,
+                      minimum width=10cm, minimum height=1.2cm, align=center,
+                      fill=blue!4}]
+        \node[layer] (z) {\textbf{Zenoh} --- ROS~2 data transport (application layer)};
+        \node[layer, below=0.45cm of z] (b) {\textbf{batman-adv} --- multi-hop mesh routing (\emph{never implemented})};
+        \node[layer, below=0.45cm of b, fill=red!4] (i) {\textbf{IBSS} --- ad-hoc WiFi link layer};
+    \end{tikzpicture}
+    \caption{The three-layer stack a true robot-to-robot mesh would require. The middle layer, \texttt{batman-adv}, is the piece that was identified as necessary but deliberately not implemented; without it, Zenoh alone cannot route across the A--B--C gap.}
+    \label{fig:batman_stack}
+\end{figure}
+
+At this point a deliberate decision was made: stop pursuing that path. \texttt{batman-adv} was identified as the correct technical solution for multi-hop robot-to-robot routing, but layering and debugging a three-tier IBSS-plus-batman-adv-plus-Zenoh stack would have added substantial complexity to the project for a capability that the working Zenoh-over-WiFi system already approximated well enough for the intended scenarios. The ad-hoc experiment was therefore wound down even though the link itself now worked, the AX210 cards were left running in ordinary infrastructure mode, and the system returned to the reliable Zenoh-over-WiFi baseline. This is a scoped, documented engineering decision rather than an unsolved bug: the team knows exactly what full mesh connectivity would take and chose not to build it within this project.
+
+\subsection{The Configuration That Works}
+\label{subsec:final_arch}
+
+The deployed system, then, is the one arrived at after all of the above: standard infrastructure WiFi, with every device --- both Jetsons and the laptop --- associating with one common router, the AX210 cards running in ordinary station mode, and Zenoh as the only cross-network transport, carrying only the compressed map and the heartbeat. The router provides DHCP, so each device receives its own address in the \texttt{192.168.0.x} range, and the small amount of multicast that Zenoh's own peer discovery needs works dependably through the access point. Table~\ref{tab:ibss_vs_infra} sets the original ad-hoc design and the deployed design side by side, and it doubles as a summary of the journey this section has described.
+
+\begin{table}[H]
+    \centering
+    \caption{The original IBSS design against the deployed infrastructure design.}
+    \label{tab:ibss_vs_infra}
+    \begin{tabularx}{\textwidth}{@{}l X X@{}}
+        \toprule
+        \textbf{Concern} & \textbf{IBSS (original goal)} & \textbf{Infrastructure (deployed)} \\
+        \midrule
+        L2 cell consistency & BSSIDs never merged on first attempt & Single AP; one consistent cell \\
+        Addressing & Manual static IPs; NetworkManager fought it & DHCP from router (\texttt{192.168.0.x}) \\
+        End-to-end ping & Failed first attempt; worked with new cards & Works \\
+        ROS~2 transport & --- & Zenoh (DDS pinned to loopback) \\
+        Plain DDS over the link & Floods $\sim$100 topics; map merge unreliable & Avoided; only 2 topics cross WiFi \\
+        Multi-hop between robots & Would require batman-adv & Not provided (scoped out) \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Time Synchronisation: Clocks That Reset on Every Boot}
+\label{subsec:time_sync}
+
+The last problem the layer faced was timing, and unlike the others it reappeared on every single power cycle rather than being a one-time configuration fight. The Jetson Orin Nano boards used as the robots' onboard computers have no real-time clock battery, so their system clocks reset to a default time every time they boot. The robot network has no internet access, so the Network Time Protocol is not available to correct this automatically: every boot starts with the clock wrong, often by a large margin.
+
+This is not a cosmetic problem for the communication layer, because Zenoh timestamps the data it carries using a Hybrid Logical Clock, which combines the machine's wall clock with a logical counter to order events across the swarm. When two machines' wall clocks disagree by more than roughly 500~milliseconds, Zenoh rejects the offending timestamps, and the log fills with rejection messages. After a fresh boot the skew was not a few hundred milliseconds but potentially hours, far outside any tolerance the logical clock was designed to absorb.
+
+\begin{notebox}
+\textbf{Honest detail.} The timestamp rejection is documented as non-fatal: Zenoh replaces the offending timestamp and still delivers the data, so maps do continue to flow even while the log floods. Tight clock agreement was nonetheless treated as a hard prerequisite, for two reasons. A flooded log hides genuine problems behind thousands of repeated warnings, and a large skew is itself a signal that something is wrong before the system has even started doing useful work.
+\end{notebox}
+
+The fix is a per-boot step rather than a background service, precisely because there is nothing on the robot network to synchronise against. The laptop base station is designated the single source of truth, and at the start of each session a small script pushes the laptop's clock to each Jetson over SSH, sending the time as a sub-second epoch value so that the residual skew after the network round-trip stays comfortably inside the 500~millisecond tolerance. One ordering caveat was learned in practice: because setting the clock causes a time jump, if the Zenoh bridge is already running when the correction is applied, the backward jump confuses it. The clock is therefore always synchronised before the stack is launched, and if it is corrected afterwards the bridge is restarted. With that single step in the startup routine, the timing problem is fully contained, and it is the last piece of the communication layer as it stands today.
+
+% ============================================================================
+\section{Multi-Robot Collaborative Map Merging}
+\label{sec:collaborative_map_merge}
+\label{sec:map_merge}
+
+The deployment of a multi-robot swarm operating under a decentralized SLAM paradigm necessitates a mechanism for aggregating the independently generated local maps into a single, coherent, globally-aligned representation. Each robot in the AUSRA swarm maintains its own occupancy grid, constructed by the \texttt{slam\_toolbox} package relative to its own local frame of reference. Without a fusion layer, these independent maps remain isolated, preventing the swarm from achieving collective spatial awareness.
+
+While the \texttt{multirobot\_map\_merge} package exists within the ROS~2 ecosystem to address this problem, its direct application to raw hardware SLAM outputs reveals two critical failure modes that render it unsuitable for production deployment:
+
+\begin{enumerate}
+    \item \textbf{Late Initialization Crash:} The \texttt{multirobot\_map\_merge} node dereferences OpenCV matrix pointers upon startup. If it receives zero or only one map before its internal discovery scan runs, the resulting null matrix dereference causes an immediate segmentation fault, crashing the entire merge pipeline.
+
+    \item \textbf{The ``Moving Floor'' Problem:} As a robot explores an unknown environment, \texttt{slam\_toolbox} dynamically resizes its internal occupancy grid and shifts the origin of the map coordinate frame to accommodate newly discovered space. This continuous origin drift renders the published \texttt{nav\_msgs/OccupancyGrid} spatially unstable. When two or more such dynamically shifting maps are fed directly into the merger, the resulting fused map tears, jumps, and becomes geometrically incoherent.
+\end{enumerate}
+
+To resolve both failure modes, the \texttt{ausra\_map\_merge\_HW} package was developed, introducing a custom fault-tolerant intermediary layer---the \textbf{Map Expansion Node}---positioned between each robot's SLAM output and the central map merger.
+
+% -----------------------------------------------------------------------
+\subsection{System Architecture}
+\label{subsec:map_merge_architecture}
+
+The complete map merging pipeline follows a three-stage decentralized workflow, as illustrated in Figure~\ref{fig:map_merge_diagram}. Each stage is designed to eliminate a specific class of failure while maximizing network efficiency.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{map_merge_architecture_diagram.png}
+    \caption{Decentralized multi-robot map merging architecture. Each robot runs a local SLAM Toolbox instance, whose dynamic output is anchored by a per-robot Map Expansion Node before being broadcast over the Zenoh DDS Bridge. Every robot in the swarm runs its own Map Merge Node, subscribing to all peer maps and producing an independent, globally-aligned fused occupancy grid.}
+    \label{fig:map_merge_diagram}
+\end{figure}
+
+The pipeline operates as follows:
+
+\begin{enumerate}
+    \item \textbf{Local SLAM Output:} Each robot's \texttt{slam\_toolbox} node publishes a raw, dynamically shifting \texttt{nav\_msgs/OccupancyGrid} to its namespaced topic \texttt{/ausra\_N/map}.
+
+    \item \textbf{Map Expansion Node (Per-Robot):} A dedicated \texttt{map\_expansion\_node} instance runs on each robot. It subscribes to the local \texttt{/ausra\_N/map} topic, applies the spatial transformation described in Section~\ref{subsec:map_merge_algorithm}, and publishes a stable, fixed-canvas map at 1~Hz.
+
+    \item \textbf{Network Broadcast via Zenoh Bridge:} Only the pre-processed, globally-aligned maps are bridged over the Wi-Fi network via the Zenoh DDS Bridge. This architecture reduces network bandwidth consumption by transmitting stable data rather than raw, continually growing SLAM maps.
+
+    \item \textbf{Local Map Merge Node (Per-Robot):} Each robot runs an instance of the \texttt{multirobot\_map\_merge} node, which subscribes to all peer maps available on the DDS network and produces a fused \texttt{/map\_merged} output for use by the local navigation stack.
+\end{enumerate}
+
+The architecture inherently supports two deployment paradigms. In the \textbf{Centralized} configuration, the Map Expansion Nodes and the Merge Node all run on a powerful base station, reducing onboard computational load at the cost of higher bandwidth dependency. In the \textbf{Decentralized} configuration, each robot runs its own expansion node onboard, requiring greater onboard CPU resources but substantially increasing system resilience to network and base-station failures.
+
+% -----------------------------------------------------------------------
+\subsection{Algorithmic Theory and Methodology}
+\label{subsec:map_merge_algorithm}
+
+\subsubsection{The Heartbeat Timer Architecture}
+\label{subsubsec:heartbeat}
+
+The Map Expansion Node employs a \textbf{Decoupled Publisher/Subscriber Architecture} to simultaneously solve the late-initialization crash and establish fault tolerance. The node's operational behavior is governed by two fully independent, asynchronous execution paths:
+
+\begin{itemize}
+    \item \textbf{The Subscriber Callback (\texttt{mapCallback}):} This function fires asynchronously whenever the robot's \texttt{slam\_toolbox} publishes a new map. Its sole responsibility is to validate the incoming data and overwrite the internal pixel buffer. Critically, it \textbf{never publishes anything}.
+
+    \item \textbf{The Heartbeat Timer (\texttt{publishCanvas}):} This function fires unconditionally at a fixed rate of 1~Hz, regardless of whether any SLAM data has been received. Its sole responsibility is to publish the current state of the internal pixel buffer.
+\end{itemize}
+
+At node launch, a fixed-size canvas of $1000 \times 1000$ cells is pre-allocated and initialized entirely to $-1$ (the ROS~2 convention for unknown space). Because the heartbeat timer begins firing immediately upon construction, the \texttt{multirobot\_map\_merge} node always receives a legally sized, non-null matrix from the moment it starts, permanently eliminating the initialization segfault.
+
+\subsubsection{The ``Moving Floor'' Fix: Spatial Coordinate Anchoring}
+\label{subsubsec:spatial_math}
+
+The primary algorithmic contribution of the Map Expansion Node is the mathematical anchoring of a dynamically shifting SLAM frame to a static global canvas. The spatial transformation proceeds in two steps.
+
+\paragraph{Step 1: Local-to-Global Frame Conversion}
+The \texttt{slam\_toolbox} package publishes the origin of the local map in the robot's own SLAM reference frame. This local origin is not stable---it shifts as the map expands. To convert it to a physically meaningful global coordinate, the robot's physical spawn offset (measured by tape measure from a designated global zero-point) is added:
+
+\begin{equation}
+    \mathbf{p}_{global} = \mathbf{p}_{local,slam} + \mathbf{p}_{offset,robot}
+    \label{eq:global_origin}
+\end{equation}
+
+where $\mathbf{p}_{global} = (x_{g}, y_{g})$ is the map origin in the global world frame, $\mathbf{p}_{local,slam} = (x_{l}, y_{l})$ is the origin published by \texttt{slam\_toolbox}, and $\mathbf{p}_{offset,robot} = (\delta_x, \delta_y)$ is the tape-measured physical spawn position of the robot.
+
+\paragraph{Step 2: Global Position to Fixed Canvas Pixel}
+The global world coordinate is then converted to a pixel index on the fixed canvas:
+
+\begin{equation}
+    \mathbf{c}_{px} = \left\lfloor \frac{\mathbf{p}_{global} - \mathbf{p}_{canvas,origin}}{r} \right\rceil
+    \label{eq:canvas_offset}
+\end{equation}
+
+where $\mathbf{c}_{px} = (c_x, c_y)$ is the integer pixel offset, $\mathbf{p}_{canvas,origin} = (-25.0,\, -25.0)$~m is the fixed south-west corner of the canvas, $r = 0.05$~m/cell is the map resolution, and $\lfloor \cdot \rceil$ denotes rounding to the nearest integer.
+
+\paragraph{Invariance Proof}
+The critical insight is that for any fixed physical feature in the environment (e.g., a wall at absolute position $x_w$), the canvas column index satisfies:
+
+\begin{equation}
+    c_{col} = \frac{(x_l + \delta_x - x_{canvas}) + col \cdot r}{r} = \frac{x_w - x_{canvas}}{r}
+    \label{eq:invariance}
+\end{equation}
+
+Since $x_w$, $\delta_x$, $x_{canvas}$, and $r$ are all physical constants, $c_{col}$ is a constant regardless of how aggressively \texttt{slam\_toolbox} shifts its internal origin $x_l$. The moving floor is therefore algebraically eliminated.
+
+\subsubsection{Fault Tolerance: The Ghost Map Behavior}
+\label{subsubsec:ghost_map}
+
+The decoupled architecture inherently provides a ``Ghost Map'' fault tolerance mechanism at no additional implementation cost. When a robot suffers a hardware failure, a network dropout, or a SLAM process crash, its \texttt{mapCallback} function simply ceases to fire. Because the callback is the only mechanism that modifies the pixel buffer, the buffer remains frozen with the last known valid SLAM data.
+
+The 1~Hz heartbeat timer, however, continues to fire unconditionally and publish the frozen buffer to the network. Consequently, the disabled robot's exploration progress is permanently preserved in the global merged map. Other members of the swarm can continue to navigate around the discovered obstacles, and the disabled agent's contribution to the collective map is not lost.
+
+% -----------------------------------------------------------------------
+\subsection{ROS~2 Implementation and Network Strategy}
+\label{subsec:map_merge_ros2}
+
+\subsubsection{Node Interfaces}
+
+The \texttt{ausra\_map\_merge\_HW} package comprises two interacting ROS~2 nodes. Their complete interfaces are detailed in Table~\ref{tab:map_merge_nodes}.
+
+\begin{table}[H]
+\centering
+\small
+\caption{ROS~2 Node Interfaces for the \texttt{ausra\_map\_merge\_HW} Package}
+\label{tab:map_merge_nodes}
+\begin{tabular}{|l|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Node} & \textbf{Function} & \textbf{Subscribes To} & \textbf{Publishes To} \\
+\hline
+\texttt{map\_expansion\_node} & Translates dynamic SLAM maps into a fixed-canvas globally-aligned occupancy grid via the heartbeat timer architecture & \texttt{/ausra\_N/map} \newline (\texttt{nav\_msgs/OccupancyGrid}, transient local) & \texttt{/ausra\_N/map\_fixed} \newline (\texttt{nav\_msgs/OccupancyGrid}, transient local) \\
+\hline
+\texttt{map\_merge} & Fuses all available \texttt{map\_fixed} streams into a single global occupancy grid & \texttt{/ausra\_*/map\_fixed} \newline (all namespaced peers) & \texttt{/map\_merged} \newline (\texttt{nav\_msgs/OccupancyGrid}) \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Configurable Parameters}
+
+The Map Expansion Node exposes a comprehensive set of ROS~2 parameters, enabling adaptation to different physical environments and swarm configurations without code modification. Key parameters are listed in Table~\ref{tab:map_merge_params}.
+
+\begin{table}[H]
+\centering
+\caption{Map Expansion Node ROS~2 Parameters}
+\label{tab:map_merge_params}
+\begin{tabular}{|l|c|p{6cm}|}
+\hline
+\textbf{Parameter} & \textbf{Default} & \textbf{Description} \\
+\hline
+\texttt{canvas\_width} & 1000 cells & Width of the fixed global canvas \\
+\hline
+\texttt{canvas\_height} & 1000 cells & Height of the fixed global canvas \\
+\hline
+\texttt{canvas\_resolution} & 0.05 m/cell & Must match \texttt{slam\_toolbox} resolution \\
+\hline
+\texttt{canvas\_origin\_x} & $-25.0$~m & Fixed south-west X corner of canvas \\
+\hline
+\texttt{canvas\_origin\_y} & $-25.0$~m & Fixed south-west Y corner of canvas \\
+\hline
+\texttt{robot\_offset\_x} & 0.0~m & Tape-measured physical spawn X of robot \\
+\hline
+\texttt{robot\_offset\_y} & 0.0~m & Tape-measured physical spawn Y of robot \\
+\hline
+\texttt{publish\_rate\_hz} & 1.0~Hz & Heartbeat publication rate \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Namespace Isolation and Swarm Scalability}
+
+The package leverages the ROS~2 namespace mechanism to achieve zero-configuration scalability. Each robot is launched with a unique namespace (e.g., \texttt{ausra\_1}, \texttt{ausra\_2}), causing all its topics to be prefixed accordingly. The map merge pipeline is then configured at launch time via a CLI argument that specifies the robot names and their physical offsets:
+
+\begin{verbatim}
+ros2 launch ausra_map_merge_HW map_merge_hw.launch.py \
+    robot_config:="ausra_1:0.0:0.0 ausra_2:1.5:0.0 ausra_3:0.75:1.5"
+\end{verbatim}
+
+This command spawns one \texttt{map\_expansion\_node} per robot with the correct input/output topics and offset parameters, and launches a single \texttt{map\_merge} node with automatically generated initial pose parameters set to zero for all robots (to avoid double-shifting the pixel offsets).
+
+\subsubsection{QoS Profile and Bandwidth Strategy}
+
+Both the publisher and subscriber of the Map Expansion Node are configured with a \texttt{transient\_local} durability profile (QoS depth~1). This configuration ensures that late-joining subscribers---such as a \texttt{multirobot\_map\_merge} node started after the expansion nodes---immediately receive the most recently published canvas upon connection, without requiring the publisher to be actively transmitting at that instant.
+
+The network bandwidth strategy is deliberately conservative. Rather than bridging raw SLAM maps (which grow dynamically in size and shift in origin), only the pre-processed, fixed-dimension canvas maps are transmitted over the Wi-Fi network. For a $1000 \times 1000$ canvas at 1~Hz, the constant bandwidth per robot is:
+
+\begin{equation}
+    BW_{robot} = 1000 \times 1000 \times 1\,\text{byte} \times 1\,\text{Hz} \approx 1.0\,\text{MB/s}
+    \label{eq:bandwidth}
+\end{equation}
+
+This deterministic, bounded data rate facilitates reliable multi-robot coordination over standard Wi-Fi infrastructure.
+
+% -----------------------------------------------------------------------
+\subsection{Simulation Validation}
+\label{subsec:map_merge_sim_validation}
+
+The \texttt{ausra\_map\_merge\_HW} architecture was validated through a structured multi-phase experiment in the Gazebo simulation environment, using a three-robot swarm. The objective was to rigorously verify the heartbeat timer, the spatial mathematics, the dynamic stability guarantee, the fault tolerance mechanism, and the final fused map quality upon mission completion.
+
+\subsubsection{Phase 1: Initialization Stability Test}
+
+To validate the elimination of the late-initialization crash, all three simulated robots were first spawned in the Gazebo environment at their designated starting positions. The map merge pipeline was subsequently launched without issuing any movement commands, and the \texttt{multirobot\_map\_merge} node was intentionally started \emph{after} the three expansion nodes, replicating the worst-case startup race condition. Figure~\ref{fig:sim_init} shows the three robots at their initial spawn poses in Gazebo, confirming the environment was correctly configured and all agents were ready prior to any movement. No segmentation faults were reported in any terminal during this phase.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{sim_init_stable.png}
+    \caption{Simulation Phase 1: The three-robot swarm at their initial spawn positions in the Gazebo environment prior to any movement. The successful launch of all nodes without crashes confirms the stability of the heartbeat timer initialization architecture.}
+    \label{fig:sim_init}
+\end{figure}
+
+\subsubsection{Phase 2: Initial Map State and Pre-Exploration Alignment}
+
+Following pipeline launch but before any robot movement was commanded, the state of the \texttt{/map\_merged} topic was observed in RViz. Figure~\ref{fig:sim_dynamic_before} shows the initial merged map output: each robot has already produced a small, locally-scanned footprint of its immediate surroundings at its spawn pose. Critically, these three micro-maps are correctly stitched together at their physically accurate world positions on the global canvas, confirming that the coordinate anchoring mechanism operates correctly from the very first heartbeat publication, before any SLAM map expansion has occurred.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{sim_dynamic_before.png}
+    \caption{Simulation Phase 2: The initial \texttt{/map\_merged} state in RViz with all three robots stationary at their spawn poses. Each robot's immediate local scan is correctly positioned on the global canvas, demonstrating correct coordinate anchoring from boot.}
+    \label{fig:sim_dynamic_before}
+\end{figure}
+
+\subsubsection{Phase 3: Dynamic Stability and Mid-Exploration Geometric Alignment}
+
+As the robots were teleoperated to explore the environment, the global merged map was continuously observed. The canvas-anchoring mathematics described in Section~\ref{subsec:map_merge_algorithm} guarantees that for any fixed physical feature in the environment, its pixel coordinate on the global canvas is an algebraic constant, independent of how aggressively the underlying \texttt{slam\_toolbox} instance shifts its internal origin. Consequently, no map tearing, positional jumps, or drift artefacts were observed throughout the exploration session; the global merged map remained completely stationary while new explored cells appeared seamlessly at their correct physical locations.
+
+Figure~\ref{fig:sim_geometric} captures the \texttt{/map\_merged} output at the midpoint of the exploration run, when all three robots had partially mapped the environment. The correctly overlapping obstacle boundaries from adjacent robot perspectives constitute direct geometric evidence that the spatial coordinate anchoring chain---tape-measured spawn offset, local-to-global frame conversion, and canvas pixel mapping---is functioning correctly under dynamic SLAM conditions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{sim_geometric_alignment.png}
+    \caption{Simulation Phase 3: Mid-exploration \texttt{/map\_merged} output in RViz. Obstacle boundaries from all three robot perspectives overlap correctly at their physical world positions, providing geometric evidence of correct spatial coordinate anchoring under dynamic SLAM conditions. No drift or map tearing was observed throughout the session.}
+    \label{fig:sim_geometric}
+\end{figure}
+
+\subsubsection{Phase 4: Ghost Map Fault Tolerance Test}
+
+To validate the fault tolerance mechanism, the \texttt{slam\_toolbox} process for Robot~2 was manually terminated via the terminal while all three robots were actively exploring. The before-and-after states of the \texttt{/map\_merged} output are presented in Figure~\ref{fig:sim_ghost}.
+
+Prior to termination (Figure~\ref{fig:sim_ghost_before}), all three robots are contributing live map updates to the merged output. Following the manual termination of Robot~2's SLAM process (Figure~\ref{fig:sim_ghost_after}), Robots~1 and~3 continue to update their respective sectors, while Robot~2's entire previously explored territory is preserved, frozen and intact, within the global map. This behaviour arises directly from the decoupled heartbeat architecture: the subscriber callback simply ceases to update the pixel buffer when SLAM data stops arriving, but the 1~Hz timer continues to publish the frozen buffer unconditionally. The disabled agent's contribution to the collective map is therefore never lost.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{sim_ghost_map_before.png}
+        \caption{All three robots actively mapping before Robot~2 is terminated}
+        \label{fig:sim_ghost_before}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{sim_ghost_map_after.png}
+        \caption{After Robot~2 termination: its explored territory remains frozen and intact}
+        \label{fig:sim_ghost_after}
+    \end{subfigure}
+    \caption{Simulation Phase 4: Ghost Map fault tolerance test. Robot~2's \texttt{slam\_toolbox} process is manually killed mid-mission. Its previously mapped territory is permanently preserved in the global merged map, while Robots~1 and~3 continue active exploration uninterrupted.}
+    \label{fig:sim_ghost}
+\end{figure}
+
+\subsubsection{Phase 5: Full Exploration Completion}
+
+Following the conclusion of the exploration mission, the final state of the \texttt{/map\_merged} output was captured in RViz, as shown in Figure~\ref{fig:sim_final}. The complete fused occupancy grid demonstrates that the three-robot swarm collectively mapped the entire simulated environment into a single, geometrically coherent global map with no unexplained discontinuities or misalignments between robot contributions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{final_rviz_exploration_output.png}
+    \caption{Simulation Phase 5: Final \texttt{/map\_merged} output upon mission completion. The three-robot swarm has produced a single, coherent global occupancy grid of the entire simulated environment, with no misalignments or discontinuities between individual robot map contributions.}
+    \label{fig:sim_final}
+\end{figure}
+
+% -----------------------------------------------------------------------
+\subsection{Hardware Validation}
+\label{subsec:map_merge_hw_validation}
+
+Simulation validation was supplemented by physical deployment of the AUSRA hardware platform to verify that the digital spatial mathematics accurately reflects physical reality under the constraints of real-world sensor noise, Wi-Fi latency, and wheel odometry slip.
+
+\subsubsection{Phase 1: Hardware Initialization Stability}
+
+The map merge pipeline was booted on the physical robots with all agents stationary at their starting poses. The \texttt{multirobot\_map\_merge} node and all expansion nodes were launched in sequence, deliberately replicating the worst-case startup order. In all repeated trials, the pipeline initialised without any segmentation faults or null-pointer dereferences. The heartbeat timer architecture---which pre-allocates a valid, all-unknown canvas and publishes it immediately upon node construction---guarantees that the merger always receives a legally-sized, non-null matrix regardless of network join order or startup timing over a physical Wi-Fi link. This behaviour is identical to that observed in simulation and requires no dedicated photograph to confirm, as the evidence is observable in the absence of any crash output in the terminal logs.
+
+\subsubsection{Phase 2: The Tape Measure Geometric Accuracy Test}
+
+This test constitutes the critical real-world verification of the spatial coordinate anchoring mathematics. Two AUSRA robots were positioned at their physical starting poses and their inter-robot distance was measured with a tape measure. The merger was launched with the corresponding physical spawn offsets configured as ROS~2 parameters. Figure~\ref{fig:hw_geometric} presents the side-by-side comparison of the physical hardware setup at the initial poses and the resulting \texttt{/map\_merged} output in RViz.
+
+As shown in Figure~\ref{fig:hw_rviz_result}, the LiDAR scans from the two robots correctly overlap along their shared line of sight, and shared environmental features (obstacles visible to both robots from their respective positions) appear as a single, aligned line rather than two displaced parallel lines. This constitutes direct geometric confirmation that the coordinate transformation chain of Equations~\ref{eq:global_origin} and~\ref{eq:canvas_offset} is correctly mapping each robot's local SLAM frame into the shared global canvas.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{hw_tape_measure_photo.jpeg}
+        \caption{Physical hardware at initial starting poses}
+        \label{fig:hw_physical_setup}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{hw_tape_measure_rviz.jpeg}
+        \caption{\texttt{/map\_merged} output in RViz at starting poses}
+        \label{fig:hw_rviz_result}
+    \end{subfigure}
+    \caption{Hardware Phase 2: Geometric Accuracy Test. The two robots at their physical starting poses (left) produce a correctly aligned merged map in RViz (right), where shared environmental features observed by both robots overlap as a single line, confirming the accuracy of the physical-to-digital coordinate transformation.}
+    \label{fig:hw_geometric}
+\end{figure}
+
+\subsubsection{Phase 3: Dynamic Stability on Physical Hardware}
+
+During the physical exploration mission, all robots were driven to explore the environment while the \texttt{/map\_merged} topic was continuously observed in RViz. As each robot's \texttt{slam\_toolbox} instance dynamically resized its internal occupancy grid and shifted its local origin to accommodate newly discovered space, the global merged canvas remained entirely stationary. No positional jumps, map tears, or drift artefacts were observed at any point during the mission. This confirms that the canvas-anchoring mechanism---which converts every SLAM origin shift into a numerically compensated pixel offset that preserves the absolute physical world position of all features---operates correctly under real-world conditions including LiDAR noise, wheel slip, and Wi-Fi transmission latency. The final exploration result, which serves as evidence of successful dynamic operation, is presented in Figure~\ref{fig:hw_final}.
+
+\subsubsection{Phase 4: Hardware Fault Tolerance}
+
+The Ghost Map fault tolerance behaviour observed in simulation is a direct consequence of the decoupled heartbeat architecture: if a robot's SLAM data stream ceases (due to sensor failure, process crash, or network dropout), its subscriber callback simply stops updating the pixel buffer. The 1~Hz heartbeat timer, however, continues to publish the frozen buffer unconditionally, preserving the agent's last known exploration contribution permanently in the global map. This behaviour is an architectural guarantee of the implementation and does not depend on the underlying hardware platform. The same mechanism confirmed in the simulation Ghost Map test (Section~\ref{subsec:map_merge_sim_validation}) applies identically on physical hardware, as the node's internal logic is entirely platform-agnostic.
+
+\subsubsection{Phase 5: Full Physical Exploration Result}
+
+Figure~\ref{fig:hw_final} presents the final state of the physical hardware validation experiment: the real-world positions of the robots at the end of the exploration mission alongside the corresponding \texttt{/map\_merged} output in RViz. The fused occupancy grid accurately reflects the physical layout of the explored environment, with the contributions from all robots correctly integrated into a single, geometrically coherent global map.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{hw_final_real_world_final_poses.jpeg}
+        \caption{Physical robots at their final exploration poses}
+        \label{fig:hw_final_real}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{hw_final_rviz_map.jpeg}
+        \caption{Final \texttt{/map\_merged} output in RViz}
+        \label{fig:hw_final_rviz}
+    \end{subfigure}
+    \caption{Hardware Phase 5: Full physical exploration result. The robots at their final poses (left) have collectively mapped the environment into the coherent global occupancy grid shown in RViz (right), validating end-to-end operation of the \texttt{ausra\_map\_merge\_HW} pipeline on physical hardware.}
+    \label{fig:hw_final}
+\end{figure}
+
+% -----------------------------------------------------------------------
+\subsection{Conclusion and Limitations}
+\label{subsec:map_merge_conclusion}
+
+The \texttt{ausra\_map\_merge\_HW} package successfully resolves the two fundamental failure modes of standard multi-robot map merging: initialization crashes and spatial misalignment from dynamic SLAM origins. The Heartbeat Timer Architecture provides a robust, race-condition-free initialization guarantee, while the spatial coordinate anchoring mathematics permanently eliminates the ``Moving Floor'' problem through a provably invariant pixel mapping. The Ghost Map behavior emerges naturally from the decoupled design, providing fault tolerance to sensor and network failures at no additional implementation cost.
+
+The package demonstrates excellent scalability, with swarm size configurable entirely from the command line, and supports both centralized and decentralized deployment topologies without code modification.
+
+\subsubsection{Current Limitations}
+
+\begin{itemize}
+    \item \textbf{Fixed Canvas Boundary:} If a robot explores beyond the $50 \times 50$~m canvas area ($1000 \times 1000$ cells at 0.05~m/cell), cells are silently dropped. This requires manual canvas resizing for large-scale deployments.
+
+    \item \textbf{Physical Offset Measurement:} The system relies on tape-measured physical spawn offsets, which introduces human measurement error. Automated position initialization via fiducial markers or RTK-GPS would improve accuracy.
+
+    \item \textbf{Static Resolution Requirement:} The canvas resolution must exactly match the \texttt{slam\_toolbox} resolution. Any mismatch causes the expansion node to reject all incoming frames, requiring parameter reconfiguration.
+
+    \item \textbf{No Dynamic Robot Discovery:} New robots cannot join the swarm mid-mission without restarting the map merge pipeline, as the node list is fixed at launch time.
+\end{itemize}
+
+% ============================================================================
+\section{Swarm System: Conclusion}
+\label{sec:swarm_conclusion}
+
+This chapter has documented the full multi-robot coordination stack of the AUSRA system, tracing the arc from the initial namespace-isolation design through the communication layer trials, to the deployed map-merging pipeline and the frontier exploration strategy.
+
+The central finding is that a minimal, disciplined footprint on the shared WiFi link is the load-bearing requirement for any multi-robot deployment on commodity hardware. By confining DDS to each machine's loopback and routing only two topics across the network via the Zenoh bridge---a compressed, throttled, delta-detected map and a 1~Hz heartbeat---the swarm achieves reliable collaborative mapping over standard infrastructure WiFi. The bandwidth reduction is approximately three orders of magnitude relative to a naive DDS-over-WiFi approach, which is what makes the architecture viable at all.
+
+The \texttt{ausra\_map\_merge\_HW} package resolves the two fundamental failure modes of off-the-shelf multi-robot merging: the late-initialization segfault is permanently eliminated by the heartbeat timer architecture, and the ``Moving Floor'' spatial misalignment is algebraically eliminated by the canvas-anchoring coordinate transform. Ghost Map fault tolerance emerges from the decoupled design at no additional implementation cost, ensuring that any robot failure preserves rather than destroys the swarm's collective map progress.
+
+The communication layer itself is the product of three distinct experimental phases---ad-hoc IBSS (two attempts, both ultimately rejected on architectural grounds), plain DDS over infrastructure WiFi (reachable but not usable), and the final Zenoh-over-infrastructure configuration---each of which provided a specific, bounded lesson about where the real constraints lie. That iterative debugging process is documented in full in Section~\ref{sec:comms_evolution} so that future projects can build on the negative results rather than repeating them.
+
+Quantitative results from the simulation and hardware validation experiments are consolidated in Chapter~\ref{chap:results}, where multi-robot mapping performance, link utilisation, and fault-tolerance repeatability are presented alongside single-robot benchmarks.

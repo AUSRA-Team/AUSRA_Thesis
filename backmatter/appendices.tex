@@ -229,7 +229,7 @@ The system uses standard Nav2 plugins configured specifically for multi-robot om
 
 The \texttt{SmacPlanner2D} provides efficient A* planning on large costmaps.
 
-\begin{lstlisting}[language=YAML, caption={SmacPlanner2D A* Configuration}]
+\begin{lstlisting}[language=bash, caption={SmacPlanner2D A* Configuration}]
 planner_server:
   ros__parameters:
     planner_plugins: ["GridBased"]
@@ -247,7 +247,7 @@ planner_server:
 
 The local controller is tuned for holonomic motion, sampling velocities in X and Y directions.
 
-\begin{lstlisting}[language=YAML, caption={DWB Holonomic Controller Configuration}]
+\begin{lstlisting}[language=bash, caption={DWB Holonomic Controller Configuration}]
 controller_server:
   ros__parameters:
     # DWB Controller for OMNIDIRECTIONAL/HOLONOMIC robot

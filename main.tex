@@ -26,10 +26,11 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{subcaption}
-\graphicspath{{figures/}{figures/Logos/}{figures/Chapter 1/}{figures/Chapter 2/}{figures/Chapter 3/}{figures/Chapter 4/}{figures/Chapter 5/}{figures/Chapter 6/}{figures/Chapter 7/}}
+\graphicspath{{figures/}{figures/Logos/}{figures/BOM/}{figures/Chapter 1/}{figures/Chapter 2/}{figures/Chapter 3/}{figures/Chapter 4/}{figures/Chapter 5/}{figures/Chapter 6/}{figures/Chapter 7/}}
 
 % --- Mathematics & Science ---
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage[version=4]{mhchem}
 \usepackage{siunitx}
@@ -201,15 +202,18 @@
 \include{chapters/chapter2_literature}
 \include{chapters/chapter3_mechanical}
 \include{chapters/chapter4_electrical}
+% Ch.5 — Autonomous Navigation, Hardware Implementation, and Perception
+%         (merged from former Ch.5 autonomous + Ch.6 hardware + Ch.8 perception)
 \include{chapters/chapter5_autonomous}
-\include{chapters/chapter6_hardware}
-% Ch.7 — Multi-Robot Swarm, Collaborative Mapping and Perception
-%         (merged from former Ch.7 swarm + former Ch.8 perception)
-\include{chapters/chapter7_swarm}
-% Ch.8 — Experimental Results & Discussion  (formerly chapter9_results)
-\include{chapters/chapter9_results}
-% Ch.9 — Conclusion & Future Recommendations (formerly chapter10_conclusion)
-\include{chapters/chapter10_conclusion}
+% Ch.6 — Multi-Robot Swarm: Communication and Collaborative Mapping
+%         (formerly chapter7_swarm)
+\include{chapters/chapter6_swarm}
+% Ch.7 — Experimental Results & Discussion
+%         (formerly chapter9_results)
+\include{chapters/chapter7_results}
+% Ch.8 — Conclusion & Future Recommendations
+%         (formerly chapter10_conclusion)
+\include{chapters/chapter8_conclusion}
 
 % --- Back Matter ---
 

@@ -1,0 +1,162 @@
+% ============================================================================
+% Chapter: Bandwidth-Efficient Communication Layer
+% ============================================================================
+
+\chapter{Designing a Bandwidth-Efficient Communication Layer}
+\label{chap:communication}
+
+The AUSRA swarm shares one resource that is both scarce and unreliable: the WiFi link between the robots and the base station. Every robot runs a complete autonomy stack on its own onboard computer, but the maps each robot builds are only useful to the rest of the swarm if they can cross that link without saturating it. This chapter describes how the communication layer was designed to move map data between machines efficiently: the transport that was chosen, the way local traffic is isolated from cross-network traffic, and the compression pipeline that reduces a map from roughly one megabyte to roughly one kilobyte before it is ever placed on the air.
+
+A short framing makes the rest of the chapter easier to read. Bandwidth on a shared 802.11 link is not merely limited, it is \emph{contended}: every robot, the base station, and any unrelated device on the same channel compete for the same airtime, and the effective throughput collapses under broadcast or multicast load to a small fraction of the headline link rate. The design goal of this layer is therefore not raw speed but discipline --- placing as little as possible on the wire, and placing only what genuinely needs to be shared between machines. The map-\emph{merging} algorithm that ultimately consumes this data is treated separately; the concern here is strictly the efficient and reliable delivery of bytes between machines. Figure~\ref{fig:comms_stack} shows the three layers this chapter works through, from the physical link at the bottom to the application-level relay at the top.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        layer/.style={rectangle, draw=asuBlue, thick, rounded corners,
+                      minimum width=11cm, minimum height=1.5cm, align=center,
+                      fill=blue!4}]
+        \node[layer] (app) {\textbf{Application layer}\\ relay node: compression, adaptive throttling, delta detection, heartbeat};
+        \node[layer, below=0.5cm of app] (trans) {\textbf{Transport layer}\\ Zenoh bridge (peer mesh) --- crosses WiFi, strict topic allowlist};
+        \node[layer, below=0.5cm of trans] (phys) {\textbf{Physical layer}\\ WiFi 802.11 --- all machines associated to one infrastructure access point};
+        \draw[->, thick, asuBlue] (app.south) -- (trans.north);
+        \draw[->, thick, asuBlue] (trans.south) -- (phys.north);
+    \end{tikzpicture}
+    \caption{The AUSRA communication stack. DDS traffic is confined to each machine's loopback interface; only the Zenoh transport layer crosses WiFi, and it carries only the two allowlisted topics produced by the application-layer relay.}
+    \label{fig:comms_stack}
+\end{figure}
+
+\section{The DDS-over-WiFi Bottleneck}
+\label{sec:dds_bottleneck}
+
+ROS~2 communicates through the Data Distribution Service (DDS), the middleware layer that sits beneath the ROS~2 application interface. By default, DDS discovers peers using UDP multicast: when a node starts, it announces every topic it publishes or subscribes to and listens for the announcements of others, so that the middleware can automatically match publishers to subscribers across the network. On a wired local-area network this discovery traffic is effectively invisible. On WiFi it is not.
+
+The root of the problem is that DDS does not distinguish between topics that are meant to stay on one machine and topics that are meant to cross the network. It gossips discovery traffic for \emph{every} node and \emph{every} topic on every machine that shares a \texttt{ROS\_DOMAIN\_ID}. A single AUSRA robot does not run a handful of nodes; it runs SLAM Toolbox, the full Nav2 navigation stack, the lifecycle managers that bring those nodes up, the costmap layers, the transform tree, and the sensor drivers. Each of those is a DDS participant with many endpoints, and each endpoint announces itself repeatedly. Across two or three robots this becomes hundreds of endpoints, all broadcasting their existence over the same contended channel.
+
+The consequence is a discovery storm. WiFi access points handle multicast poorly: multicast frames are typically transmitted at a low basic rate and are throttled under load, which is precisely the condition this traffic creates. The flood of discovery packets then starves the few messages that actually matter --- the map and pose updates the swarm depends on. The observable symptoms were exactly what this model predicts: the global map and pose topics arrived late or were dropped outright, and Nav2 periodically reported that it had lost connection to topics it expected to be continuous.
+
+It is worth being clear about what does \emph{not} solve this. Throttling the rate at which the application publishes large messages --- which the AUSRA relay does, and which is described in Section~\ref{sec:compression} --- reduces the volume of \emph{data} traffic, but it cannot touch the \emph{discovery} traffic, because discovery is generated by the middleware below the application. No matter how infrequently the application publishes, DDS keeps announcing every endpoint. The discovery storm is therefore structural: solving it requires changing how discovery works, not how often the application sends data. This realisation is what motivated every design decision that follows.
+
+\section{Isolating Local Traffic: \texttt{ROS\_LOCALHOST\_ONLY=1}}
+\label{sec:localhost_only}
+
+The first design decision follows directly from that diagnosis. If DDS multicast is the source of the storm, then DDS should not be allowed to reach the WiFi interface at all. Setting the environment variable \texttt{ROS\_LOCALHOST\_ONLY=1} on every machine pins all DDS traffic to the loopback interface. Each machine's middleware can then discover and exchange messages only with nodes on the same machine.
+
+This sounds drastic, and it is meant to. The effect is to split the system cleanly into two transport domains:
+
+\begin{itemize}
+    \item \textbf{On-machine traffic (loopback DDS).} Everything a robot needs for its own autonomy stays here: SLAM, Nav2, the costmaps, the transform tree, laser scans, odometry. All of it continues to run at full rate over loopback, which is fast and free, and none of it is ever visible to another machine.
+    \item \textbf{Cross-machine traffic.} A single, explicitly chosen channel --- described in Section~\ref{sec:zenoh} --- carries only the small set of topics the swarm actually needs to share. Nothing reaches this channel unless it has been deliberately selected.
+\end{itemize}
+
+With DDS confined to loopback, the WiFi link is left clean for the one transport that is permitted to use it. This is the architectural pivot of the whole layer: the network is no longer a shared bus that every node implicitly broadcasts onto, but a private, curated channel that carries a known, minimal payload.
+
+All machines additionally share \texttt{ROS\_DOMAIN\_ID=0}. In a conventional ROS~2 deployment the domain ID is what separates one logical network from another over the wire; here, because DDS no longer crosses the network, the domain ID has a narrower role --- it simply groups the nodes within a single machine. Keeping it identical and fixed across machines removes it as a variable and avoids any accidental mismatch between machines.
+
+\begin{notebox}
+\texttt{ROS\_LOCALHOST\_ONLY=1} is mandatory whenever the cross-machine bridge is in use, and it is a deliberate trade-off. The same setting that isolates the discovery storm also isolates \emph{any} component that legitimately needs DDS on a real network interface --- for example a micro-ROS link to a microcontroller that speaks DDS-XRCE over the network. The variable is therefore scoped to the autonomy stack and explicitly unset when the system is reverted to plain DDS for testing.
+\end{notebox}
+
+\section{Choosing Zenoh as the Cross-Network Transport}
+\label{sec:zenoh}
+
+Isolating DDS to loopback leaves a gap: the swarm still needs \emph{some} mechanism to move map data between machines. The mechanism chosen for AUSRA is Zenoh, bridged into ROS~2 through the \texttt{zenoh-bridge-ros2dds} component. Because Zenoh is less familiar than DDS, this section first explains what Zenoh is and how it differs architecturally from a standard DDS implementation, and then makes the concrete case for choosing it over simply continuing to run DDS over WiFi.
+
+\subsection{What Zenoh Is}
+\label{subsec:what_is_zenoh}
+
+Zenoh is a publish/subscribe and query protocol designed from the outset for resource-constrained devices and for networks that are wide-area, wireless, or lossy --- rather than for the well-behaved wired local networks that classical DDS assumes. It treats data as values associated with hierarchical keys, and it moves that data between participants over explicit sessions. Two architectural differences from a standard DDS implementation are directly relevant to the AUSRA bandwidth problem.
+
+\begin{itemize}
+    \item \textbf{Discovery model.} A standard DDS implementation relies on multicast to discover peers and to match every publisher with every subscriber across the entire domain. This all-to-all matching is what produces the discovery storm on WiFi. Zenoh instead uses a lightweight scouting mechanism to locate peers and then routes data over point-to-point sessions. It does not need to flood the network continuously in order to function; discovery is a small, bounded cost rather than an ongoing broadcast load.
+    \item \textbf{Routing and brokering.} Zenoh is built around routing keyed data between sessions, and it can operate as a flat peer mesh or through dedicated routers. Because routing is explicit, a Zenoh deployment can forward only the data that some participant has actually asked for, rather than mirroring an entire discovery domain onto every link. This selectivity is the property AUSRA exploits most directly.
+\end{itemize}
+
+\begin{notebox}
+\textbf{What is established versus what is reasoned.} The concrete facts of the AUSRA deployment --- that the bridge runs in a peer mesh on \texttt{tcp/7447}, that it is driven by an explicit topic allowlist, that it preserves the quality-of-service settings of bridged topics, and that it reconnects cleanly after a WiFi interruption --- are taken directly from the project's own design and deployment notes. The broader description of Zenoh as a protocol aimed at wide-area, lossy, and constrained networks, and the contrast drawn between its discovery model and DDS multicast, is the author's framing of \emph{why} those configured properties hold. It is consistent with the project's design but is stated at a more general level than the project's own notes do.
+\end{notebox}
+
+\subsection{Why Zenoh and Not Plain DDS}
+\label{subsec:why_zenoh}
+
+The alternative to introducing Zenoh was to keep running a vanilla DDS implementation --- such as Fast~DDS or Cyclone~DDS --- directly over WiFi, perhaps with tuning. That option was considered and rejected, for three concrete reasons rooted in the bandwidth and discovery problems already described.
+
+\begin{enumerate}
+    \item \textbf{Multicast discovery does not scale on a constrained WiFi link.} As established in Section~\ref{sec:dds_bottleneck}, plain DDS announces every node and every topic by multicast, and that is exactly the traffic a contended WiFi channel cannot absorb. Zenoh's scouting locates peers with a small, bounded exchange rather than a continuous topic-discovery broadcast, which removes the root cause of the storm rather than merely reducing its symptoms.
+    \item \textbf{Selective bridging rather than mirroring the whole domain.} Zenoh bridges only an explicit allowlist of topics; everything else remains on loopback DDS and never appears on the network. A plain DDS-over-WiFi setup offers no such selectivity --- once DDS is on the interface, the entire domain is exposed, which is what produced the storm in the first place. Zenoh lets the design state precisely what crosses the wire, which in AUSRA is the compressed map and a heartbeat, and nothing more.
+    \item \textbf{Lower overhead on limited compute.} A single Zenoh session per machine replaces the all-pairs DDS endpoint matching across the network. On the Jetson Orin Nano, where SLAM, Nav2, and --- in the decentralised topology --- map merging already share one modest CPU, avoiding the discovery and matching overhead of a network-wide DDS domain is a real saving, not a marginal one.
+\end{enumerate}
+
+Staying on vanilla Fast~DDS or Cyclone~DDS over WiFi was therefore not sufficient, and the reason is important: both implementations produce the same multicast discovery storm, because the storm is a property of the DDS discovery \emph{design}, not of any one vendor's defaults. Switching DDS vendors would change the implementation details but not the fundamental behaviour on a constrained wireless link.
+
+\begin{notebox}
+\textbf{Honest scope of the comparison.} There is a middle option between plain multicast DDS and Zenoh: a DDS Discovery Server, which replaces multicast discovery with a unicast, server-mediated scheme and would suppress much of the storm. It is recognised in the project as the natural fallback if Zenoh were ever abandoned. However, it was not benchmarked head-to-head against Zenoh in this work. The claim made here is the one that was actually observed --- that plain multicast DDS over WiFi reproduced the storm --- and not that every possible DDS configuration was exhaustively evaluated.
+\end{notebox}
+
+\section{Bridge Integration: \texttt{zenoh-bridge-ros2dds}}
+\label{sec:bridge}
+
+Zenoh is integrated through \texttt{zenoh-bridge-ros2dds}, pinned to a specific stable release that is compatible with the ROS~2 distribution in use, and run as a separate process on every machine. The bridge subscribes to allowlisted ROS~2 topics on the local loopback DDS, carries them across the Zenoh peer mesh, and re-publishes them as ordinary DDS topics on the receiving machine's loopback. To any ROS~2 node on either side, the bridged topics simply appear as normal topics; the bridge is transparent, and no application node needs to be aware that Zenoh exists. Running the bridge as its own process also isolates it: if it crashes it can be restarted automatically without disturbing SLAM, Nav2, or the relay, all of which continue to operate on local DDS.
+
+\subsection{The Allowlist}
+\label{subsec:allowlist}
+
+The bridge is configured by a JSON5 file per machine class, and its central feature is the allowlist --- an explicit set of topic-name regular expressions that are permitted to cross WiFi. This is the mechanism that turns the broad ``isolate everything'' decision of Section~\ref{sec:localhost_only} into a precise ``share exactly these'' policy. In the default compressed-map configuration the allowlist is just two patterns in each direction.
+
+\noindent\textbf{Listing: Zenoh bridge allowlist (Jetson side, default compressed mode).}
+\begin{lstlisting}
+allow: {
+  publishers:  ["/ausra_.*/map_compressed", "/ausra_.*/heartbeat"],
+  subscribers: ["/ausra_.*/map_compressed", "/ausra_.*/heartbeat"],
+  // service and action allowlists deliberately empty: pub/sub only
+}
+\end{lstlisting}
+
+Everything not matched by these patterns --- laser scans, odometry, the transform tree, the raw uncompressed map --- stays on loopback and never reaches the air. Three details of this allowlist are deliberate. First, it uses regular expressions, so a single pattern such as \texttt{/ausra\_.*/map\_compressed} matches the corresponding topic for every robot in the swarm without the file needing to be edited per robot. Second, the publisher and subscriber lists are specified separately, so the direction of each topic's flow is explicit. Third, the service and action allowlists are intentionally left empty: cross-network remote procedure calls are out of scope for this layer, and leaving the lists empty means none can be opened by accident.
+
+\begin{notebox}
+The allowlist exists in two files --- one for the Jetsons and one for the laptop base station --- and they must be kept in step. Adding a topic to the shared set means editing both files, rebuilding, and restarting the bridge, because the configuration is read once at startup and there is no live reload. This two-files-in-sync requirement is the single most common operational mistake in maintaining the layer, which is why it is called out explicitly rather than left implicit.
+\end{notebox}
+
+\subsection{Domain Segregation and Quality-of-Service Preservation}
+\label{subsec:domain_qos}
+
+Two further properties make the bridge dependable enough to build the swarm on.
+
+\begin{itemize}
+    \item \textbf{Domain segregation.} Every machine runs on \texttt{ROS\_DOMAIN\_ID=0}, and the bridge plugin is likewise configured for domain~0. Because DDS is confined to loopback, the domain ID now only groups nodes within a machine, while Zenoh handles all cross-machine routing. The two concerns --- local grouping and network transport --- no longer overlap, which removes a whole class of subtle misconfiguration in which a domain mismatch silently prevents discovery.
+    \item \textbf{Quality-of-service preservation.} The compressed map topic is published with \texttt{TRANSIENT\_LOCAL} durability and \texttt{RELIABLE} reliability. \texttt{RELIABLE} ensures the map is retransmitted until it is acknowledged rather than silently dropped, and \texttt{TRANSIENT\_LOCAL} ensures that a machine joining late still receives the most recent map rather than waiting for the next publication. The bridge is configured so that this contract is carried end-to-end across the network. This matters because the failure mode is silent: if durability degraded to \texttt{VOLATILE} somewhere in the path, a late-joining consumer would receive nothing at all, and the only symptom would be an empty map with no error message. Preserving quality-of-service across the bridge is therefore load-bearing, not a nicety.
+\end{itemize}
+
+Peer discovery between the bridges uses Zenoh's own scouting multicast group, which is a single lightweight exchange to locate peers and is entirely distinct from --- and far cheaper than --- DDS topic discovery. Where even that small amount of multicast is unreliable, as on the ad-hoc link discussed in Chapter~\ref{chap:comms_issues}, the bridges can instead be given a static list of peer endpoints to connect to directly over \texttt{tcp/7447}, removing any dependence on multicast for discovery.
+
+\section{Map Compression as a Communication-Layer Concern}
+\label{sec:compression}
+
+The single largest item that crosses the wire is the occupancy-grid map. A raw \texttt{OccupancyGrid} for a room-scale environment is on the order of one megabyte, which is far too large to send at any useful rate over a WiFi link shared with the rest of the swarm. Compression is therefore not an optimisation bolted on afterwards; it is part of the communication layer itself, the step that makes map data small enough to transmit at all. As elsewhere in this chapter, the concern is delivery efficiency: how the merging stage uses the maps is out of scope.
+
+The on-robot relay node performs three optimisations before any map data reaches the bridge, each targeting a different dimension of the cost.
+
+\begin{enumerate}
+    \item \textbf{Lossless compression.} The occupancy grid is compressed with zlib and shipped as a \texttt{UInt8MultiArray} on the \texttt{/ausra\_X/map\_compressed} topic. Occupancy grids built during exploration are dominated by ``unknown'' cells, and such grids are extremely compressible: in practice they shrink by well over 99~percent, taking a map of roughly one megabyte down to roughly one kilobyte on sparse maps. The payload is carried as a plain \texttt{UInt8MultiArray} --- a raw byte buffer --- rather than a bespoke message type, so that any consumer can decompress it without first agreeing on a custom message definition. On the receiving machine a decompressor node reconstructs the original \texttt{OccupancyGrid}, so that every stage downstream of the bridge is identical whether or not compression was used.
+    \item \textbf{Adaptive throttling.} A background thread on the robot monitors the round-trip latency to the base station and uses it as a proxy for link health. The map is published at most once every five seconds under normal conditions, and if latency rises above roughly 150~milliseconds --- the signature of a congested link --- the publish interval backs off further, to fifteen or thirty seconds. This deliberately trades map freshness for link stability at exactly the moment the link is under stress, rather than pushing more data onto an already-struggling channel.
+    \item \textbf{Delta detection.} The relay computes a hash of the map payload and compares it against the previously sent map. If the map has not changed, it is not published at all. A robot that is stationary, or that has finished exploring its immediate surroundings, therefore contributes no map traffic, freeing the channel for robots that are actively mapping.
+\end{enumerate}
+
+It is worth working a concrete number to show why this combination matters. A raw room-scale grid of roughly one megabyte, published once per second as a naive implementation might, would demand about 8~megabits per second per robot from the data path alone --- before any discovery overhead, and multiplied by the number of robots. That is already a large fraction of the usable throughput of a contended WiFi channel. The compressed topic, by contrast, is on the order of one kilobyte, published at most once every five seconds, and suppressed entirely when the map has not changed. The worst-case sustained load per robot therefore falls from megabits per second to a few kilobits per second --- a reduction of roughly three orders of magnitude --- which is what makes a multi-robot deployment viable on ordinary WiFi at all. The complete set of topics that AUSRA places on the link is summarised in Table~\ref{tab:cross_wifi_topics}.
+
+\begin{table}[H]
+    \centering
+    \caption{Cross-WiFi topics in the default (compressed) configuration.}
+    \label{tab:cross_wifi_topics}
+    \begin{tabularx}{\textwidth}{@{}l l X@{}}
+        \toprule
+        \textbf{Topic} & \textbf{Rate} & \textbf{Role on the wire} \\
+        \midrule
+        \texttt{/ausra\_X/map\_compressed} & $\leq$ 0.2 Hz & zlib-compressed map ($\sim$1\,MB $\rightarrow$ $\sim$1\,KB), \texttt{TRANSIENT\_LOCAL}+\texttt{RELIABLE} \\
+        \texttt{/ausra\_X/heartbeat} & 1 Hz & liveness / peer presence ($<$100\,B) \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The quality-of-service settings on \texttt{/ausra\_X/map\_compressed} are the same \texttt{TRANSIENT\_LOCAL} and \texttt{RELIABLE} contract discussed in Section~\ref{subsec:domain_qos}: together they guarantee that a machine joining the swarm late still receives the most recent compressed map rather than nothing. Compression, quality-of-service, and the bridge allowlist together define the entire footprint that AUSRA places on the WiFi link --- two topics, one of them tiny and the other compressed, throttled, and de-duplicated. That minimal, disciplined footprint is precisely what is meant by a bandwidth-efficient communication layer.
+
